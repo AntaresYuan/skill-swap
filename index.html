@@ -90,7 +90,7 @@ p{margin:0}
 .hero .cta .btn.t{background:rgba(255,255,255,.16);color:#fff}
 .props{display:grid;gap:10px}
 .prop{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center}
-.prop b{font-size:22px;min-width:76px}
+.prop b{font-size:22px;min-width:76px;white-space:nowrap}
 .prop span{font-size:13px;opacity:.95}
 
 /* filters */
@@ -212,7 +212,11 @@ footer{margin:48px 0 0;padding:24px 0 100px;border-top:1px solid var(--line);fon
 }
 @media (max-width:720px){
   .wrap{padding:0 16px}
+  body{overflow-x:hidden}
+  .top{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--card)}
   .top .wrap{gap:12px}
+  .hero>*{min-width:0}
+  .search{min-width:0}
   .brand small{display:none}
   .nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));justify-content:space-around;z-index:30}
   .nav a{flex-direction:column;gap:0;font-size:12px;padding:6px 8px}
