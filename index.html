@@ -2,688 +2,1204 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>技能换换 · SkillSwap</title>
-<meta name="description" content="用你会的，换你想学的——技能互换平台：发布我能教的、我想学的，智能双向匹配，时间币让交换不再需要刚好互补。">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%235b5bd6'/><path d='M18 26h22l-6-6M46 38H24l6 6' stroke='white' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<title>技能换换 · AI 技能交换</title>
+<meta name="description" content="用你会的，换你想学的。AI 顾问小换帮你建立技能档案、匹配交换伙伴、约课并提醒上课。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%235b5bd6'/><stop offset='1' stop-color='%23d65b9a'/></linearGradient></defs><rect width='64' height='64' rx='16' fill='url(%23g)'/><path d='M18 26h22l-6-6M46 38H24l6 6' stroke='white' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
 <style>
 :root{
-  --bg:#f6f7fb;--card:#fff;--text:#1d2130;--muted:#6b7280;--line:#e6e8f0;--soft:#f1f2f7;
+  --bg:#f4f5f9;--panel:#fff;--text:#1d2130;--muted:#6b7280;--line:#e6e8ef;--soft:#f1f2f7;
   --pri:#5b5bd6;--pri-d:#4848c2;--pri-50:#eef0ff;
   --teach:#0e9467;--teach-50:#e6f6ef;--learn:#e2570c;--learn-50:#fff0e6;
-  --gold:#f2a516;--danger:#dc2626;
-  --r:14px;--shadow:0 1px 2px rgba(16,24,40,.04),0 6px 20px rgba(16,24,40,.06);
+  --gold:#f2a516;--red:#e5484d;
+  --ai:linear-gradient(135deg,#5b5bd6 0%,#9b5bd6 55%,#d65b9a 100%);
+  --shadow:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.06);
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#12131a;--card:#1b1d27;--text:#e9eaf0;--muted:#9aa0ae;--line:#2a2d3a;--soft:#232634;
-  --pri:#7c7cf0;--pri-d:#9393ff;--pri-50:#25264a;--teach:#34c08f;--teach-50:#163a2d;--learn:#ff8a4c;--learn-50:#3d2416;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);
+  --bg:#111219;--panel:#1a1c25;--text:#e9eaf0;--muted:#9aa0ae;--line:#2a2d3a;--soft:#232634;
+  --pri:#7c7cf0;--pri-d:#9393ff;--pri-50:#262850;--teach:#34c08f;--teach-50:#15372b;--learn:#ff8a4c;--learn-50:#3b2415;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
 }}
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}
-button,input,select,textarea{font:inherit;color:inherit}
-h1,h2,h3,h4{margin:0;line-height:1.3}
-p{margin:0}
-.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-.muted{color:var(--muted)}
-.small{font-size:13px}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--pri)}
 
-/* top bar */
-.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:saturate(1.6) blur(10px);border-bottom:1px solid var(--line)}
-.top .wrap{display:flex;align-items:center;gap:24px;height:62px}
-.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;white-space:nowrap}
-.brand i{display:grid;place-items:center;width:32px;height:32px;border-radius:9px;background:var(--pri);color:#fff;font-style:normal}
-.brand small{font-weight:500;color:var(--muted);font-size:12px}
-.nav{display:flex;gap:4px;flex:1}
-.nav a{padding:8px 14px;border-radius:10px;color:var(--muted);font-weight:500;white-space:nowrap;display:flex;align-items:center;gap:6px}
-.nav a:hover{background:var(--soft);color:var(--text)}
-.nav a.on{background:var(--pri-50);color:var(--pri)}
-.nav .dot{min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--learn);color:#fff;font-size:11px;display:inline-grid;place-items:center}
-.coin{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#fff7e6;color:#a15c00;font-weight:600;font-size:14px;white-space:nowrap;border:1px solid #fde3ad}
-@media (prefers-color-scheme:dark){.coin{background:#3a2c10;color:#ffc65c;border-color:#5a4417}}
-.me-chip{display:flex;align-items:center;gap:8px}
+/* ---------- shell ---------- */
+.app{display:grid;grid-template-columns:76px 300px 1fr;height:100vh;height:100dvh}
+.app.nolist{grid-template-columns:76px 1fr}
+.app.nolist .list{display:none}
+.rail{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:16px 0 14px;gap:6px}
+.logo{width:42px;height:42px;border-radius:13px;background:var(--ai);color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px;margin-bottom:14px}
+.rail .nb{width:62px;border:0;background:none;border-radius:12px;padding:8px 0 6px;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:12px;color:var(--muted);position:relative}
+.rail .nb .ic{font-size:21px;line-height:1.2}
+.rail .nb:hover{background:var(--soft)}
+.rail .nb.on{background:var(--pri-50);color:var(--pri);font-weight:600}
+.rail .sp{flex:1}
+.dot{position:absolute;top:3px;right:9px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;font-weight:600;display:grid;place-items:center;line-height:1}
+.coinv{display:flex;flex-direction:column;align-items:center;font-size:11px;color:#a15c00;background:#fff6e0;border:1px solid #fde3ad;border-radius:12px;padding:6px 8px;margin-bottom:8px;line-height:1.3;cursor:pointer}
+.coinv b{font-size:16px}
+@media (prefers-color-scheme:dark){.coinv{background:#3a2c10;color:#ffc65c;border-color:#5a4417}}
 
-/* generic */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--card);padding:9px 16px;border-radius:10px;cursor:pointer;font-weight:500;white-space:nowrap;transition:.15s}
+.list{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0;height:100vh;height:100dvh}
+.list-h{padding:20px 18px 12px;display:flex;align-items:center;justify-content:space-between}
+.list-h h2{margin:0;font-size:19px}
+.citems{overflow-y:auto;flex:1;padding:0 8px 12px}
+.citem{display:flex;gap:12px;padding:11px 10px;border-radius:12px;cursor:pointer;align-items:center}
+.citem:hover{background:var(--soft)}
+.citem.on{background:var(--pri-50)}
+.citem .bd{flex:1;min-width:0}
+.citem .nm{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-weight:600;font-size:14px}
+.citem .nm small{font-weight:400;color:var(--muted);font-size:11px;white-space:nowrap}
+.citem .pv{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;display:flex;justify-content:space-between;gap:8px}
+.citem .pv span{overflow:hidden;text-overflow:ellipsis}
+.citem .ub{flex:none;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;display:grid;place-items:center}
+.pin{font-size:10px;color:var(--pri);background:var(--pri-50);padding:0 6px;border-radius:4px;margin-left:6px;font-weight:600}
+.list-tip{margin:8px 10px;padding:12px;border-radius:12px;background:var(--soft);font-size:12px;color:var(--muted)}
+
+.main{min-width:0;display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
+.av{display:inline-grid;place-items:center;border-radius:50%;color:#fff;font-weight:600;flex:none;line-height:1}
+.bot{background:var(--ai)!important}
+
+/* ---------- chat ---------- */
+.chat-head{height:66px;flex:none;display:flex;align-items:center;gap:12px;padding:0 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+.chat-head .t{font-weight:600;display:flex;align-items:center;gap:6px}
+.chat-head .s{font-size:12px;color:var(--muted)}
+.chat-head .r{margin-left:auto;display:flex;gap:8px}
+.online{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block}
+.back{display:none;border:0;background:none;font-size:28px;line-height:1;padding:0 4px 4px 0;color:var(--text)}
+.hbtn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 12px;font-size:13px;font-weight:500;white-space:nowrap}
+.hbtn.ai{border:0;background:var(--ai);color:#fff}
+.hbtn.ai:hover{filter:brightness(1.08)}
+.msgs{flex:1;overflow-y:auto;padding:22px 20px 10px;scroll-behavior:smooth}
+.msgs-inner{max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.m{display:flex;gap:10px;align-items:flex-start;animation:pop .22s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.m.me{flex-direction:row-reverse}
+.m .col{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1;align-items:flex-start}
+.m.me .col{align-items:flex-end}
+.bub{padding:10px 14px;border-radius:16px;background:var(--panel);border:1px solid var(--line);max-width:min(600px,86%);word-break:break-word;box-shadow:var(--shadow)}
+.m.ai .bub,.m.peer .bub{border-top-left-radius:6px}
+.m.me .bub{background:var(--pri);color:#fff;border-color:transparent;border-top-right-radius:6px;box-shadow:none}
+.bub.aiin{background:linear-gradient(var(--panel),var(--panel)) padding-box,var(--ai) border-box;border:1.5px solid transparent}
+.who{font-size:12px;color:var(--muted);margin-bottom:-4px}
+.who b{background:var(--ai);-webkit-background-clip:text;background-clip:text;color:transparent}
+.m.sys{justify-content:center}
+.m.sys .pill{font-size:12px;color:var(--muted);background:var(--soft);padding:4px 12px;border-radius:999px;text-align:center}
+.typing{display:flex;gap:4px;padding:14px 16px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);opacity:.4;animation:blink 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.suggest{display:flex;gap:8px;overflow-x:auto;padding:8px 20px 0;max-width:840px;margin:0 auto;width:100%;scrollbar-width:none}
+.suggest:empty{display:none}
+.suggest button{flex:none;border:1px solid color-mix(in srgb,var(--pri) 45%,transparent);color:var(--pri);background:var(--panel);border-radius:999px;padding:6px 13px;font-size:13px;white-space:nowrap}
+.suggest button:hover{background:var(--pri-50)}
+.composer{padding:10px 20px 16px;flex:none}
+.composer .box{max-width:800px;margin:0 auto;display:flex;gap:8px;align-items:flex-end;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:8px 8px 8px 16px;box-shadow:var(--shadow)}
+.composer .box:focus-within{border-color:var(--pri)}
+.composer textarea{flex:1;border:0;outline:0;resize:none;background:transparent;max-height:140px;padding:7px 0;line-height:1.5}
+.send{border:0;background:var(--pri);color:#fff;border-radius:11px;padding:8px 16px;font-weight:600}
+.send:hover{background:var(--pri-d)}
+.bub a{color:inherit;text-decoration:underline;word-break:break-all}
+
+/* ---------- A2UI renderer ---------- */
+.a2ui{width:100%;max-width:640px}
+.a2ui:has(.a2-list){max-width:820px}
+.a2-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);min-width:0}
+.a2-col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.a2-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
+.a2-row.between{justify-content:space-between;flex-wrap:nowrap}
+.a2-row .a2-row{flex-wrap:nowrap}
+.a2-row .a2-col{gap:0}
+.a2-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;width:100%}
+.a2-list.v{grid-template-columns:1fr}
+.a2-list>.a2-card{display:flex;flex-direction:column}
+.a2-list>.a2-card>.a2-col{flex:1}
+.a2-list>.a2-card>.a2-col>.a2-btn:last-child{margin-top:auto}
+.a2-hr{border:0;border-top:1px dashed var(--line);margin:2px 0;width:100%}
+.t-h3{font-size:18px;font-weight:700;line-height:1.35}
+.t-h4{font-size:16px;font-weight:700;line-height:1.35}
+.t-h5{font-size:14.5px;font-weight:600;line-height:1.35}
+.t-caption{font-size:12.5px;color:var(--muted);line-height:1.55}
+.t-body{font-size:14px;line-height:1.6}
+.a2-chips{display:flex;flex-wrap:wrap;gap:7px}
+.a2-chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 13px;font-size:13.5px;transition:.12s}
+.a2-chip:hover{border-color:var(--pri);color:var(--pri)}
+.a2-chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.a2-field{display:grid;gap:5px;width:100%}
+.a2-field>span{font-size:12.5px;color:var(--muted)}
+.a2-input{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--panel);outline:0;width:100%}
+.a2-input:focus{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-50)}
+.a2-btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 16px;font-weight:600;font-size:14px;transition:.12s}
+.a2-btn:hover{border-color:var(--pri);color:var(--pri)}
+.a2-btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
+.a2-btn.pri:hover{background:var(--pri-d);color:#fff}
+.a2-list .a2-btn{width:100%}
+.a2-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:13px;background:var(--soft);white-space:nowrap}
+.a2-tag em{font-style:normal;font-size:11px;opacity:.8}
+.a2-tag.teach{background:var(--teach-50);color:var(--teach)}
+.a2-tag.learn{background:var(--learn-50);color:var(--learn)}
+.a2-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:2px 9px;border-radius:7px;background:var(--soft);color:var(--muted);white-space:nowrap;align-self:flex-start}
+.a2-badge.pri{background:var(--pri-50);color:var(--pri)}
+.a2-badge.teach{background:var(--teach-50);color:var(--teach)}
+.a2-badge.learn{background:var(--learn-50);color:var(--learn)}
+.a2-badge.score{background:var(--ai);color:#fff;font-size:13px;padding:3px 10px;align-self:center}
+.a2-badge.soft{font-weight:500}
+.a2-rating{display:flex;gap:4px}
+.a2-rating button{border:0;background:none;font-size:30px;line-height:1;color:var(--line);padding:0 2px}
+.a2-rating button.on{color:var(--gold)}
+.a2ui.locked .a2-chip,.a2ui.locked .a2-input,.a2ui.locked .a2-rating{pointer-events:none}
+.a2ui.locked .a2-chip:not(.on){opacity:.45}
+.a2ui.locked .a2-btn:not(.chosen){display:none}
+.a2ui.locked .a2-btn.chosen{pointer-events:none;background:var(--soft);border-color:var(--line);color:var(--muted)}
+.a2ui.locked .a2-btn.chosen::before{content:'✓ '}
+
+/* ---------- calendar & me ---------- */
+.page{flex:1;overflow-y:auto;padding:26px 28px 40px}
+.page-in{max-width:900px;margin:0 auto}
+.page h1{font-size:24px;margin:0 0 4px}
+.page .sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+.days{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:20px;scrollbar-width:thin}
+.day{flex:none;width:58px;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:8px 0;text-align:center;position:relative}
+.day small{display:block;font-size:11px;color:var(--muted)}
+.day b{font-size:18px}
+.day.today{border-color:var(--pri)}
+.day.on{background:var(--pri);border-color:var(--pri);color:#fff}
+.day.on small{color:#fff}
+.day i{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--learn)}
+.sech{font-size:14px;font-weight:600;color:var(--muted);margin:22px 0 10px}
+.ev{display:grid;grid-template-columns:86px 1fr;gap:16px;padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);margin-bottom:12px}
+.ev .tm{border-right:1px dashed var(--line);padding-right:12px}
+.ev .tm b{font-size:20px;display:block;line-height:1.2}
+.ev .tm small{font-size:12px;color:var(--muted)}
+.ev .ti{font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ev .meta{font-size:13px;color:var(--muted);margin:6px 0 10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.ev .meta a{word-break:break-all}
+.ev .acts{display:flex;gap:8px;flex-wrap:wrap}
+.st{font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:999px}
+.st.up{background:var(--pri-50);color:var(--pri)}
+.st.live{background:#ffe9e9;color:var(--red)}
+.st.done{background:var(--teach-50);color:var(--teach)}
+@media (prefers-color-scheme:dark){.st.live{background:#3d1c1e}}
+.sync{font-size:12px;color:var(--teach)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 14px;font-size:13.5px;font-weight:500;white-space:nowrap}
 .btn:hover{border-color:var(--pri);color:var(--pri)}
 .btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
-.btn.pri:hover{background:var(--pri-d);border-color:var(--pri-d);color:#fff}
-.btn.sm{padding:6px 12px;font-size:13px;border-radius:8px}
-.btn.ghost{border-color:transparent;background:transparent}
-.btn.ghost:hover{background:var(--soft)}
-.btn[disabled]{opacity:.5;cursor:not-allowed}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
-.av{display:inline-grid;place-items:center;border-radius:50%;color:#fff;font-weight:600;flex:none}
-.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:13px;background:var(--soft);white-space:nowrap}
-.tag em{font-style:normal;font-size:11px;opacity:.75}
-.tag.teach{background:var(--teach-50);color:var(--teach)}
-.tag.learn{background:var(--learn-50);color:var(--learn)}
-.tag.hi{outline:2px solid currentColor;outline-offset:-2px;font-weight:600}
-.tag .x{cursor:pointer;margin-left:2px;opacity:.6;border:0;background:none;padding:0 2px;font-size:14px;line-height:1}
-.tag .x:hover{opacity:1}
-.tags{display:flex;flex-wrap:wrap;gap:6px}
-.lbl{font-size:12px;font-weight:600;padding:2px 0;width:34px;flex:none}
-.lbl.teach{color:var(--teach)}.lbl.learn{color:var(--learn)}
-.row{display:flex;gap:8px;align-items:flex-start}
-.badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:2px 8px;border-radius:6px}
-.b-both{background:var(--pri-50);color:var(--pri)}
-.b-learn{background:var(--learn-50);color:var(--learn)}
-.b-teach{background:var(--teach-50);color:var(--teach)}
-.vf{color:#0b7dc1;font-size:12px;font-weight:600}
-.sec{margin:36px 0 14px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
-.sec h2{font-size:20px}
-.sec p{font-size:14px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.empty{padding:48px 20px;text-align:center;color:var(--muted)}
-.empty b{display:block;font-size:40px;margin-bottom:8px}
+.btn.pri:hover{background:var(--pri-d);color:#fff}
+.btn.ai{background:var(--ai);border:0;color:#fff}
+.btn.ai:hover{color:#fff;filter:brightness(1.08)}
+.empty{text-align:center;padding:56px 20px;color:var(--muted);background:var(--panel);border:1px dashed var(--line);border-radius:16px}
+.empty b{display:block;font-size:42px;margin-bottom:8px}
+.grid2{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:20px}
+.card h3{margin:0 0 12px;font-size:16px;display:flex;align-items:center;gap:8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.kv{font-size:13px;color:var(--muted);margin-bottom:4px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--soft);border-radius:12px;padding:12px}
+.stat b{font-size:22px;display:block;line-height:1.2}
+.stat span{font-size:12px;color:var(--muted)}
+.ledger div{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.plus{color:var(--teach);font-weight:600}.minus{color:var(--learn);font-weight:600}.zero{color:var(--muted)}
+.rules{font-size:13px;color:var(--muted);display:grid;gap:4px;margin-bottom:10px}
 
-/* hero */
-.hero{margin-top:28px;padding:40px;border-radius:22px;background:linear-gradient(135deg,#5b5bd6 0%,#7b5bd6 55%,#c05bb0 100%);color:#fff;display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:center;overflow:hidden;position:relative}
-.hero h1{font-size:38px;letter-spacing:.5px}
-.hero h1 span{color:#ffd76a}
-.hero .sub{margin-top:12px;font-size:16px;opacity:.92;max-width:520px}
-.hero .cta{margin-top:24px;display:flex;gap:10px;flex-wrap:wrap}
-.hero .cta .btn{border:0;padding:11px 20px}
-.hero .cta .btn.w{background:#fff;color:var(--pri)}
-.hero .cta .btn.t{background:rgba(255,255,255,.16);color:#fff}
-.props{display:grid;gap:10px}
-.prop{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:14px 16px;display:flex;gap:12px;align-items:center}
-.prop b{font-size:22px;min-width:76px;white-space:nowrap}
-.prop span{font-size:13px;opacity:.95}
-
-/* filters */
-.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.search{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 14px}
-.search input{border:0;outline:0;background:transparent;padding:11px 0;width:100%}
-.chips{display:flex;gap:6px;flex-wrap:wrap}
-.chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:13px;white-space:nowrap}
-.chip.on{background:var(--text);color:var(--card);border-color:var(--text)}
-
-/* user card */
-.ucard{padding:18px;display:flex;flex-direction:column;gap:12px}
-.uhead{display:flex;gap:12px;align-items:center}
-.uhead .n{font-weight:600;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
-.uhead .meta{font-size:13px;color:var(--muted)}
-.uhead .sc{margin-left:auto;text-align:right}
-.bio{font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.acts{display:flex;gap:8px;margin-top:auto}
-.acts .btn{flex:1}
-.star{color:var(--gold)}
-
-/* match */
-.mcard{padding:18px;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center}
-.ring{--p:80;width:62px;height:62px;border-radius:50%;background:conic-gradient(var(--pri) calc(var(--p)*1%),var(--soft) 0);display:grid;place-items:center;flex:none}
-.ring span{width:50px;height:50px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-weight:700;font-size:15px;color:var(--pri)}
-.ring small{font-size:10px;font-weight:500;display:block;margin-top:-6px;color:var(--muted)}
-.swapline{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0}
-.arrow{color:var(--muted);font-weight:700}
-.why{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
-.why span{font-size:12px;color:var(--muted);background:var(--soft);padding:2px 8px;border-radius:6px}
-.mgroup{margin-bottom:28px}
-.mgroup>h3{font-size:16px;display:flex;align-items:center;gap:8px;margin-bottom:4px}
-.mgroup>p{font-size:13px;color:var(--muted);margin-bottom:12px}
-.stack{display:grid;gap:12px}
-
-/* swaps */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}
-.stat{padding:16px 18px}
-.stat b{font-size:26px;display:block}
-.stat span{font-size:13px;color:var(--muted)}
-.tabs{display:flex;gap:6px;margin:24px 0 14px;border-bottom:1px solid var(--line)}
-.tabs button{border:0;background:none;padding:10px 14px;cursor:pointer;color:var(--muted);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px}
-.tabs button.on{color:var(--pri);border-color:var(--pri)}
-.scard{padding:18px;display:grid;gap:12px}
-.scard .hd{display:flex;align-items:center;gap:12px}
-.st{margin-left:auto;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px}
-.st.pending{background:#fff4d6;color:#a16207}
-.st.scheduled{background:var(--pri-50);color:var(--pri)}
-.st.done{background:var(--teach-50);color:var(--teach)}
-@media (prefers-color-scheme:dark){.st.pending{background:#3a2f10;color:#ffcf5c}}
-.prog{height:8px;border-radius:4px;background:var(--soft);overflow:hidden}
-.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--pri),#a46be0);border-radius:4px}
-.metas{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
-.msg{font-size:13px;background:var(--soft);border-radius:10px;padding:8px 12px}
-.msg b{font-weight:600}
-
-/* profile */
-.pgrid{display:grid;grid-template-columns:1fr 1.2fr;gap:16px;margin-top:24px;align-items:start}
-.panel{padding:20px}
-.panel h3{font-size:16px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.field{display:grid;gap:6px;margin-bottom:14px}
-.field>span{font-size:13px;color:var(--muted);font-weight:500}
-.inp{width:100%;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:9px 12px;outline:0}
-.inp:focus{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-50)}
-textarea.inp{resize:vertical;min-height:72px}
-.addrow{display:flex;gap:8px;margin-top:12px}
-.addrow .inp{flex:1;min-width:0}
-.addrow select.inp{flex:0 0 92px}
-.checks{display:flex;gap:14px}
-.checks label{display:flex;gap:6px;align-items:center;cursor:pointer}
-.ledger{display:grid;gap:2px;margin-top:10px;max-height:220px;overflow:auto}
-.ledger div{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-bottom:1px dashed var(--line)}
-.plus{color:var(--teach);font-weight:600}.minus{color:var(--learn);font-weight:600}
-.rules{font-size:13px;color:var(--muted);display:grid;gap:6px;margin-top:6px}
-
-/* how */
-.how{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.how .card{padding:20px}
-.how .n{width:30px;height:30px;border-radius:9px;background:var(--pri-50);color:var(--pri);display:grid;place-items:center;font-weight:700;margin-bottom:10px}
-.how h4{font-size:16px;margin-bottom:6px}
-.how p{font-size:13px;color:var(--muted)}
-.pain{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.pain .card{padding:18px}
-.pain .q{font-size:13px;color:var(--muted);text-decoration:line-through;margin-bottom:6px}
-.pain h4{font-size:15px;margin-bottom:6px}
-.pain p{font-size:13px;color:var(--muted)}
-footer{margin:48px 0 0;padding:24px 0 100px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);text-align:center}
-
-/* user detail */
-.uhero{margin-top:24px;padding:24px;display:flex;gap:20px;align-items:center;flex-wrap:wrap}
-.uhero h1{font-size:24px;display:flex;align-items:center;gap:8px}
-.review{padding:14px 0;border-bottom:1px solid var(--line);display:flex;gap:12px}
-.review:last-child{border:0}
-
-/* modal + toast */
-.mask{position:fixed;inset:0;background:rgba(15,17,28,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
-.mask.show{display:flex}
-.modal{width:100%;max-width:520px;max-height:calc(100vh - 32px);overflow:auto;padding:24px;border-radius:18px;background:var(--card);box-shadow:0 20px 60px rgba(0,0,0,.25)}
-.modal h3{font-size:18px;margin-bottom:4px}
-.mfoot{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}
-.seg{display:flex;gap:6px;flex-wrap:wrap}
-.seg label{flex:1;min-width:120px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px}
-.seg input{display:none}
-.seg label:has(input:checked){border-color:var(--pri);background:var(--pri-50);color:var(--pri);font-weight:600}
-.hint{font-size:12px;color:var(--muted);margin-top:4px}
-.note{font-size:13px;padding:10px 12px;border-radius:10px;background:var(--pri-50);color:var(--pri)}
-.stars{display:flex;gap:6px;font-size:30px;cursor:pointer;color:var(--line)}
-.stars .on{color:var(--gold)}
-.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#1d2130;color:#fff;padding:11px 18px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:60;pointer-events:none;max-width:calc(100vw - 32px)}
+/* ---------- banner / toast ---------- */
+.banner{position:fixed;top:14px;left:50%;transform:translate(-50%,-160%);transition:.35s cubic-bezier(.2,.9,.3,1.2);z-index:70;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.18);padding:12px 14px;display:flex;align-items:center;gap:12px;width:min(520px,calc(100vw - 24px))}
+.banner:not(.show){opacity:0;pointer-events:none}
+.banner.show{transform:translate(-50%,0);opacity:1}
+.banner .tx{flex:1;font-size:14px;min-width:0}
+.banner .tx small{display:block;color:var(--muted);font-size:12px}
+.banner .x{border:0;background:none;color:var(--muted);font-size:18px}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#1d2130;color:#fff;padding:10px 18px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:80;pointer-events:none;max-width:calc(100vw - 32px)}
 .toast.show{opacity:1;transform:translateX(-50%)}
 
-/* responsive */
-@media (max-width:880px){
-  .hero{grid-template-columns:1fr;padding:28px}
-  .hero h1{font-size:30px}
-  .pgrid{grid-template-columns:1fr}
-  .how,.pain{grid-template-columns:1fr}
-  .stats{grid-template-columns:repeat(2,1fr)}
+/* ---------- classroom ---------- */
+.room{position:fixed;inset:0;z-index:60;background:#0d0e14;color:#fff;display:none;flex-direction:column}
+.room.show{display:flex}
+.room-top{display:flex;align-items:center;gap:16px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.room-top .ttl{font-weight:600}
+.room-top .ttl small{display:block;font-weight:400;color:#9aa0ae;font-size:12px}
+.room-top .clock{margin-left:auto;font-variant-numeric:tabular-nums;background:rgba(255,255,255,.08);padding:5px 12px;border-radius:999px;font-size:14px}
+.rec{color:#ff6b6b;font-size:13px}
+.room-body{flex:1;display:grid;grid-template-columns:1fr 320px;min-height:0}
+.stage{position:relative;padding:18px;display:flex;min-height:0}
+.tile{flex:1;border-radius:18px;background:radial-gradient(circle at 50% 40%,#2c2f45,#16171f);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;position:relative;overflow:hidden}
+.tile .nm{position:absolute;left:14px;bottom:12px;background:rgba(0,0,0,.45);padding:3px 10px;border-radius:8px;font-size:13px}
+.tile .ring{border-radius:50%;padding:6px;animation:talk 1.6s infinite}
+@keyframes talk{0%,100%{box-shadow:0 0 0 0 rgba(124,124,240,0)}50%{box-shadow:0 0 0 10px rgba(124,124,240,.35)}}
+.tile.me{position:absolute;right:30px;bottom:30px;width:180px;height:120px;flex:none;border:2px solid rgba(255,255,255,.15)}
+.tile.me.off{background:#222}
+.tile.me.off .av{opacity:.3}
+.caption{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);background:rgba(0,0,0,.55);padding:6px 14px;border-radius:10px;font-size:14px;max-width:70%;text-align:center}
+.offline-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:20px 24px;text-align:center;max-width:420px;margin:0 16px}
+.notes{border-left:1px solid rgba(255,255,255,.08);padding:18px;overflow-y:auto;background:#12131b}
+.notes h4{margin:0 0 4px;font-size:15px}
+.notes .nsub{font-size:12px;color:#9aa0ae;margin-bottom:12px}
+.note{font-size:13.5px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.06);margin-bottom:8px;animation:pop .3s}
+.note small{display:block;color:#9aa0ae;font-size:11px}
+.room-ctl{display:flex;justify-content:center;gap:12px;padding:14px;border-top:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
+.room-ctl button{border:0;background:rgba(255,255,255,.1);color:#fff;border-radius:14px;padding:10px 16px;font-size:14px;min-width:64px}
+.room-ctl button.off{background:#3b1d22;color:#ff8f8f}
+.room-ctl .end{background:var(--red);font-weight:600;padding:10px 22px}
+
+/* ---------- A2UI inspector (?a2ui) ---------- */
+.insp{position:fixed;right:0;top:0;bottom:0;width:420px;background:#0f1117;color:#c9d1d9;z-index:90;display:none;flex-direction:column;font:12px/1.45 ui-monospace,Menlo,monospace;border-left:1px solid #222}
+.insp.show{display:flex}
+.insp h4{margin:0;padding:10px 12px;border-bottom:1px solid #222;font:600 13px -apple-system,sans-serif;color:#fff;display:flex;justify-content:space-between}
+.insp .lg{flex:1;overflow:auto;padding:8px 12px}
+.insp pre{margin:0 0 10px;white-space:pre-wrap;word-break:break-all;border-left:3px solid #5b5bd6;padding-left:8px}
+.insp pre.up{border-color:#34c08f}
+
+/* ---------- responsive ---------- */
+@media (max-width:1000px){.app{grid-template-columns:76px 260px 1fr}.room-body{grid-template-columns:1fr 260px}}
+@media (max-width:760px){
+  .app,.app.nolist{grid-template-columns:1fr}
+  .rail{position:fixed;left:0;right:0;bottom:0;z-index:40;flex-direction:row;justify-content:space-around;padding:4px 6px calc(4px + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line)}
+  .logo,.rail .sp,.coinv,.rail .meav{display:none}
+  .rail .nb{width:auto;flex:1}
+  .main,.list{height:calc(100dvh - 62px - env(safe-area-inset-bottom))}
+  .app .list{display:none}
+  .app.mlist .list{display:flex}
+  .app.mlist .main{display:none}
+  .back{display:inline-block}
+  .chat-head{padding:0 12px;height:60px;gap:10px}
+  .chat-head .s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52vw}
+  .chat-head .hbtn .lbl{display:none}
+  .msgs{padding:14px 12px 6px}
+  .suggest{padding:6px 12px 0}
+  .composer{padding:8px 12px 10px}
+  .bub{max-width:88%}
+  .a2-list{grid-template-columns:1fr}
+  .page{padding:18px 16px 30px}
+  .grid2{grid-template-columns:1fr}
+  .ev{grid-template-columns:62px 1fr;gap:12px;padding:14px}
+  .room-body{grid-template-columns:1fr;grid-template-rows:1fr 190px}
+  .notes{border-left:0;border-top:1px solid rgba(255,255,255,.08)}
+  .tile.me{width:110px;height:80px;right:24px;bottom:24px}
+  .room-ctl button{min-width:0;padding:10px 12px}
+  .insp{width:100%}
 }
-@media (max-width:720px){
-  .wrap{padding:0 16px}
-  body{overflow-x:hidden}
-  .top{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--card)}
-  .top .wrap{gap:12px}
-  .hero>*{min-width:0}
-  .search{min-width:0}
-  .brand small{display:none}
-  .nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom));justify-content:space-around;z-index:30}
-  .nav a{flex-direction:column;gap:0;font-size:12px;padding:6px 8px}
-  .nav a .ic{font-size:18px}
-  .me-chip .nm{display:none}
-  .top .sp{flex:1}
-  .mcard{grid-template-columns:auto 1fr}
-  .mcard .go{grid-column:1/-1}
-  .grid{grid-template-columns:1fr}
-  .hero{margin-top:16px}
-}
-@media (min-width:721px){.top .sp{display:none}}
 </style>
 </head>
 <body>
-<header class="top">
-  <div class="wrap">
-    <a class="brand" href="#/discover"><i>⇄</i>技能换换 <small>SkillSwap</small></a>
-    <nav class="nav" id="nav"></nav>
-    <div class="sp"></div>
-    <a class="coin" href="#/profile" title="时间币：教 1 小时 = 赚 1 币，学 1 小时 = 花 1 币">⏱ <span id="coinNum">0</span> 时间币</a>
-    <a class="me-chip" href="#/profile" id="meChip"></a>
-  </div>
-</header>
-<main class="wrap" id="app"></main>
-<div class="mask" id="mask" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div>
+<div class="app" id="app">
+  <nav class="rail" id="rail"></nav>
+  <aside class="list" id="list"></aside>
+  <main class="main" id="main"></main>
+</div>
+<div class="banner" id="banner"></div>
+<div class="room" id="room"></div>
 <div class="toast" id="toast"></div>
+<aside class="insp" id="insp"><h4>A2UI 消息流 <span style="cursor:pointer" onclick="this.closest('.insp').classList.remove('show')">✕</span></h4><div class="lg" id="insplog"></div></aside>
 
 <script>
-/* ============ 基础数据 ============ */
-const CATS = ['音乐','编程','设计','语言','摄影','运动','生活','职场'];
-const CAT_ICON = {音乐:'🎸',编程:'💻',设计:'🎨',语言:'🗣️',摄影:'📷',运动:'🏃',生活:'🍳',职场:'💼',其他:'✨'};
+'use strict';
+/* =====================================================================
+   基础工具
+   ===================================================================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const md = s => esc(s)
+  .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+  .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1">$1</a>')
+  .replace(/\n/g, '<br>');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const pad = n => String(n).padStart(2, '0');
+const WEEK = '日一二三四五六';
+const MIN = 60e3, HOUR = 36e5, DAY = 864e5;
+const uniq = a => [...new Set(a)];
+function dayDiff(ts){ const a=new Date(ts); a.setHours(0,0,0,0); const b=new Date(); b.setHours(0,0,0,0); return Math.round((a-b)/DAY); }
+function fmtDay(ts){ const d=new Date(ts), k=dayDiff(ts); return k===0?'今天':k===1?'明天':k===2?'后天':`${d.getMonth()+1}月${d.getDate()}日 周${WEEK[d.getDay()]}`; }
+const fmtHM = ts => { const d=new Date(ts); return pad(d.getHours())+':'+pad(d.getMinutes()); };
+const fmtWhen = ts => fmtDay(ts)+' '+fmtHM(ts);
+function fmtAgo(ts){ const s=(Date.now()-ts)/1000; if(s<60) return '刚刚'; if(s<3600) return Math.floor(s/60)+' 分钟前'; if(dayDiff(ts)===0) return fmtHM(ts); const d=new Date(ts); return `${d.getMonth()+1}/${d.getDate()}`; }
+const ceilMin = t => Math.ceil(t/MIN)*MIN;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),2600); }
+const isMobile = () => matchMedia('(max-width:760px)').matches;
+
+/* =====================================================================
+   平台数据
+   ===================================================================== */
 const SKILL_CAT = {
-  '吉他':'音乐','钢琴':'音乐','尤克里里':'音乐','唱歌':'音乐','架子鼓':'音乐',
-  'Python':'编程','前端开发':'编程','数据分析':'编程','SQL':'编程',
+  '吉他':'音乐','尤克里里':'音乐','钢琴':'音乐','唱歌':'音乐',
+  'Python':'编程','前端开发':'编程','数据分析':'编程',
   'UI设计':'设计','PS修图':'设计','手绘插画':'设计','视频剪辑':'设计',
   '英语口语':'语言','日语':'语言','韩语':'语言','法语':'语言',
   '摄影':'摄影','人像摄影':'摄影','手机摄影':'摄影',
-  '健身':'运动','游泳':'运动','羽毛球':'运动','瑜伽':'运动','滑板':'运动',
-  '烘焙':'生活','做饭':'生活','咖啡拉花':'生活','花艺':'生活',
+  '健身':'运动','瑜伽':'运动','游泳':'运动','滑板':'运动',
+  '烘焙':'生活','做饭':'生活','咖啡拉花':'生活',
   'Excel':'职场','PPT':'职场','简历面试':'职场','公众号写作':'职场'
 };
-const LEVELS = ['入门','熟练','精通'];
+const CAT_ICON = {音乐:'🎸',编程:'💻',设计:'🎨',语言:'🗣️',摄影:'📷',运动:'🏃',生活:'🍳',职场:'💼',其他:'✨'};
+const ALIASES = {
+  '吉他':['吉他','guitar'],'尤克里里':['尤克里里','ukulele'],'钢琴':['钢琴','piano'],'唱歌':['唱歌','声乐'],
+  'Python':['python'],'前端开发':['前端','javascript','react','网页开发'],'数据分析':['数据分析','sql'],
+  'UI设计':['ui设计','ui','交互设计','figma'],'PS修图':['修图','photoshop','ps'],'手绘插画':['插画','手绘','画画'],'视频剪辑':['剪辑','剪视频'],
+  '英语口语':['英语','口语','english'],'日语':['日语','日文'],'韩语':['韩语'],'法语':['法语'],
+  '人像摄影':['人像'],'手机摄影':['手机摄影','手机拍照'],'摄影':['摄影','拍照','相机'],
+  '健身':['健身','增肌','减脂'],'瑜伽':['瑜伽','yoga'],'游泳':['游泳'],'滑板':['滑板'],
+  '烘焙':['烘焙','蛋糕','面包'],'做饭':['做饭','厨艺','烹饪','做菜'],'咖啡拉花':['拉花','咖啡'],
+  'Excel':['excel','表格'],'PPT':['ppt','幻灯片'],'简历面试':['简历','面试'],'公众号写作':['写作','公众号','文案']
+};
+const POP_TEACH = ['Python','英语口语','吉他','摄影','数据分析','UI设计','视频剪辑','健身','烘焙','日语','钢琴','PPT','做饭','瑜伽','公众号写作','前端开发'];
+const POP_LEARN = ['吉他','摄影','日语','Python','钢琴','健身','英语口语','UI设计','烘焙','视频剪辑','瑜伽','做饭','数据分析','游泳','唱歌','法语'];
+const TEACH_LV = ['入门','熟练','精通','专业级'];
+const LEARN_LV = ['零基础','入门','进阶'];
+const AVAILS = ['工作日白天','工作日晚上','周末上午','周末下午','周末晚上'];
+const CITIES = ['北京','上海','广州','深圳','杭州','成都','南京','其他城市'];
+const GOAL_HINT = {吉他:'比如：3 个月能弹唱 5 首喜欢的歌',摄影:'比如：能拍出好看的人像和旅行照',Python:'比如：能写脚本自动处理工作里的表格',日语:'比如：看日剧不用字幕、旅行能简单交流',英语口语:'比如：能自信地完成英文面试',钢琴:'比如：能弹几首喜欢的流行曲',健身:'比如：3 个月减脂 5 斤、养成运动习惯'};
+
 const USERS = [
- {id:'u1',name:'林小雨',city:'上海',bio:'独立乐队主唱，教过 20+ 零基础学员，擅长用流行歌带你入门。',teach:[{skill:'吉他',level:'精通'},{skill:'尤克里里',level:'熟练'}],learn:[{skill:'Python'},{skill:'数据分析'}],rating:4.9,count:32,modes:['线上','线下'],avail:'周末下午',verified:true},
- {id:'u2',name:'陈默',city:'北京',bio:'商业人像摄影师，从构图、布光到后期修图一条龙。',teach:[{skill:'人像摄影',level:'精通'},{skill:'PS修图',level:'熟练'}],learn:[{skill:'英语口语'},{skill:'吉他'}],rating:4.8,count:21,modes:['线上','线下'],avail:'工作日晚上',verified:true},
- {id:'u3',name:'Ethan 王',city:'深圳',bio:'外企 HR，海外长大，能陪练口语，也能帮你改英文简历。',teach:[{skill:'英语口语',level:'精通'},{skill:'简历面试',level:'精通'}],learn:[{skill:'手机摄影'},{skill:'做饭'}],rating:4.9,count:45,modes:['线上'],avail:'工作日晚上',verified:true},
- {id:'u4',name:'苏苏',city:'杭州',bio:'开过两年烘焙工作室，戚风蛋糕零失败教学。',teach:[{skill:'烘焙',level:'精通'},{skill:'咖啡拉花',level:'熟练'}],learn:[{skill:'PPT'},{skill:'手绘插画'}],rating:4.7,count:18,modes:['线下'],avail:'周末全天',verified:false},
- {id:'u5',name:'阿杰',city:'成都',bio:'持证健身教练，玩了五年滑板，带你安全入门不受伤。',teach:[{skill:'健身',level:'精通'},{skill:'滑板',level:'熟练'}],learn:[{skill:'视频剪辑'},{skill:'Python'}],rating:4.6,count:12,modes:['线上','线下'],avail:'工作日晚上',verified:true},
- {id:'u6',name:'周周',city:'上海',bio:'大厂 UI 设计师，辅导过 30+ 转行同学的作品集。',teach:[{skill:'UI设计',level:'精通'},{skill:'手绘插画',level:'熟练'}],learn:[{skill:'日语'},{skill:'吉他'}],rating:4.8,count:27,modes:['线上','线下'],avail:'周末上午',verified:true},
- {id:'u7',name:'小野',city:'广州',bio:'日语 N1，在东京工作过三年，可以陪练日常会话。',teach:[{skill:'日语',level:'精通'},{skill:'韩语',level:'入门'}],learn:[{skill:'UI设计'},{skill:'烘焙'}],rating:4.9,count:38,modes:['线上'],avail:'周末全天',verified:true},
- {id:'u8',name:'老K',city:'北京',bio:'互联网数据分析师，Excel 和 SQL 都能教，偏实战。',teach:[{skill:'数据分析',level:'精通'},{skill:'Excel',level:'精通'}],learn:[{skill:'钢琴'},{skill:'人像摄影'}],rating:4.7,count:16,modes:['线上'],avail:'工作日晚上',verified:false},
- {id:'u9',name:'米粒',city:'上海',bio:'音乐学院钢琴专业在读，特别有耐心教成人零基础。',teach:[{skill:'钢琴',level:'精通'},{skill:'唱歌',level:'熟练'}],learn:[{skill:'Python'},{skill:'英语口语'}],rating:5.0,count:9,modes:['线上','线下'],avail:'周末下午',verified:true},
- {id:'u10',name:'大鹏',city:'深圳',bio:'视频博主，剪辑和手机拍摄都能教，作业一对一点评。',teach:[{skill:'视频剪辑',level:'精通'},{skill:'手机摄影',level:'熟练'}],learn:[{skill:'健身'},{skill:'公众号写作'}],rating:4.8,count:24,modes:['线上'],avail:'随时可约',verified:true},
- {id:'u11',name:'晴天',city:'杭州',bio:'瑜伽 RYT200 认证教练，也是持证游泳救生员。',teach:[{skill:'瑜伽',level:'精通'},{skill:'游泳',level:'熟练'}],learn:[{skill:'法语'},{skill:'摄影'}],rating:4.9,count:30,modes:['线下'],avail:'周末上午',verified:true},
- {id:'u12',name:'何老师',city:'南京',bio:'前媒体编辑，教你写出有人看的文章和清晰的 PPT。',teach:[{skill:'公众号写作',level:'精通'},{skill:'PPT',level:'精通'}],learn:[{skill:'吉他'},{skill:'瑜伽'}],rating:4.6,count:14,modes:['线上'],avail:'工作日晚上',verified:false}
+ {id:'u1',name:'林小雨',city:'上海',teach:[{skill:'吉他',level:'精通'},{skill:'尤克里里',level:'熟练'}],learn:[{skill:'Python',level:'零基础'},{skill:'数据分析',level:'零基础'}],rating:4.9,count:32,modes:['线上','线下'],avail:['周末下午','工作日晚上'],verified:true,place:'静安寺 · 慢闪咖啡（有练琴角）',hello:'我是小雨，玩乐队快 8 年了，带过 20 多个零基础的学员。',style:'我一般第一节课先教你调音和两个最常用的和弦，回家就能弹一首简单的歌。'},
+ {id:'u2',name:'陈默',city:'北京',teach:[{skill:'人像摄影',level:'精通'},{skill:'PS修图',level:'熟练'}],learn:[{skill:'英语口语',level:'入门'},{skill:'吉他',level:'零基础'}],rating:4.8,count:21,modes:['线上','线下'],avail:['工作日晚上','周末上午'],verified:true,place:'798 艺术区 · 光影工作室',hello:'我是陈默，做商业人像摄影 6 年了。',style:'我会先看看你拍过的照片，然后从构图和用光这两件最影响出片的事讲起。'},
+ {id:'u3',name:'Ethan 王',city:'深圳',teach:[{skill:'英语口语',level:'精通'},{skill:'简历面试',level:'精通'}],learn:[{skill:'手机摄影',level:'零基础'},{skill:'做饭',level:'零基础'}],rating:4.9,count:45,modes:['线上'],avail:['工作日晚上','周末晚上'],verified:true,place:'南山 · 海岸城',hello:'Hi！我是 Ethan，在海外长大，现在在外企做 HR。',style:'我的口语课基本是全英文情景对话，每次结束会给你一份常用表达清单。'},
+ {id:'u4',name:'苏苏',city:'杭州',teach:[{skill:'烘焙',level:'精通'},{skill:'咖啡拉花',level:'熟练'}],learn:[{skill:'PPT',level:'入门'},{skill:'手绘插画',level:'零基础'}],rating:4.7,count:18,modes:['线下'],avail:['周末上午','周末下午'],verified:false,place:'西湖区 · 苏苏的烘焙小屋',hello:'我是苏苏，之前开过两年烘焙工作室～',style:'烘焙一定要上手，我这里工具和材料都有，第一节课就能带走自己做的戚风。'},
+ {id:'u5',name:'阿杰',city:'成都',teach:[{skill:'健身',level:'专业级'},{skill:'滑板',level:'熟练'}],learn:[{skill:'视频剪辑',level:'零基础'},{skill:'Python',level:'零基础'}],rating:4.6,count:12,modes:['线上','线下'],avail:['工作日晚上','周末上午'],verified:true,place:'高新区 · 天府软件园健身房',hello:'我是阿杰，持证健身教练，也玩了五年滑板。',style:'我会先帮你做个体态和体能评估，再定一个你能坚持下来的计划。'},
+ {id:'u6',name:'周周',city:'上海',teach:[{skill:'UI设计',level:'精通'},{skill:'手绘插画',level:'熟练'}],learn:[{skill:'日语',level:'零基础'},{skill:'吉他',level:'零基础'}],rating:4.8,count:27,modes:['线上','线下'],avail:['周末上午','周末下午'],verified:true,place:'徐汇滨江 · 西岸美术馆咖啡厅',hello:'我是周周，在大厂做 UI 设计，辅导过 30 多位转行同学。',style:'我习惯拿真实的 App 页面来拆解，边讲边让你在 Figma 里跟着改。'},
+ {id:'u7',name:'小野',city:'广州',teach:[{skill:'日语',level:'精通'},{skill:'韩语',level:'入门'}],learn:[{skill:'UI设计',level:'零基础'},{skill:'烘焙',level:'零基础'}],rating:4.9,count:38,modes:['线上'],avail:['周末上午','周末下午','周末晚上'],verified:true,place:'天河 · 太古汇',hello:'我是小野，日语 N1，在东京工作过三年。',style:'我会用动漫和日剧里的台词带你练五十音和日常会话，不会很枯燥。'},
+ {id:'u8',name:'老K',city:'北京',teach:[{skill:'数据分析',level:'精通'},{skill:'Excel',level:'精通'}],learn:[{skill:'钢琴',level:'零基础'},{skill:'人像摄影',level:'入门'}],rating:4.7,count:16,modes:['线上'],avail:['工作日晚上'],verified:false,place:'中关村',hello:'我是老K，在互联网公司做数据分析。',style:'我直接拿真实业务数据带你做分析，学完就能用在工作里。'},
+ {id:'u9',name:'米粒',city:'上海',teach:[{skill:'钢琴',level:'精通'},{skill:'唱歌',level:'熟练'}],learn:[{skill:'Python',level:'零基础'},{skill:'英语口语',level:'入门'}],rating:5.0,count:9,modes:['线上','线下'],avail:['周末下午','周末晚上'],verified:true,place:'五角场 · 学校附近的琴房',hello:'我是米粒，音乐学院钢琴专业在读～',style:'成人学琴我会从你喜欢的流行曲开始，同时把识谱和指法慢慢补上。'},
+ {id:'u10',name:'大鹏',city:'深圳',teach:[{skill:'视频剪辑',level:'精通'},{skill:'手机摄影',level:'熟练'}],learn:[{skill:'健身',level:'零基础'},{skill:'公众号写作',level:'入门'}],rating:4.8,count:24,modes:['线上'],avail:['工作日晚上','周末下午','周末晚上'],verified:true,place:'福田 CBD',hello:'我是大鹏，做视频博主三年了。',style:'我会让你每节课都剪出一条完整的小片子，我逐帧点评。'},
+ {id:'u11',name:'晴天',city:'杭州',teach:[{skill:'瑜伽',level:'精通'},{skill:'游泳',level:'熟练'}],learn:[{skill:'法语',level:'零基础'},{skill:'摄影',level:'零基础'}],rating:4.9,count:30,modes:['线下'],avail:['周末上午','工作日白天'],verified:true,place:'滨江 · 晴天瑜伽馆',hello:'我是晴天，瑜伽 RYT200 认证教练～',style:'我会根据你的柔韧度和身体状况调整体式，安全第一。'},
+ {id:'u12',name:'何老师',city:'南京',teach:[{skill:'公众号写作',level:'精通'},{skill:'PPT',level:'精通'}],learn:[{skill:'吉他',level:'零基础'},{skill:'瑜伽',level:'零基础'}],rating:4.6,count:14,modes:['线上'],avail:['工作日晚上','周末上午'],verified:false,place:'新街口',hello:'我是何老师，之前在媒体做了八年编辑。',style:'我会带你拆解爆款文章的结构，每节课你都要写一段，我当场改。'},
+ {id:'u13',name:'Kevin',city:'杭州',teach:[{skill:'Python',level:'精通'},{skill:'前端开发',level:'熟练'}],learn:[{skill:'吉他',level:'零基础'},{skill:'摄影',level:'入门'}],rating:4.8,count:19,modes:['线上','线下'],avail:['工作日晚上','周末下午'],verified:true,place:'西溪 · 梦想小镇咖啡',hello:'我是 Kevin，后端工程师，写 Python 七年了。',style:'我会带你从一个小项目入手，比如写个自动整理文件的脚本，边做边学。'},
+ {id:'u14',name:'阿May',city:'广州',teach:[{skill:'做饭',level:'精通'},{skill:'法语',level:'熟练'}],learn:[{skill:'英语口语',level:'入门'},{skill:'瑜伽',level:'零基础'}],rating:4.9,count:22,modes:['线上','线下'],avail:['周末上午','周末下午'],verified:true,place:'越秀 · 东山口',hello:'我是阿May，在法国留学过四年，最爱下厨。',style:'家常菜我会先教你三道快手菜，把火候和调味的底层逻辑讲清楚。'},
+ {id:'u15',name:'思远',city:'北京',teach:[{skill:'前端开发',level:'精通'},{skill:'Python',level:'熟练'}],learn:[{skill:'日语',level:'零基础'},{skill:'健身',level:'零基础'}],rating:4.7,count:11,modes:['线上'],avail:['工作日晚上','周末晚上'],verified:true,place:'望京',hello:'我是思远，前端工程师，也写一点 Python。',style:'我会带你从零做一个能上线的小网站，作品直接放进简历。'}
 ];
-const REVIEW_POOL = [
-  ['阿木','讲得很清楚，第一节课就能弹完整一首歌了！','讲解清晰'],
-  ['Lily','非常有耐心，节奏完全照顾我的基础。','很有耐心'],
-  ['小鱼','每次都准时，还会留课后小作业，很靠谱。','准时守约'],
-  ['Tom','干货满满，比我之前报的网课实用多了。','干货满满'],
-  ['可可','互换体验很好，我们现在已经是朋友了 😄','值得再约']
-];
+const userById = id => USERS.find(u => u.id === id);
+const NOTE_BANK = {
+  吉他:['认识吉他结构，纠正持琴和拨片姿势','标准调音 E-A-D-G-B-E，用调音器逐弦校准','C、G 两个开放和弦：手指立起来，避免碰到相邻弦','节奏型「下 下上 上下上」，先慢速 60 拍练稳'],
+  摄影:['构图：三分法 + 引导线，主体放在交叉点','用光：顺光、侧光、逆光的效果对比','人像对焦在眼睛，光圈 f/2.8 左右虚化背景','后期：先调曝光和白平衡，再做局部调整'],
+  Python:['装好 Python 和 VS Code，跑通第一行 print','变量、列表、for 循环的基本用法','小项目：写脚本批量重命名文件夹里的照片','学会读报错信息：看最后一行 + 定位行号'],
+  英语口语:['情景练习：自我介绍 + 追问 follow-up','纠音：th / v / 长短元音','常用表达：I was wondering if… / That makes sense','影子跟读法：每天 10 分钟'],
+  日语:['五十音：あ行～さ行 发音和书写','日常寒暄：おはよう / ありがとう / すみません','用日剧台词练语调','记忆法：假名联想卡片'],
+  钢琴:['坐姿、手型与指法编号','中央 C 定位与五指位置','右手旋律《小星星》','节拍器 60 拍慢练'],
+  健身:['体态评估：圆肩、骨盆前倾检查','动作模式：深蹲、俯卧撑标准动作','制定每周 3 次、每次 40 分钟的计划','饮食：蛋白质摄入和热量缺口'],
+  default:['了解你的基础和学习目标','核心概念快速过一遍','老师示范 + 你跟着做第一个练习','针对你的问题逐个答疑']
+};
 
-/* ============ 状态 ============ */
-const KEY = 'skillswap.v1';
-function nextSat(h=15){ const d=new Date(); d.setDate(d.getDate()+((6-d.getDay()+7)%7||7)); d.setHours(h,0,0,0); return toLocal(d); }
-function toLocal(d){ const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; }
-function seed(){
-  return {
-    me:{id:'me',name:'我',city:'上海',bio:'程序员，想在下班后学点音乐和摄影。',teach:[{skill:'Python',level:'熟练'},{skill:'英语口语',level:'熟练'}],learn:[{skill:'吉他'},{skill:'摄影'}],modes:['线上','线下'],avail:'周末下午'},
-    credits:3,
-    ledger:[{t:'新人注册赠送',d:3,at:Date.now()-86400000*3}],
-    swaps:[{id:'s0',uid:'u10',learn:'手机摄影',teach:null,pay:'credit',mode:'线上',time:nextSat(10),status:'scheduled',done:1,total:4,trial:true,created:Date.now()-86400000*2,msgs:[{from:'u10',t:'第一节试听课的作业我看了，构图进步很大！下周我们练逆光人像。'}]}],
-    rated:{}
-  };
+/* =====================================================================
+   状态（本地持久化）
+   ===================================================================== */
+const KEY = 'skillswap.agent.v1';
+function fresh(){
+  return {seq:0, started:false, onb:'basic',
+    draft:{name:'',city:'',teach:[],learn:[],goal:'',exp:'',mode:'都可以',dur:'60 分钟',avail:[],freq:'每周 1 次'},
+    profile:null, threads:{agent:{id:'agent',msgs:[],unread:0,last:Date.now()}},
+    surfaces:{}, events:[], credits:3, ledger:[{t:'新用户注册赠送',d:3,at:Date.now()}],
+    view:'chat', active:'agent', mlist:false, calDay:null};
 }
-let state = load();
-function load(){ try{ const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.me&&Array.isArray(s.swaps)) return s; }catch(e){} return seed(); }
-function save(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
-const ui = {q:'',cat:'全部',tab:'active'};
+let state = (()=>{ try{ const s=JSON.parse(localStorage.getItem(KEY)); if(s && s.threads && s.threads.agent) return s; }catch(e){} return fresh(); })();
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+const typingNow = {};
 
-/* ============ 工具 ============ */
-const $ = s => document.querySelector(s);
-const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const userById = id => USERS.find(u=>u.id===id);
-const catOf = s => SKILL_CAT[s] || Object.keys(SKILL_CAT).find(k=>skillMatch(k,s)) && SKILL_CAT[Object.keys(SKILL_CAT).find(k=>skillMatch(k,s))] || '其他';
+/* =====================================================================
+   A2UI —— Agent 用 JSON 消息描述界面，客户端渲染，用户操作以 userAction 回传
+   消息：surfaceUpdate / dataModelUpdate / beginRendering / deleteSurface
+   ===================================================================== */
+const A2UI_LOG = [];
+function a2uiLog(dir, msg){
+  A2UI_LOG.push({dir,msg});
+  const box=$('#insplog');
+  if(box && $('#insp').classList.contains('show')){ box.insertAdjacentHTML('beforeend',`<pre class="${dir==='up'?'up':''}">${dir==='up'?'⬆ client → agent':'⬇ agent → client'}\n${esc(JSON.stringify(msg,null,1))}</pre>`); box.scrollTop=box.scrollHeight; }
+}
+function getPath(o,p){ return String(p).split('/').filter(Boolean).reduce((a,k)=>a==null?undefined:a[k], o); }
+function setPath(o,p,v){ const ks=String(p).split('/').filter(Boolean); if(!ks.length){ Object.assign(o,v); return; } let c=o; ks.slice(0,-1).forEach(k=>{ if(c[k]==null||typeof c[k]!=='object') c[k]={}; c=c[k]; }); c[ks[ks.length-1]]=v; }
+function toContents(o){ return Object.entries(o).map(([key,v])=> Array.isArray(v)?{key,valueList:v.map(x=>({valueString:String(x)}))} : typeof v==='number'?{key,valueNumber:v} : typeof v==='boolean'?{key,valueBoolean:v} : (v&&typeof v==='object')?{key,valueMap:toContents(v)} : {key,valueString:String(v??'')}); }
+function fromVal(e){ if('valueString' in e) return e.valueString; if('valueNumber' in e) return e.valueNumber; if('valueBoolean' in e) return e.valueBoolean; if('valueMap' in e) return fromContents(e.valueMap); if('valueList' in e) return e.valueList.map(fromVal); }
+function fromContents(c){ const o={}; (c||[]).forEach(e=>o[e.key]=fromVal(e)); return o; }
+
+function a2uiReceive(msg){
+  a2uiLog('down', msg);
+  if(msg.surfaceUpdate){ const {surfaceId,components}=msg.surfaceUpdate; const s=state.surfaces[surfaceId]||(state.surfaces[surfaceId]={components:{},data:{},root:null,locked:false,chosen:null}); components.forEach(c=>s.components[c.id]=c.component); }
+  else if(msg.dataModelUpdate){ const {surfaceId,path,contents}=msg.dataModelUpdate; const s=state.surfaces[surfaceId]; if(s) setPath(s.data, path||'/', fromContents(contents)); }
+  else if(msg.beginRendering){ const s=state.surfaces[msg.beginRendering.surfaceId]; if(s) s.root=msg.beginRendering.root; }
+  else if(msg.deleteSurface){ delete state.surfaces[msg.deleteSurface.surfaceId]; }
+}
+
+// Agent 端组件构建（标准组件 + 客户端扩展目录 Avatar / Tag / Badge / Rating）
+let B = null;
+function comp(type, props){ const id='c'+(++B.n); B.list.push({id, component:{[type]:props}}); return id; }
+const L = s => ({literalString:String(s)});
+const kids = a => ({explicitList:a.filter(Boolean)});
+const UI = {
+  text:(t,hint='body')=>comp('Text',{text:L(t),usageHint:hint}),
+  label:t=>UI.text(t,'caption'),
+  row:(a,o={})=>comp('Row',{children:kids(a),alignment:'center',distribution:o.between?'spaceBetween':'start'}),
+  col:a=>comp('Column',{children:kids(a)}),
+  list:(a,dir='horizontal')=>comp('List',{children:kids(a),direction:dir}),
+  card:child=>comp('Card',{child}),
+  divider:()=>comp('Divider',{}),
+  button:(label,name,ctx={},primary=false)=>comp('Button',{child:UI.text(label),primary,action:{name,context:Object.entries(ctx).map(([key,v])=>({key,value:L(v)}))}}),
+  choice:(path,opts,max=1)=>comp('MultipleChoice',{selections:{path},options:opts.map(o=>({label:L(o.label??o),value:String(o.value??o)})),maxAllowedSelections:max}),
+  field:(label,path,ph='')=>comp('TextField',{label:L(label),text:{path},textFieldType:'shortText',placeholder:ph}),
+  avatar:(u,size=40)=>comp('Avatar',{name:L(u.name),seed:L(u.id),size}),
+  tag:(t,tone,level)=>comp('Tag',{text:L(t),tone,...(level?{level:L(level)}:{})}),
+  badge:(t,tone='soft')=>comp('Badge',{text:L(t),tone}),
+  rating:path=>comp('Rating',{value:{path},max:5})
+};
+function buildSurface(fn, data={}){
+  B={n:0,list:[]}; const root=fn(UI); const list=B.list; B=null;
+  const sid='sf'+(++state.seq)+'_'+Math.random().toString(36).slice(2,6);
+  [{surfaceUpdate:{surfaceId:sid,components:list}},{dataModelUpdate:{surfaceId:sid,path:'/',contents:toContents(data)}},{beginRendering:{surfaceId:sid,root}}].forEach(a2uiReceive);
+  return sid;
+}
+
+// 客户端渲染器
+function bval(s,v){ if(v==null) return ''; if('literalString' in v) return v.literalString; if('literalNumber' in v) return v.literalNumber; if('literalBoolean' in v) return v.literalBoolean; if('path' in v) return getPath(s.data,v.path); return ''; }
+function surfHTML(sid){ const s=state.surfaces[sid]; if(!s||!s.root) return ''; return `<div class="a2ui${s.locked?' locked':''}" data-sid="${sid}">${compHTML(s,s.root)}</div>`; }
+function compHTML(s,id){
+  const c=s.components[id]; if(!c) return '';
+  const [type,p]=Object.entries(c)[0];
+  const ch=()=>(p.children&&p.children.explicitList||[]).map(k=>compHTML(s,k)).join('');
+  switch(type){
+    case 'Text': return `<div class="t-${p.usageHint||'body'}">${md(bval(s,p.text))}</div>`;
+    case 'Row': return `<div class="a2-row${p.distribution==='spaceBetween'?' between':''}">${ch()}</div>`;
+    case 'Column': return `<div class="a2-col">${ch()}</div>`;
+    case 'List': return `<div class="a2-list${p.direction==='vertical'?' v':''}">${ch()}</div>`;
+    case 'Card': return `<div class="a2-card">${compHTML(s,p.child)}</div>`;
+    case 'Divider': return '<hr class="a2-hr">';
+    case 'Button': { const t=s.components[p.child]; const label=t&&t.Text?bval(s,t.Text.text):''; return `<button class="a2-btn${p.primary?' pri':''}${s.chosen===id?' chosen':''}" data-a2btn="${id}">${esc(label)}</button>`; }
+    case 'MultipleChoice': { const sel=getPath(s.data,p.selections.path)||[]; return `<div class="a2-chips" data-a2mc="${id}">${p.options.map(o=>`<button class="a2-chip${sel.includes(o.value)?' on':''}" data-v="${esc(o.value)}">${esc(bval(s,o.label))}</button>`).join('')}</div>`; }
+    case 'TextField': return `<label class="a2-field">${p.label&&bval(s,p.label)?`<span>${esc(bval(s,p.label))}</span>`:''}<input class="a2-input" data-a2bind="${esc(p.text.path)}" value="${esc(getPath(s.data,p.text.path)??'')}" placeholder="${esc(p.placeholder||'')}"></label>`;
+    case 'Avatar': return avatarHTML({id:bval(s,p.seed),name:bval(s,p.name)},p.size||40);
+    case 'Tag': return tagHTML(bval(s,p.text),p.tone,p.level?bval(s,p.level):'');
+    case 'Badge': return `<span class="a2-badge ${p.tone||''}">${esc(bval(s,p.text))}</span>`;
+    case 'Rating': { const v=+getPath(s.data,p.value.path)||0; return `<div class="a2-rating" data-a2rate="${id}">${[1,2,3,4,5].map(n=>`<button class="${n<=v?'on':''}" data-n="${n}">★</button>`).join('')}</div>`; }
+  }
+  return '';
+}
+function refreshSurface(sid){ document.querySelectorAll(`.a2ui[data-sid="${sid}"]`).forEach(el=>el.outerHTML=surfHTML(sid)); }
+function lockSurface(sid, chosen){ const s=state.surfaces[sid]; if(!s) return; s.locked=true; if(chosen) s.chosen=chosen; save(); refreshSurface(sid); }
+const KEEP_ACTIVE = new Set(['match.chat','nav.calendar','ics.download','class.join','event.chat']);
+function onA2Button(sid,cid){
+  const s=state.surfaces[sid]; if(!s||s.locked) return;
+  const p=s.components[cid].Button;
+  const context={}; (p.action.context||[]).forEach(({key,value})=>context[key]=bval(s,value));
+  a2uiLog('up', {userAction:{name:p.action.name,surfaceId:sid,sourceComponentId:cid,timestamp:new Date().toISOString(),context}});
+  if(!KEEP_ACTIVE.has(p.action.name)){ if(AGENT.validate(p.action.name,context,s)===false) return; lockSurface(sid,cid); }
+  AGENT.onAction(p.action.name, context, s, sid);
+}
+
+/* =====================================================================
+   视图片段
+   ===================================================================== */
+const COLORS = ['#5b5bd6','#0e9467','#e2570c','#d6409f','#0b7dc1','#8e4ec6','#c2410c','#0d9488'];
+function avatarHTML(u,size=40){
+  if(u.id==='agent') return `<span class="av bot" style="width:${size}px;height:${size}px;font-size:${Math.round(size*.42)}px">换</span>`;
+  const i=[...String(u.id)].reduce((a,c)=>a+c.charCodeAt(0),0)%COLORS.length;
+  return `<span class="av" style="width:${size}px;height:${size}px;background:${COLORS[i]};font-size:${Math.round(size*.42)}px">${esc([...(u.name||'我')][0])}</span>`;
+}
+function catOf(s){ if(SKILL_CAT[s]) return SKILL_CAT[s]; const k=Object.keys(SKILL_CAT).find(k=>skillMatch(k,s)); return k?SKILL_CAT[k]:'其他'; }
+function tagHTML(s,tone,level){ return `<span class="a2-tag ${tone||''}">${CAT_ICON[catOf(s)]} ${esc(s)}${level?` <em>${esc(level)}</em>`:''}</span>`; }
+
+/* =====================================================================
+   匹配
+   ===================================================================== */
 const norm = s => String(s).toLowerCase().replace(/\s+/g,'');
-function skillMatch(a,b){ a=norm(a); b=norm(b); return !!a && !!b && (a===b || a.includes(b) || b.includes(a)); }
-function overlap(teachList, learnList){
-  const out=[];
-  teachList.forEach(t=>learnList.forEach(l=>{ if(skillMatch(t.skill,l.skill) && !out.find(o=>o.skill===t.skill)) out.push({skill:t.skill,level:t.level,want:l.skill}); }));
-  return out;
+function skillMatch(a,b){ a=norm(a); b=norm(b); return !!a&&!!b&&(a===b||a.includes(b)||b.includes(a)); }
+const tRank = l => TEACH_LV.indexOf(l)+1;
+const lRank = l => Math.max(0,LEARN_LV.indexOf(l));
+function commonModes(u,P){ let m=P.mode==='都可以'?u.modes.slice():u.modes.filter(x=>x===P.mode); if(u.city!==P.city) m=m.filter(x=>x!=='线下'); return m; }
+function matchInfo(u,P=state.profile){
+  const theyTeach=[], iTeach=[];
+  u.teach.forEach(t=>P.learn.forEach(l=>{ if(skillMatch(t.skill,l.skill)&&tRank(t.level)>lRank(l.level)&&!theyTeach.some(x=>x.skill===t.skill)) theyTeach.push({skill:t.skill,level:t.level,myLevel:l.level}); }));
+  P.teach.forEach(t=>u.learn.forEach(l=>{ if(skillMatch(t.skill,l.skill)&&tRank(t.level)>lRank(l.level)&&!iTeach.some(x=>x.skill===t.skill)) iTeach.push({skill:t.skill,level:t.level,theirLevel:l.level}); }));
+  const type=theyTeach.length&&iTeach.length?'both':theyTeach.length?'learn':iTeach.length?'teach':'none';
+  if(type==='none') return {type};
+  const avail=u.avail.filter(a=>P.avail.includes(a)); const modes=commonModes(u,P);
+  let score={both:58,learn:38,teach:30}[type];
+  score+=avail.length?6:0; score+=modes.length?5:-15; score+=(modes.includes('线下')?6:0);
+  score+=Math.round((u.rating-4)*15)+(u.verified?3:0)+(theyTeach[0]&&tRank(theyTeach[0].level)>=3?2:0);
+  score=Math.max(12,Math.min(99,score));
+  const t=theyTeach[0], i=iTeach[0];
+  let reason = type==='both' ? `${u.name}${t.level}${t.skill}，又正好想学你的${i.skill}，你们可以直接互换，谁都不用花时间币。`
+    : type==='learn' ? `${u.name}${t.level}${t.skill}。${u.style.replace(/^我/,'TA ')}`
+    : `${u.name}正想学${i.skill}（现在${i.theirLevel}），你来教每课时赚 1 时间币，攒着去学${P.learn[0]?P.learn[0].skill:'想学的技能'}。`;
+  if(avail.length) reason+=`你们都在${avail.join('、')}有空`+(modes.includes('线下')?`，还都在${u.city}，可以线下见面。`:'。');
+  const tags=[...(modes.length?modes:u.modes).map(m=>m==='线上'?'💻 线上':'📍 线下'), ...(avail.length?avail:u.avail).slice(0,2).map(a=>'📅 '+a)];
+  return {type,theyTeach,iTeach,score,reason,tags,avail,modes};
 }
-function matchInfo(u){
-  const me = state.me;
-  const theyTeach = overlap(u.teach, me.learn);   // TA 能教我的
-  const iTeach = overlap(me.teach, u.learn);      // 我能教 TA 的
-  const type = theyTeach.length && iTeach.length ? 'both' : theyTeach.length ? 'learn' : iTeach.length ? 'teach' : 'none';
-  const why = [];
-  let score = {both:55,learn:36,teach:30,none:0}[type];
-  if(type!=='none'){
-    if(u.city===me.city){ score+=10; why.push('同城 · '+u.city); }
-    const both = u.modes.filter(m=>me.modes.includes(m));
-    if(both.length){ score+=5; why.push('都可'+both.join('/')); }
-    if(u.avail===me.avail){ score+=4; why.push('时间都在'+u.avail); }
-    score += Math.round((u.rating-4)*18);
-    why.push('★'+u.rating.toFixed(1)+' · '+u.count+' 次交换');
-    if(u.verified){ score+=4; why.push('技能已认证'); }
-    score += Math.min(theyTeach.length+iTeach.length-1,3)*3;
+const PAY = {both:'swap',learn:'credit',teach:'earn'};
+
+/* =====================================================================
+   消息与会话
+   ===================================================================== */
+function thread(tid){ return state.threads[tid]; }
+function visible(tid){ return state.view==='chat' && state.active===tid && !(isMobile()&&state.mlist); }
+function push(tid,m){
+  const th=thread(tid); m.id=++state.seq; m.at=Date.now(); th.msgs.push(m); th.last=m.at;
+  if(m.from!=='me' && m.from!=='sys' && !visible(tid)) th.unread=(th.unread||0)+1;
+  save();
+  if(visible(tid)) appendMsg(tid,m);
+  renderList(); renderRail();
+  return m;
+}
+const queues = {};
+function enqueue(tid,fn){ queues[tid]=(queues[tid]||Promise.resolve()).then(fn).catch(e=>console.error(e)); return queues[tid]; }
+async function showTyping(tid,from,ms){
+  typingNow[tid]=from; if(visible(tid)) renderTyping(tid); renderList();
+  await sleep(ms);
+  delete typingNow[tid]; const t=$('#typing'); if(t&&visible(tid)) t.remove(); renderList();
+}
+const typeMs = t => Math.min(1500, 450 + String(t||'').length*14);
+function say(tid,text,{from='agent',ms}={}){ return enqueue(tid, async()=>{ await showTyping(tid,from,ms??typeMs(text)); push(tid,{from,text}); }); }
+function sayUI(tid,text,build,data,{from='agent',ms,after}={}){ return enqueue(tid, async()=>{ await showTyping(tid,from,ms??typeMs(text)+300); const sid=buildSurface(build,data); push(tid,{from,text,sid}); if(after) after(sid); }); }
+function me(tid,text){ push(tid,{from:'me',text}); }
+function sys(tid,text){ push(tid,{from:'sys',text}); }
+
+/* =====================================================================
+   Agent：小换
+   ===================================================================== */
+function parseSkills(text){
+  let t=' '+String(text||'').toLowerCase()+' '; const found=[];
+  const pairs=[]; Object.entries(ALIASES).forEach(([k,arr])=>arr.forEach(a=>pairs.push([k,a])));
+  pairs.sort((a,b)=>b[1].length-a[1].length);
+  pairs.forEach(([k,a])=>{ const re=/^[a-z]+$/.test(a)?new RegExp('(^|[^a-z])'+a+'([^a-z]|$)'):null; if(re?re.test(t):t.includes(a)){ if(!found.includes(k)) found.push(k); t=t.split(a).join(' '); } });
+  if(!found.length){
+    String(text||'').replace(/我(会|能|可以)?(教|学)?|想学|擅长|还有|以及|一些|吧|呢|啊|的/g,' ').split(/[,，、。;；\s和及跟与]+/).map(x=>x.trim()).filter(x=>x.length>=2&&x.length<=10).forEach(x=>found.push(x));
   }
-  return {type,theyTeach,iTeach,why,score:Math.min(99,Math.max(0,score))};
+  return uniq(found);
 }
-function avatar(u,size=44){
-  const colors=['#5b5bd6','#0e9467','#e2570c','#d6409f','#0b7dc1','#8e4ec6','#c2410c','#0d9488'];
-  const i=[...String(u.id)].reduce((a,c)=>a+c.charCodeAt(0),0)%colors.length;
-  return `<span class="av" style="width:${size}px;height:${size}px;background:${colors[i]};font-size:${Math.round(size*.42)}px">${esc([...(u.name||'我')][0])}</span>`;
-}
-function tag(s,kind,{hi=false,level='',x=''}={}){
-  const lv = level?`<em>${esc(level)}</em>`:'';
-  const del = x?`<button class="x" title="删除" onclick="${x}">×</button>`:'';
-  return `<span class="tag ${kind}${hi?' hi':''}">${CAT_ICON[catOf(s)]||'✨'} ${esc(s)}${lv}${del}</span>`;
-}
-const TYPE_LABEL = {both:['⇄ 双向互换','b-both'],learn:['TA 能教你','b-learn'],teach:['你能教 TA','b-teach']};
-function typeBadge(t){ if(t==='none') return ''; const [l,c]=TYPE_LABEL[t]; return `<span class="badge ${c}">${l}</span>`; }
-function fmtTime(s){ const d=new Date(s); if(isNaN(d)) return s; const w='日一二三四五六'[d.getDay()]; return `${d.getMonth()+1}月${d.getDate()}日 周${w} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
-function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),2600); }
-function openModal(html){ $('#modal').innerHTML=html; $('#mask').classList.add('show'); }
-function closeModal(){ $('#mask').classList.remove('show'); }
-function addLedger(t,d){ state.credits+=d; state.ledger.unshift({t,d,at:Date.now()}); }
+const D = () => state.draft;
+const NEXT_STEP = {basic:'askTeach',teach:'askTeachLevel',teachLevel:'askLearn',learn:'askLearnLevel',learnLevel:'askPrefs',prefs:'showProfile',profile:'askTeach'};
 
-/* ============ 页面：发现 ============ */
-function userCard(u){
-  const m = matchInfo(u);
-  const hiT = new Set(m.theyTeach.map(x=>x.skill)), hiL = new Set(m.iTeach.map(x=>x.want));
-  // 学习方向上 TA 想学的 skill 名称来自 u.learn，需要按名称比较
-  const learnHi = s => u.learn.some(l=>l.skill===s) && state.me.teach.some(t=>skillMatch(t.skill,s));
-  return `<div class="card ucard">
-    <div class="uhead">${avatar(u)}
-      <div><div class="n"><a href="#/user/${u.id}">${esc(u.name)}</a>${u.verified?'<span class="vf">✓ 认证</span>':''}</div>
-      <div class="meta">${esc(u.city)} · <span class="star">★</span>${u.rating.toFixed(1)} · ${u.count} 次交换</div></div>
-      <div class="sc">${typeBadge(m.type)}${m.type!=='none'?`<div class="small muted">匹配度 ${m.score}%</div>`:''}</div>
-    </div>
-    <div class="row"><span class="lbl teach">能教</span><div class="tags">${u.teach.map(t=>tag(t.skill,'teach',{hi:hiT.has(t.skill),level:t.level})).join('')}</div></div>
-    <div class="row"><span class="lbl learn">想学</span><div class="tags">${u.learn.map(l=>tag(l.skill,'learn',{hi:learnHi(l.skill)})).join('')}</div></div>
-    <p class="bio">${esc(u.bio)}</p>
-    <div class="acts"><a class="btn sm" href="#/user/${u.id}">查看主页</a><button class="btn sm pri" onclick="openSwap('${u.id}')">发起交换</button></div>
-  </div>`;
-}
-function filteredUsers(){
-  const q = norm(ui.q);
-  return USERS.filter(u=>(ui.cat==='全部'||u.teach.some(t=>catOf(t.skill)===ui.cat))
-    && (!q || norm([u.name,u.city,u.bio,...u.teach.map(t=>t.skill),...u.learn.map(l=>l.skill)].join(' ')).includes(q)));
-}
-function renderGrid(){
-  const list = filteredUsers();
-  $('#grid').innerHTML = list.length ? list.map(userCard).join('') : `<div class="empty card" style="grid-column:1/-1"><b>🔍</b>暂时没有人教「${esc(ui.q||ui.cat)}」<br><span class="small">把它加到「我想学的」，有人发布时我们第一时间通知你</span></div>`;
-  $('#chips').innerHTML = ['全部',...CATS].map(c=>`<button class="chip${ui.cat===c?' on':''}" onclick="ui.cat='${c}';renderGrid()">${c==='全部'?'全部':CAT_ICON[c]+' '+c}</button>`).join('');
-}
-function renderDiscover(){
-  const recs = USERS.map(u=>({u,m:matchInfo(u)})).filter(x=>x.m.type!=='none').sort((a,b)=>b.m.score-a.m.score).slice(0,3);
-  return `
-  <section class="hero">
-    <div>
-      <h1>用你<span>会的</span>，换你<span>想学的</span></h1>
-      <p class="sub">发布「我能教的」和「我想学的」，系统帮你找到正好互补的人。一小时换一小时，不花学费；暂时没有互补的人，也能用时间币先学。</p>
-      <div class="cta"><a class="btn w" href="#/match">看看谁和我匹配 →</a><a class="btn t" href="#/profile">完善我的技能档案</a></div>
-    </div>
-    <div class="props">
-      <div class="prop"><b>0 元</b><span>以技能换技能，不用交学费</span></div>
-      <div class="prop"><b>1h = 1币</b><span>教别人 1 小时赚 1 时间币，用来向任何人学习</span></div>
-      <div class="prop"><b>15 分钟</b><span>首课免费试听，觉得合适再继续</span></div>
-    </div>
-  </section>
-
-  ${recs.length?`<div class="sec"><div><h2>为你推荐</h2><p class="muted">根据你的技能档案：${state.me.teach.map(t=>esc(t.skill)).join('、')||'—'} ⇄ ${state.me.learn.map(l=>esc(l.skill)).join('、')||'—'}</p></div><a class="btn sm" href="#/match">全部匹配</a></div>
-  <div class="grid">${recs.map(x=>userCard(x.u)).join('')}</div>`:''}
-
-  <div class="sec"><div><h2>技能广场</h2><p class="muted">${USERS.length} 位技能达人正在等你来交换</p></div></div>
-  <div class="filters">
-    <label class="search">🔍<input id="q" placeholder="搜索技能、昵称或城市，例如：吉他、摄影、Python" value="${esc(ui.q)}" oninput="ui.q=this.value;renderGrid()"></label>
-  </div>
-  <div class="chips" id="chips" style="margin:12px 0 16px"></div>
-  <div class="grid" id="grid"></div>
-
-  <div class="sec"><div><h2>为什么需要技能换换</h2></div></div>
-  <div class="pain">
-    <div class="card"><div class="q">报班太贵，一门课动辄上千</div><h4>💸 技能就是学费</h4><p>你会的东西就是你的「货币」。1 对 1 互教，零成本学一门新技能。</p></div>
-    <div class="card"><div class="q">自学没人带，三分钟热度</div><h4>🤝 学伴 + 约课 = 坚持</h4><p>和真人约好时间、有课时进度、有课后反馈，比一个人刷视频更容易坚持。</p></div>
-    <div class="card"><div class="q">会的东西没处分享、没法变现</div><h4>⏱ 教学赚时间币</h4><p>教得越多，赚的时间币和口碑越多，可以用来学任何你想学的。</p></div>
-  </div>
-
-  <div class="sec"><div><h2>怎么玩</h2></div></div>
-  <div class="how">
-    <div class="card"><div class="n">1</div><h4>建立技能档案</h4><p>写下你能教的（含熟练度）和想学的，还有方便的时间、线上/线下。</p></div>
-    <div class="card"><div class="n">2</div><h4>智能双向匹配</h4><p>优先推荐「你教 TA、TA 教你」的完美互补；不互补时用时间币补位。</p></div>
-    <div class="card"><div class="n">3</div><h4>约课 · 上课 · 互评</h4><p>首课 15 分钟试听，按课时打卡，结课互评，信用越来越高。</p></div>
-  </div>`;
-}
-
-/* ============ 页面：匹配 ============ */
-function matchCard(u,m){
-  const learnPart = m.theyTeach.length ? `<span class="small muted">TA 教你</span>${m.theyTeach.map(t=>tag(t.skill,'teach',{level:t.level})).join('')}` : '';
-  const teachPart = m.iTeach.length ? `<span class="small muted">你教 TA</span>${m.iTeach.map(t=>tag(t.skill,'learn')).join('')}` : '';
-  const sep = learnPart && teachPart ? '<span class="arrow">⇄</span>' : '';
-  const payHint = m.type==='learn'?'<span class="small muted">· 1 时间币/课时</span>':m.type==='teach'?'<span class="small muted">· 每课时 +1 时间币</span>':'<span class="small muted">· 课时互抵，免费</span>';
-  return `<div class="card mcard">
-    <div class="ring" style="--p:${m.score}"><span><div>${m.score}<small>匹配度</small></div></span></div>
-    <div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${avatar(u,28)}<a href="#/user/${u.id}"><b>${esc(u.name)}</b></a>${u.verified?'<span class="vf">✓ 认证</span>':''}</div>
-      <div class="swapline">${learnPart}${sep}${teachPart}${payHint}</div>
-      <div class="why">${m.why.map(w=>`<span>${esc(w)}</span>`).join('')}</div>
-    </div>
-    <div class="go"><button class="btn pri" style="width:100%" onclick="openSwap('${u.id}')">${m.type==='both'?'发起互换':m.type==='learn'?'用时间币约课':'去教 TA'}</button></div>
-  </div>`;
-}
-function renderMatch(){
-  const me = state.me;
-  if(!me.teach.length || !me.learn.length){
-    return `<div class="sec"><div><h2>智能匹配</h2></div></div><div class="card empty"><b>📝</b>先在技能档案里至少填写 1 个「能教的」和 1 个「想学的」，我们才能帮你配对。<div style="margin-top:14px"><a class="btn pri" href="#/profile">去完善档案</a></div></div>`;
+const AGENT = {
+  start(){
+    state.started=true; save();
+    say('agent','嗨，我是**小换** 👋 你的 AI 技能交换顾问。\n在技能换换，**你会的就是学费**：教别人 1 小时，就能换别人教你 1 小时。',{ms:700});
+    say('agent','我先花 1 分钟了解一下你，然后一次性把最合适的交换伙伴推荐给你。先认识一下？',{ms:900});
+    AGENT.askBasic();
+  },
+  // 刷新页面后若当前步骤卡片已提交但下一步尚未发出，则继续
+  resume(){
+    if(!state.started || state.onb==='done') return;
+    const th=thread('agent'); const open=th.msgs.some(m=>m.sid&&state.surfaces[m.sid]&&!state.surfaces[m.sid].locked);
+    if(!open){ say('agent','我们接着来～',{ms:400}); AGENT[NEXT_STEP[state.onb]||'askBasic'](); }
+  },
+  askBasic(){
+    sayUI('agent','',ui=>ui.card(ui.col([
+      ui.text('怎么称呼你？','h5'), ui.field('','/name','你的昵称'),
+      ui.text('你在哪个城市？（方便匹配线下课）','h5'), ui.choice('/city',CITIES,1),
+      ui.row([ui.button('下一步','onb.basic',{},true)])
+    ])),{name:D().name||'',city:[D().city||'上海']},{after:()=>{state.onb='basic';save();updateSuggest();}});
+  },
+  askTeach(){
+    const pre=D().teach.map(t=>t.skill); const opts=uniq([...POP_TEACH,...pre]);
+    sayUI('agent','先说说**你愿意教别人什么**？可以多选；列表里没有的，写在下面或者直接在输入框里告诉我 👇',ui=>ui.card(ui.col([
+      ui.text('📤 我能教','h5'), ui.choice('/teach',opts,8), ui.field('其他技能（用逗号分隔）','/other','例如：尤克里里, 咖啡拉花'),
+      ui.row([ui.button('就这些','onb.teach',{},true)])
+    ])),{teach:pre,other:''},{after:()=>{state.onb='teach';save();updateSuggest();}});
+  },
+  askTeachLevel(){
+    const T=D().teach;
+    sayUI('agent','不错！那你在这些技能上**大概是什么水平**？这能帮我找到真正需要你的人。',ui=>ui.card(ui.col([
+      ...T.map((t,i)=>ui.col([ui.text(`${CAT_ICON[catOf(t.skill)]} ${t.skill}`,'h5'), ui.choice('/lv/'+i,TEACH_LV,1)])),
+      ui.label('入门：能带零基础入门 · 熟练：能系统地教 · 精通：多年经验 / 有作品 · 专业级：从业 / 有证书'),
+      ui.field('一句话介绍你的教学经验（选填，会展示在你的档案上）','/exp','例如：在公司带过 3 个实习生写 Python'),
+      ui.row([ui.button('确认','onb.teachLevel',{},true)])
+    ])),{lv:Object.fromEntries(T.map((t,i)=>[i,[t.level||'熟练']])),exp:D().exp||''},{after:()=>{state.onb='teachLevel';save();updateSuggest();}});
+  },
+  askLearn(){
+    const teachS=D().teach.map(t=>t.skill); const pre=D().learn.map(l=>l.skill);
+    const opts=uniq([...POP_LEARN.filter(s=>!teachS.includes(s)),...pre]);
+    sayUI('agent','了解 👍 接下来，**你想学什么**？',ui=>ui.card(ui.col([
+      ui.text('📥 我想学','h5'), ui.choice('/learn',opts,6), ui.field('其他想学的（用逗号分隔）','/other','例如：咖啡拉花, 滑板'),
+      ui.row([ui.button('就这些','onb.learn',{},true)])
+    ])),{learn:pre,other:''},{after:()=>{state.onb='learn';save();updateSuggest();}});
+  },
+  askLearnLevel(){
+    const Ls=D().learn; const hint=GOAL_HINT[Ls[0].skill]||'比如：先入门，培养兴趣，每周坚持练';
+    sayUI('agent','你现在在这些方向上是**什么水平**？有想达到的目标也可以告诉我，我会转达给老师。',ui=>ui.card(ui.col([
+      ...Ls.map((l,i)=>ui.col([ui.text(`${CAT_ICON[catOf(l.skill)]} ${l.skill}`,'h5'), ui.choice('/ll/'+i,LEARN_LV,1)])),
+      ui.field('学习目标（选填）','/goal',hint),
+      ui.row([ui.button('确认','onb.learnLevel',{},true)])
+    ])),{ll:Object.fromEntries(Ls.map((l,i)=>[i,[l.level||'零基础']])),goal:D().goal||''},{after:()=>{state.onb='learnLevel';save();updateSuggest();}});
+  },
+  askPrefs(){
+    const d=D();
+    sayUI('agent','最后，说说你的**上课偏好**，我会按这个帮你筛人、排时间：',ui=>ui.card(ui.col([
+      ui.text('上课方式','h5'), ui.choice('/mode',['线上','线下','都可以'],1),
+      ui.text('单次时长','h5'), ui.choice('/dur',['30 分钟','45 分钟','60 分钟','90 分钟'],1),
+      ui.text('方便的时间（可多选）','h5'), ui.choice('/avail',AVAILS,5),
+      ui.text('学习节奏','h5'), ui.choice('/freq',['每周 1 次','每周 2 次','灵活安排'],1),
+      ui.row([ui.button('生成我的技能档案','onb.prefs',{},true)])
+    ])),{mode:[d.mode],dur:[d.dur],avail:d.avail.length?d.avail:['工作日晚上','周末下午'],freq:[d.freq]},{after:()=>{state.onb='prefs';save();updateSuggest();}});
+  },
+  showProfile(){
+    say('agent','好的，正在为你生成技能档案…',{ms:600});
+    sayUI('agent','这是根据你刚才说的整理出来的档案，确认没问题我就开始匹配 👇',ui=>ui.col([profileCardUI(ui,D()), ui.row([ui.button('没问题，开始匹配','onb.confirm',{},true), ui.button('我要修改','onb.edit')])]),{},{ms:1300,after:()=>{state.onb='profile';save();updateSuggest();}});
+  },
+  match(exclude=[]){
+    const P=state.profile;
+    const list=USERS.filter(u=>!exclude.includes(u.id)).map(u=>({u,m:matchInfo(u,P)})).filter(x=>x.m.type!=='none').sort((a,b)=>b.m.score-a.m.score).slice(0,6);
+    say('agent','收到！我开始帮你匹配了，稍等几秒…',{ms:500});
+    say('agent','✓ **技能互补**：找能教你、也需要你的人\n✓ **水平匹配**：TA 的水平要高于你现在的水平\n✓ **时间和方式**：可约时间、线上 / 线下、所在城市\n✓ **口碑**：评分、认证、历史交换次数',{ms:1800});
+    if(!list.length){ say('agent','暂时没有找到合适的伙伴 😢 我已经帮你订阅了，有新用户发布相关技能时第一时间通知你。\n你也可以多加几个能教的技能，选择面会大很多。'); return; }
+    const nb=list.filter(x=>x.m.type==='both').length;
+    sayUI('agent',`为你找到 **${list.length} 位**合适的伙伴${nb?`，其中 **${nb} 位**可以直接技能互换`:''}，按匹配度排好了 👇`,ui=>ui.list(list.map(x=>matchCardUI(ui,x.u,x.m))),{},{ms:900});
+    say('agent','看中谁就点「**去对话**」直接私聊。聊得差不多了叫我一声（对话右上角的「✨ 小换整理约课」），我来帮你们敲定时间地点，同步到双方日程 📅');
+    const none=P.learn.filter(l=>!USERS.some(u=>u.teach.some(t=>skillMatch(t.skill,l.skill))));
+    if(none.length) say('agent',`另外，平台上暂时还没有人教 **${none.map(l=>l.skill).join('、')}**，我已经帮你订阅了，有人发布时第一时间告诉你 🔔`);
+  },
+  validate(name,c,s){
+    const d=s.data;
+    if(name==='onb.basic' && !String(d.name||'').trim()){ toast('先告诉我怎么称呼你吧'); return false; }
+    if(name==='onb.teach' && !(d.teach||[]).length && !parseSkills(d.other).length){ toast('至少选一个你能教的技能吧'); return false; }
+    if(name==='onb.learn' && !(d.learn||[]).length && !parseSkills(d.other).length){ toast('至少选一个你想学的技能吧'); return false; }
+    if(name==='onb.prefs' && !(d.avail||[]).length){ toast('至少选一个方便的时间段'); return false; }
+  },
+  onAction(name,c,s){
+    const d=s.data, dr=D();
+    switch(name){
+      case 'onb.basic': { dr.name=String(d.name).trim().slice(0,16); dr.city=(d.city||[])[0]||'上海'; save(); me('agent',`我是${dr.name}，在${dr.city}`); say('agent',`很高兴认识你，${dr.name}！`,{ms:500}); AGENT.askTeach(); break; }
+      case 'onb.teach': { const list=uniq([...(d.teach||[]),...parseSkills(d.other)]); me('agent','我能教：'+list.join('、')); AGENT.setTeach(list); break; }
+      case 'onb.teachLevel': { dr.teach.forEach((t,i)=>t.level=((d.lv||{})[i]||[])[0]||'熟练'); dr.exp=String(d.exp||'').trim(); save(); me('agent',dr.teach.map(t=>`${t.skill} ${t.level}`).join(' · ')); AGENT.askLearn(); break; }
+      case 'onb.learn': { const list=uniq([...(d.learn||[]),...parseSkills(d.other)]); me('agent','我想学：'+list.join('、')); AGENT.setLearn(list); break; }
+      case 'onb.learnLevel': { dr.learn.forEach((l,i)=>l.level=((d.ll||{})[i]||[])[0]||'零基础'); dr.goal=String(d.goal||'').trim(); save(); me('agent',dr.learn.map(l=>`${l.skill}：${l.level}`).join(' · ')+(dr.goal?`\n目标：${dr.goal}`:'')); AGENT.askPrefs(); break; }
+      case 'onb.prefs': { dr.mode=(d.mode||[])[0]||'都可以'; dr.dur=(d.dur||[])[0]||'60 分钟'; dr.avail=d.avail; dr.freq=(d.freq||[])[0]||'每周 1 次'; save(); me('agent',`${dr.mode} · ${dr.dur}/次 · ${dr.avail.join('、')} · ${dr.freq}`); AGENT.showProfile(); break; }
+      case 'onb.confirm': { state.profile=JSON.parse(JSON.stringify(dr)); state.onb='done'; save(); me('agent','没问题，开始匹配吧'); renderRail(); updateSuggest(); AGENT.match(); break; }
+      case 'onb.edit': { me('agent','我要修改一下'); say('agent','好的，我们重新过一遍，之前填的我都帮你保留了 ✍️',{ms:500}); AGENT.askTeach(); break; }
+      case 'match.chat': openPartner(c.uid); break;
+      case 'book.start': BOOK.card(c.uid,false); break;
+      case 'book.later': me(c.uid,'我们再聊聊'); say(c.uid,'好的～你们继续聊，需要的时候点右上角「✨ 小换整理约课」叫我就行。',{ms:500}); break;
+      case 'book.confirm': BOOK.confirm(c.uid,s); break;
+      case 'nav.calendar': go('cal'); break;
+      case 'ics.download': downloadICS(c.eid); break;
+      case 'class.join': joinClass(c.eid); break;
+      case 'event.chat': go('chat',c.uid); break;
+      case 'fb.submit': FEEDBACK.submit(c.eid,s); break;
+    }
+  },
+  setTeach(list){ const dr=D(); dr.teach=list.map(skill=>({skill,level:(dr.teach.find(t=>t.skill===skill)||{}).level||'熟练'})); save(); AGENT.askTeachLevel(); },
+  setLearn(list){ const dr=D(); dr.learn=list.map(skill=>({skill,level:(dr.learn.find(l=>l.skill===skill)||{}).level||'零基础'})); save(); AGENT.askLearnLevel(); },
+  lockOpen(){ const th=thread('agent'); for(let i=th.msgs.length-1;i>=0;i--){ const m=th.msgs[i]; if(m.sid&&state.surfaces[m.sid]&&!state.surfaces[m.sid].locked){ lockSurface(m.sid); return; } } },
+  onText(text){
+    const st=state.onb;
+    if(st==='basic'){ const dr=D(); const name=text.replace(/^(我叫|叫我|我是|你可以叫我)/,'').replace(/[，,。.!！]/g,' ').trim().split(/\s+/)[0]; const city=CITIES.find(c=>text.includes(c)); dr.name=(name||text).slice(0,16); dr.city=city||dr.city||'上海'; save(); AGENT.lockOpen(); say('agent',`很高兴认识你，${dr.name}！`,{ms:500}); AGENT.askTeach(); return; }
+    if(st==='teach'||st==='learn'){ const list=parseSkills(text); if(!list.length){ say('agent','没太听懂 😅 可以直接点上面的技能，或者写成「Python、吉他」这样～'); return; } AGENT.lockOpen(); st==='teach'?AGENT.setTeach(list):AGENT.setLearn(list); return; }
+    if(st!=='done'){ say('agent','点上面卡片里的选项就好，选完点确认 ✅ 有问题也可以直接问我。'); return; }
+    if(/匹配|推荐|找人|伙伴|换一批|其他人/.test(text)){ AGENT.match(); return; }
+    if(/日程|课程|安排|上课|几点/.test(text)){ AGENT.agenda(); return; }
+    if(/币|余额|积分|计费|收费|多少钱/.test(text)){ say('agent',`你现在有 **${state.credits} 个时间币**。\n• 教别人 1 小时 = +1 币；向别人学 1 小时 = −1 币\n• 技能互换的课时互相抵扣，不花币\n• 每段新关系的首课 15 分钟试听免费`); return; }
+    if(/修改|档案|资料|重新填/.test(text)){ say('agent','好的，我们重新过一遍，之前填的我都帮你保留了 ✍️'); AGENT.askTeach(); return; }
+    if(/提醒/.test(text)){ say('agent','每节课开课前我都会在这里提醒你，并附上课堂入口；课程结束后我会来问问你的体验 😊'); return; }
+    if(/你好|hi|hello|在吗|嗨/i.test(text)){ say('agent',`在的～${state.profile.name}，有什么可以帮你？`); return; }
+    say('agent','这个我还在学习中 🤔 目前我可以帮你：\n• 重新匹配交换伙伴\n• 查看课程日程\n• 查询时间币\n• 修改技能档案');
+  },
+  agenda(){
+    const up=state.events.filter(e=>e.status!=='done').sort((a,b)=>a.start-b.start);
+    if(!up.length){ say('agent','你还没有课程安排～在匹配结果里挑一位伙伴聊聊，聊好了我帮你们约课 📅'); return; }
+    sayUI('agent',`你有 **${up.length} 节**待上的课：`,ui=>ui.col(up.map(e=>eventCardUI(ui,e,{head:null,buttons:false})).concat([ui.row([ui.button('打开日程','nav.calendar',{},true)])])));
   }
-  const all = USERS.map(u=>({u,m:matchInfo(u)})).filter(x=>x.m.type!=='none').sort((a,b)=>b.m.score-a.m.score);
-  const groups = [
-    ['both','⇄ 双向互换 · 完美互补','你们正好能互教对方，1 小时换 1 小时，谁都不花钱。'],
-    ['learn','📥 TA 能教你','对方暂时用不上你的技能？用时间币约课，对方也能拿币去学别的。'],
-    ['teach','📤 你能教 TA','教学赚时间币，攒着去学你真正想学的。']
-  ];
-  const wantNo = me.learn.filter(l=>!USERS.some(u=>u.teach.some(t=>skillMatch(t.skill,l.skill))));
-  return `<div class="sec"><div><h2>智能匹配</h2><p class="muted">你能教：${me.teach.map(t=>esc(t.skill)).join('、')} ｜ 你想学：${me.learn.map(l=>esc(l.skill)).join('、')}　<a href="#/profile" style="color:var(--pri)">修改</a></p></div></div>
-  ${groups.map(([k,title,desc])=>{
-    const items = all.filter(x=>x.m.type===k);
-    return `<div class="mgroup"><h3>${title} <span class="small muted">${items.length} 人</span></h3><p>${desc}</p>
-      <div class="stack">${items.length?items.map(x=>matchCard(x.u,x.m)).join(''):'<div class="card empty small">暂时没有，试着在档案里多加几个技能</div>'}</div></div>`;
-  }).join('')}
-  ${wantNo.length?`<div class="card" style="padding:16px 18px" ><b>🔔 已为你订阅：</b>${wantNo.map(l=>esc(l.skill)).join('、')} —— 有人发布这些技能时会第一时间通知你。</div>`:''}`;
+};
+
+function profileCardUI(ui,P){
+  const modeT=P.mode==='都可以'?'💻📍 线上 / 线下都可以':P.mode==='线上'?'💻 线上':'📍 线下';
+  return ui.card(ui.col([
+    ui.row([ui.avatar({id:'me',name:P.name},52), ui.col([ui.text(P.name,'h4'), ui.label(`${P.city} · 新加入 · 时间币 ${state.credits}`)])]),
+    P.exp?ui.text(`“${P.exp}”`,'caption'):null,
+    ui.divider(),
+    ui.label('📤 我能教'), ui.row(P.teach.map(t=>ui.tag(t.skill,'teach',t.level))),
+    ui.label('📥 我想学'), ui.row(P.learn.map(l=>ui.tag(l.skill,'learn',l.level))),
+    P.goal?ui.text('🎯 目标：'+P.goal,'caption'):null,
+    ui.divider(),
+    ui.row([ui.badge(modeT), ui.badge('⏱ '+P.dur+' / 次'), ui.badge('🔁 '+P.freq)]),
+    ui.row(P.avail.map(a=>ui.badge('📅 '+a)))
+  ]));
+}
+function matchCardUI(ui,u,m){
+  const T={both:['⇄ 技能互换 · 课时互抵','pri'],learn:['⏱ 时间币学习 · 1 币/课时','learn'],teach:['📤 教 TA · 每课时 +1 币','teach']}[m.type];
+  const t=m.theyTeach[0], i=m.iTeach[0];
+  return ui.card(ui.col([
+    ui.row([ui.row([ui.avatar(u,44), ui.col([ui.text(u.name+(u.verified?' ✓':''),'h5'), ui.label(`${u.city} · ★${u.rating.toFixed(1)} · ${u.count} 次交换`)])]), ui.badge(m.score+'%','score')],{between:true}),
+    ui.badge(T[0],T[1]),
+    t?ui.row([ui.label('TA 教你'), ui.tag(t.skill,'teach',t.level)]):null,
+    i?ui.row([ui.label('你教 TA'), ui.tag(i.skill,'learn','TA '+i.theirLevel)]):null,
+    ui.text(m.reason,'caption'),
+    ui.row(m.tags.map(x=>ui.badge(x))),
+    ui.button('去对话','match.chat',{uid:u.id},true)
+  ]));
+}
+function eventCardUI(ui,ev,{head='🎉 约课成功 · 已同步到双方日程',buttons=true}={}){
+  const u=userById(ev.uid);
+  return ui.card(ui.col([
+    head?ui.text(head,'h5'):null,
+    ui.row([ui.avatar(u,38), ui.col([ui.text(`${ev.title} · ${u.name}`,'h5'), ui.label(`${fmtWhen(ev.start)} · ${ev.dur} 分钟 · ${ev.mode}`)])]),
+    ev.mode==='线上'?ui.text('🔗 课堂链接：'+roomURL(ev),'caption'):ui.text('📍 '+ev.place,'caption'),
+    ui.text(payText(ev)+(ev.trial?' · 首课试听免费':''),'caption'),
+    buttons?ui.row([ui.button('查看日程','nav.calendar'), ui.button('加入手机日历','ics.download',{eid:ev.id})]):null
+  ]));
+}
+function payText(ev){ return ev.pay==='swap'?`⇄ 技能互换（你学${ev.learn}，教 TA ${ev.teach}）`:ev.pay==='credit'?'⏱ 时间币 · 每课时 1 币':'📤 你来教 · 每课时 +1 币'; }
+
+/* =====================================================================
+   私聊：匹配到的用户
+   ===================================================================== */
+function openPartner(uid){
+  if(!thread(uid)){
+    const u=userById(uid), m=matchInfo(u);
+    state.threads[uid]={id:uid,msgs:[],unread:0,last:Date.now(),stage:0,
+      m:{type:m.type,score:m.score,learn:m.theyTeach[0]?.skill||null,learnLevel:m.theyTeach[0]?.level||'',myLevel:m.theyTeach[0]?.myLevel||'',teach:m.iTeach[0]?.skill||null,theirLevel:m.iTeach[0]?.theirLevel||''}};
+    const x=state.threads[uid].m;
+    sys(uid,`你通过小换匹配认识了 ${u.name} · 匹配度 ${x.score}%`);
+    const intro = x.type==='both' ? `我已经把你们的互补点告诉了双方：**${u.name}** 能教你 **${x.learn}**（${x.learnLevel}），也正想学你的 **${x.teach}**。打个招呼吧，下面有我帮你准备的开场白 👇`
+      : x.type==='learn' ? `**${u.name}** 能教你 **${x.learn}**（${x.learnLevel}）。TA 暂时不需要你的技能，可以用时间币约课（1 币/课时，你现在有 ${state.credits} 币）。打个招呼吧 👇`
+      : `**${u.name}** 正想学 **${x.teach}**（现在${x.theirLevel}），你来教每课时能赚 1 时间币。打个招呼吧 👇`;
+    push(uid,{from:'agent',text:intro});
+  }
+  go('chat',uid);
+}
+const PARTNER = {
+  onText(uid,text){
+    const th=thread(uid), u=userById(uid), x=th.m, P=state.profile, my=P.name;
+    if(/线下|见面|面对面|当面/.test(text)) th.wantMode='线下'; else if(/线上|视频|远程|网上/.test(text)) th.wantMode='线上';
+    if(/周末|周六|周日|星期六|星期天|那个时间/.test(text)) th.wantSlot='later'; else if(/今天|马上|待会|一会儿|现在就|现在可以|现在有空/.test(text)) th.wantSlot='soon';
+    const st=th.stage||0; th.stage=st+1; save(); updateSuggest();
+    const later=fmtWhen(BOOK.laterSlot(u));
+    const modeT=u.modes.includes('线下')?(u.city===P.city?`线下的话可以在${u.place}，线上也完全没问题。`:'我们不在一个城市，线上上课就好，平台课堂很方便。'):'我一般线上上课，平台课堂很方便。';
+    let r;
+    if(st===0){
+      r = x.type==='both' ? `你好呀${my}～ ${u.hello} 正好我也一直想学${x.teach}，互换太合适了！你${x.learn}现在是${x.myLevel}对吧，想学到什么程度呀？`
+        : x.type==='learn' ? `你好${my}～ ${u.hello} 用时间币约课没问题！你${x.learn}现在是${x.myLevel}，想学到什么程度？`
+        : `你好${my}！${u.hello} 我一直想学${x.teach}，现在还是${x.theirLevel}，正缺一个老师 🙏 你一般怎么教呀？`;
+    } else if(st===1){
+      r = x.type==='teach' ? `听起来很靠谱！我${u.avail.join('、')}比较有空，${modeT}你一般什么时候方便？`
+        : `明白了！${u.style} 你一般什么时间方便？我${u.avail.join('、')}比较空，${modeT}`;
+    } else if(st===2){
+      r = `那我们先约个 15 分钟试听吧？${x.type==='teach'?'你先看看我的基础，再定后面怎么教。':'试听不扣币，觉得合适再正式开始。'} 我今天待会儿就有空，也可以约${later}，你看哪个合适？`;
+    } else {
+      if(/线下/.test(text)) r = u.modes.includes('线下')&&u.city===P.city ? `线下的话我一般在${u.place}，你方便过来吗？` : '我这段时间只方便线上哈，平台课堂用起来很顺手～';
+      else if(/线上/.test(text)) r='线上没问题，到时候直接用平台课堂就行，会自动生成会议链接。';
+      else if(/币|钱|费|价格|多少/.test(text)) r = x.type==='both'?'我们互换的话课时互相抵扣，谁都不花币～':'按平台规则 1 小时 1 个时间币，试听那节不算～';
+      else if(/谢谢|感谢/.test(text)) r='不客气～到时候见！';
+      else if(/准备/.test(text)) r=x.type==='teach'?'我先把自己的问题列一下，到时候请你多指点～':`不用特别准备，${ev0Mode(uid)==='线下'?'人到就行，工具我这边都有':'找个安静的地方，带上耳机'}，有想学的歌或者问题可以先发我～`;
+      else if(/试听|好|行|可以|ok|没问题|嗯|周|今天|待会|点/i.test(text)) r='好嘞！那让小换帮我们把时间和地点整理一下吧 😄';
+      else r=['好的～','收到！','没问题 👌'][st%3]+' 有什么想法随时说。';
+    }
+    enqueue(uid, async()=>{
+      await sleep(500);
+      await showTyping(uid,uid,Math.min(2200,900+r.length*20));
+      push(uid,{from:uid,text:r});
+      if(st===2 || (st>=3 && /小换/.test(r) && !th.hinted)){
+        th.hinted=true; save();
+        await sleep(600);
+        await showTyping(uid,'agent',900);
+        const sid=buildSurface(ui=>ui.row([ui.button('好的，帮我整理','book.start',{uid},true), ui.button('再聊聊','book.later',{uid})]));
+        push(uid,{from:'agent',text:'看起来你们已经聊到时间了 ✨ 要我帮你们整理成约课单，同步到双方日程吗？',sid});
+      }
+    });
+  }
+};
+
+function ev0Mode(uid){ const e=state.events.filter(e=>e.uid===uid&&e.status!=='done').sort((a,b)=>a.start-b.start)[0]; return e?e.mode:'线上'; }
+
+/* =====================================================================
+   约课：AI 整理 → 双方确认 → 日程
+   ===================================================================== */
+const SLOT_DEF = {'工作日白天':[[1,2,3,4,5],14],'工作日晚上':[[1,2,3,4,5],20],'周末上午':[[6,0],10],'周末下午':[[6,0],15],'周末晚上':[[6,0],19]};
+function slotFromAvail(a,after=Date.now()){
+  const [days,h]=SLOT_DEF[a]||SLOT_DEF['周末下午'];
+  for(let i=0;i<15;i++){ const c=new Date(after); c.setDate(c.getDate()+i); c.setHours(h,0,0,0); if(days.includes(c.getDay())&&c.getTime()>after+2*HOUR) return c.getTime(); }
+  return after+DAY;
+}
+function roomURL(ev){ return location.origin+location.pathname+'#room='+ev.code; }
+const BOOK = {
+  laterSlot(u){ const P=state.profile; const a=u.avail.find(x=>P.avail.includes(x))||u.avail[0]; return slotFromAvail(a); },
+  card(uid,echo=true){
+    const th=thread(uid), u=userById(uid), P=state.profile, x=th.m;
+    const soon=ceilMin(Date.now()+3*MIN), later=BOOK.laterSlot(u);
+    const a2=u.avail.find(a=>slotFromAvail(a)!==later&&P.avail.includes(a))||u.avail.find(a=>slotFromAvail(a)!==later);
+    const opts=[{label:`今天 ${fmtHM(soon)}（待会儿就上）`,value:String(soon)},{label:fmtWhen(later),value:String(later)}];
+    if(a2) opts.push({label:fmtWhen(slotFromAvail(a2)),value:String(slotFromAvail(a2))});
+    opts.sort((a,b)=>+a.value-+b.value);
+    let modes=commonModes(u,P); if(!modes.length) modes=u.modes.filter(m=>m==='线上'); if(!modes.length) modes=['线上'];
+    const defMode=th.wantMode&&modes.includes(th.wantMode)?th.wantMode:modes[0];
+    const defSlot=th.wantSlot==='later'?String(later):String(soon);
+    const pay=PAY[x.type];
+    const course = x.type==='both'?`${u.name} 教你 **${x.learn}** ⇄ 你教 ${u.name} **${x.teach}**`:x.type==='learn'?`${u.name} 教你 **${x.learn}**`:`你教 ${u.name} **${x.teach}**`;
+    const payT = pay==='swap'?'⇄ 技能互换：课时互相抵扣，双方都不花时间币':pay==='credit'?`⏱ 时间币：每课时 1 币（你的余额 ${state.credits}）`:'📤 你来教：每课时 +1 时间币';
+    const bullets=[`• ${u.name}：建议先上 15 分钟试听`];
+    if(th.wantMode) bullets.push(`• 你：希望${th.wantMode}上课`);
+    if(th.wantSlot) bullets.push(th.wantSlot==='soon'?'• 你：今天就想先试试':'• 你：周末那个时间更方便');
+    bullets.push(`• 你们共同的空闲：${(u.avail.filter(a=>P.avail.includes(a)).join('、'))||u.avail[0]}`);
+    if(echo) me(uid,'@小换 帮我们整理一下约课');
+    sayUI(uid,'好的，我读了一下你们的聊天，整理成了下面这张约课单 👇 确认后会同时发到你们俩的日程上。',ui=>ui.card(ui.col([
+      ui.text('📋 约课确认单','h4'),
+      ui.text('**聊天要点**\n'+bullets.join('\n'),'caption'),
+      ui.divider(),
+      ui.row([ui.label('课程'), ui.text(course)]),
+      ui.row([ui.label('计费'), ui.text(payT)]),
+      ui.row([ui.label('首课'), ui.text(`15 分钟免费试听 · 之后每次 ${P.dur}`)]),
+      ui.text('上课时间','h5'), ui.choice('/slot',opts,1),
+      ui.text('上课方式','h5'), ui.choice('/mode',modes,1),
+      modes.includes('线下')?ui.field('线下地点（选线上可忽略）','/place'):ui.text('💻 线上课会自动生成课堂链接，双方点开即可上课','caption'),
+      ui.row([ui.button('确认并发给双方','book.confirm',{uid},true), ui.button('再聊聊','book.later',{uid})])
+    ])),{slot:[defSlot],mode:[defMode],place:u.place},{ms:1500});
+  },
+  confirm(uid,s){
+    const u=userById(uid), d=s.data;
+    let start=+((d.slot||[])[0]); if(!start||start<Date.now()+MIN) start=ceilMin(Date.now()+2*MIN);
+    const mode=(d.mode||[])[0]||'线上';
+    const ev=mkEvent({uid,start,dur:15,trial:true,mode,place:mode==='线下'?(String(d.place||'').trim()||u.place):''});
+    say(uid,`📨 约课单已发给 ${u.name}，等待 TA 确认…`,{ms:500});
+    enqueue(uid, async()=>{ await sleep(600); await showTyping(uid,uid,1300); push(uid,{from:uid,text:'收到，已确认 👍 到时候见！'}); state.events.push(ev); save(); renderRail(); });
+    sayUI(uid,'',ui=>eventCardUI(ui,ev),{},{ms:700});
+    say(uid,'⏰ 开课前我会提醒你们俩，课程结束后我也会来问问上课体验。',{ms:600});
+    sayUI('agent',`📅 新日程：你和 **${u.name}** 约好了「${ev.title}」`,ui=>eventCardUI(ui,ev,{head:null}),{},{ms:300});
+  }
+};
+function mkEvent({uid,start,dur,trial,mode,place,n=1}){
+  const x=thread(uid).m;
+  const skill=x.learn||x.teach;
+  const r=k=>Math.random().toString(36).slice(2,2+k);
+  const lead=Math.max(30e3,Math.min(15*MIN,(start-Date.now())/3));
+  return {id:'e'+Date.now()+r(3),uid,skill,learn:x.learn,teach:x.teach,pay:PAY[x.type],start,dur,trial,mode,place,code:`${r(3)}-${r(4)}-${r(3)}`,n,
+    title:`${skill}${trial?'试听课':`课 · 第 ${n} 节`}`,status:'upcoming',created:Date.now(),remindAt:start-lead,reminded:false};
+}
+function downloadICS(eid){
+  const ev=state.events.find(e=>e.id===eid); if(!ev) return; const u=userById(ev.uid);
+  const dt=t=>new Date(t).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
+  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//SkillSwap//CN','BEGIN:VEVENT',`UID:${ev.id}@skillswap`,`DTSTAMP:${dt(Date.now())}`,`DTSTART:${dt(ev.start)}`,`DTEND:${dt(ev.start+ev.dur*MIN)}`,`SUMMARY:${ev.title} · ${u.name}（技能换换）`,`LOCATION:${ev.mode==='线上'?roomURL(ev):ev.place}`,`DESCRIPTION:${ev.mode==='线上'?'课堂链接 '+roomURL(ev):'线下课程'}`,'BEGIN:VALARM','TRIGGER:-PT15M','ACTION:DISPLAY','DESCRIPTION:技能换换：课程即将开始','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'})); a.download=`${ev.title}-${u.name}.ics`; document.body.appendChild(a); a.click(); a.remove();
+  toast('已生成日历文件，打开即可加入手机 / 电脑日历');
 }
 
-/* ============ 发起交换 ============ */
-function openSwap(uid){
-  const u = userById(uid), m = matchInfo(u);
-  const learnOpts = u.teach.map(t=>t.skill);
-  const defLearn = (m.theyTeach[0]||{}).skill || learnOpts[0];
-  const defPay = m.type==='both'?'swap':m.type==='teach'?'earn':'credit';
-  const teachOpts = m.iTeach.length ? m.iTeach.map(t=>t.skill) : state.me.teach.map(t=>t.skill);
-  const modes = u.modes.filter(x=>state.me.modes.includes(x)); const modeList = modes.length?modes:u.modes;
-  openModal(`
-    <h3>和 ${esc(u.name)} 发起交换</h3>
-    <p class="small muted" style="margin-bottom:16px">${esc(u.city)} · ${esc(u.avail)} · ${u.modes.join('/')}</p>
-    <div class="field"><span>交换方式</span>
-      <div class="seg">
-        <label><input type="radio" name="pay" value="swap" ${defPay==='swap'?'checked':''} onchange="swapPayChange()">⇄ 技能互换<br><span class="hint">互教，课时互抵</span></label>
-        <label><input type="radio" name="pay" value="credit" ${defPay==='credit'?'checked':''} onchange="swapPayChange()">⏱ 时间币学<br><span class="hint">1 币/课时，余额 ${state.credits}</span></label>
-        <label><input type="radio" name="pay" value="earn" ${defPay==='earn'?'checked':''} onchange="swapPayChange()">📤 我来教<br><span class="hint">每课时 +1 币</span></label>
-      </div>
-    </div>
-    <div class="field" id="f-learn"><span>我想向 TA 学</span><select class="inp" id="s-learn">${learnOpts.map(s=>`<option ${s===defLearn?'selected':''}>${esc(s)}</option>`).join('')}</select></div>
-    <div class="field" id="f-teach"><span>我来教 TA</span><select class="inp" id="s-teach">${teachOpts.map(s=>`<option>${esc(s)}</option>`).join('')}</select>${m.iTeach.length?'':'<div class="hint">TA 的「想学」里没有你的技能，可以问问 TA 是否感兴趣</div>'}</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="field"><span>首次上课时间</span><input class="inp" type="datetime-local" id="s-time" value="${nextSat()}"></div>
-      <div class="field"><span>上课方式</span><select class="inp" id="s-mode">${modeList.map(x=>`<option>${x}</option>`).join('')}</select></div>
-    </div>
-    <div class="field"><span>计划课时</span><select class="inp" id="s-total">${[2,4,6,8].map(n=>`<option value="${n}" ${n===4?'selected':''}>${n} 课时（每课时 1 小时）</option>`).join('')}</select></div>
-    <div class="checks" style="margin-bottom:14px"><label><input type="checkbox" id="s-trial" checked> 首课 15 分钟免费试听（不满意不扣币）</label></div>
-    <div class="field"><span>打个招呼</span><textarea class="inp" id="s-msg">你好！看到你能教${esc(defLearn)}，我是零基础，想认真学一学～</textarea></div>
-    <div class="note" id="s-note"></div>
-    <div class="mfoot"><button class="btn" onclick="closeModal()">取消</button><button class="btn pri" onclick="submitSwap('${u.id}')">发送请求</button></div>`);
-  swapPayChange();
+/* =====================================================================
+   提醒
+   ===================================================================== */
+function statusOf(ev){ if(ev.status==='done') return 'done'; return Date.now()>=ev.start?'live':'up'; }
+function tick(){
+  const now=Date.now();
+  state.events.forEach(ev=>{ if(ev.status!=='done' && !ev.reminded && now>=ev.remindAt){ ev.reminded=true; save(); remind(ev); } });
+  if(state.view==='cal') document.querySelectorAll('[data-st]').forEach(el=>{ const ev=state.events.find(e=>e.id===el.dataset.st); if(ev){ const html=stHTML(ev); if(el.outerHTML!==html) el.outerHTML=html; } });
+  const clk=$('#rclock'); if(clk&&ROOM.ev){ const sec=Math.floor((Date.now()-ROOM.t0)/1000); clk.textContent=`${pad(Math.floor(sec/60))}:${pad(sec%60)} / ${ROOM.ev.dur}:00`; }
 }
-function swapPayChange(){
-  const pay = document.querySelector('input[name=pay]:checked').value;
-  $('#f-learn').style.display = pay==='earn'?'none':'';
-  $('#f-teach').style.display = pay==='credit'?'none':'';
-  $('#s-note').textContent = {swap:'⇄ 互换：你教 TA 1 小时，TA 教你 1 小时，课时互相抵扣，双方都不花时间币。',credit:`⏱ 时间币：每完成 1 课时扣 1 币（当前余额 ${state.credits}）。币不够？去教别人就能赚。`,earn:'📤 我来教：每完成 1 课时你获得 1 时间币，可以用来向任何人学习。'}[pay];
+function remind(ev){
+  const u=userById(ev.uid); const mins=Math.max(1,Math.round((ev.start-Date.now())/MIN));
+  const when=Date.now()>=ev.start?'**已经开始了**':`还有 **${mins} 分钟**开始`;
+  sayUI('agent',`⏰ 上课提醒：你和 **${u.name}** 的「${ev.title}」${when}。${ev.mode==='线上'?'找个安静的地方，戴好耳机～':`记得提前出发，地点在 ${ev.place}`}`,ui=>ui.card(ui.col([
+    ui.row([ui.avatar(u,38), ui.col([ui.text(`${ev.title} · ${u.name}`,'h5'), ui.label(`${fmtWhen(ev.start)} · ${ev.dur} 分钟 · ${ev.mode}`)])]),
+    ev.mode==='线上'?ui.text('🔗 '+roomURL(ev),'caption'):ui.text('📍 '+ev.place,'caption'),
+    ui.row([ui.button(ev.mode==='线上'?'进入课堂':'到达签到','class.join',{eid:ev.id},true), ui.button('给 TA 发消息','event.chat',{uid:ev.uid})])
+  ])),{},{ms:600});
+  showBanner(ev, mins);
 }
-function submitSwap(uid){
-  const u = userById(uid);
-  const pay = document.querySelector('input[name=pay]:checked').value;
-  const total = +$('#s-total').value;
-  if(pay==='credit' && state.credits<1){ toast('时间币不足，先去教别人赚一点吧'); return; }
-  const s = {id:'s'+Date.now(),uid,pay,learn:pay==='earn'?null:$('#s-learn').value,teach:pay==='credit'?null:$('#s-teach').value,
-    mode:$('#s-mode').value,time:$('#s-time').value,total,done:0,trial:$('#s-trial').checked,status:'pending',created:Date.now(),
-    msgs:[{from:'me',t:$('#s-msg').value.trim()||'你好，想和你交换技能～'}]};
-  state.swaps.unshift(s); save(); closeModal();
-  toast(`已发送给 ${u.name}，等待对方确认…`);
-  scheduleAccept(s.id);
-  render();
-}
-function scheduleAccept(id){
-  setTimeout(()=>{
-    const s = state.swaps.find(x=>x.id===id); if(!s||s.status!=='pending') return;
-    const u = userById(s.uid);
-    s.status='scheduled';
-    s.msgs.push({from:s.uid,t:s.trial?'没问题！我们先上 15 分钟试听课，看看节奏合不合适 😊':'好呀，到时候见！'});
-    save(); toast(`🎉 ${u.name} 接受了你的交换请求`); render();
-  }, 2200);
+function showBanner(ev,mins){
+  const u=userById(ev.uid); const b=$('#banner');
+  b.innerHTML=`${avatarHTML({id:'agent'},36)}<div class="tx"><b>${esc(ev.title)} · ${esc(u.name)}</b><small>小换提醒：${Date.now()>=ev.start?'课程已开始':mins+' 分钟后开课'} · ${esc(ev.mode)}</small></div><button class="btn pri" data-act="join" data-eid="${ev.id}">${ev.mode==='线上'?'进入课堂':'签到'}</button><button class="x" data-act="bclose">✕</button>`;
+  b.classList.add('show'); clearTimeout(showBanner._t); showBanner._t=setTimeout(()=>b.classList.remove('show'),12000);
 }
 
-/* ============ 页面：我的交换 ============ */
-function swapCard(s){
-  const u = userById(s.uid); if(!u) return '';
-  const stText = {pending:'待对方确认',scheduled:'进行中',done:'已结课'}[s.status];
-  const flow = s.pay==='swap' ? `你学 ${tag(s.learn,'teach')} <span class="arrow">⇄</span> 你教 ${tag(s.teach,'learn')}`
-    : s.pay==='credit' ? `你学 ${tag(s.learn,'teach')} <span class="small muted">· 时间币支付 1 币/课时</span>`
-    : `你教 ${tag(s.teach,'learn')} <span class="small muted">· 每课时 +1 时间币</span>`;
-  const last = s.msgs[s.msgs.length-1];
-  const lastFrom = last.from==='me'?'我':userById(last.from)?.name;
-  const pct = Math.round(s.done/s.total*100);
-  let acts = '';
-  if(s.status==='pending') acts = `<button class="btn sm" onclick="cancelSwap('${s.id}')">撤回请求</button>`;
-  if(s.status==='scheduled') acts = `<button class="btn sm pri" onclick="finishLesson('${s.id}')">✓ 完成第 ${s.done+1} 课时</button><button class="btn sm" onclick="openChat('${s.id}')">💬 留言</button>`;
-  if(s.status==='done') acts = state.rated[s.id] ? `<span class="small muted">你的评价：${'★'.repeat(state.rated[s.id])}</span><button class="btn sm" onclick="openSwap('${s.uid}')">再约一期</button>` : `<button class="btn sm pri" onclick="openRate('${s.id}')">⭐ 评价 TA</button>`;
-  return `<div class="card scard">
-    <div class="hd">${avatar(u,40)}<div><a href="#/user/${u.id}"><b>${esc(u.name)}</b></a><div class="small muted">${esc(u.city)} · ★${u.rating.toFixed(1)}</div></div><span class="st ${s.status}">${stText}</span></div>
-    <div class="swapline">${flow}</div>
-    <div class="metas"><span>📅 ${fmtTime(s.time)}</span><span>${s.mode==='线上'?'💻':'📍'} ${esc(s.mode)}</span>${s.trial?'<span>🎁 首课试听</span>':''}</div>
-    <div><div class="small muted" style="display:flex;justify-content:space-between;margin-bottom:6px"><span>学习进度</span><span>${s.done}/${s.total} 课时</span></div><div class="prog"><i style="width:${pct}%"></i></div></div>
-    <div class="msg"><b>${esc(lastFrom)}：</b>${esc(last.t)}</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${acts}</div>
-  </div>`;
+/* =====================================================================
+   课堂
+   ===================================================================== */
+const ROOM = {ev:null,t0:0,timer:null,mic:true,cam:true};
+function joinClass(eid){
+  const ev=state.events.find(e=>e.id===eid); if(!ev) return;
+  if(ev.status==='done'){ toast('这节课已经结束啦'); return; }
+  $('#banner').classList.remove('show');
+  const u=userById(ev.uid), P=state.profile;
+  ROOM.ev=ev; ROOM.t0=Date.now(); ROOM.mic=true; ROOM.cam=true;
+  const notes=classNotes(ev); let k=0;
+  const online=ev.mode==='线上';
+  $('#room').innerHTML=`
+    <div class="room-top"><div class="ttl">${esc(ev.title)} · ${esc(u.name)}<small>${online?'技能换换课堂 · '+esc(ev.code):'线下课程 · '+esc(ev.place)}</small></div><span class="rec">● 小换记录中</span><span class="clock" id="rclock">00:00 / ${ev.dur}:00</span></div>
+    <div class="room-body">
+      <div class="stage">${online?`
+        <div class="tile"><div class="ring">${avatarHTML(u,120)}</div><div class="caption" id="rcap">${esc(u.name)} 已加入课堂</div><span class="nm">${esc(u.name)}</span></div>
+        <div class="tile me" id="mytile">${avatarHTML({id:'me',name:P.name},48)}<span class="nm">我</span></div>`:`
+        <div class="tile"><div class="offline-card"><div style="font-size:40px">📍</div><h3 style="margin:6px 0">线下课程进行中</h3><p style="color:#9aa0ae;margin:0 0 10px">${esc(ev.place)}</p><p style="margin:0">✅ 你已签到 ${fmtHM(Date.now())}　·　✅ ${esc(u.name)} 已到达</p></div><div class="caption" id="rcap">小换正在根据课堂内容记录笔记</div></div>`}
+      </div>
+      <aside class="notes"><h4>✨ 小换 · AI 课堂笔记</h4><div class="nsub">自动记录要点，课后发给你们俩</div><div id="rnotes"></div></aside>
+    </div>
+    <div class="room-ctl">${online?'<button data-act="mic">🎤 静音</button><button data-act="cam">📷 关摄像头</button><button data-act="share">🖥 共享屏幕</button>':''}<button class="end" data-act="endClass">结束课程</button></div>`;
+  $('#room').classList.add('show');
+  clearInterval(ROOM.timer);
+  const addNote=()=>{
+    if(k>=notes.length){ clearInterval(ROOM.timer); return; }
+    const box=$('#rnotes'); if(!box) return;
+    box.insertAdjacentHTML('beforeend',`<div class="note"><small>${fmtHM(Date.now())}</small>${esc(notes[k])}</div>`);
+    const cap=$('#rcap'); const topic=notes[k].replace(/^[^一-龥A-Za-z]+/,'').split(/[：，,]/)[0];
+    if(cap) cap.textContent=`${u.name}：我们来看「${topic}」…`;
+    k++;
+  };
+  setTimeout(addNote,1200); ROOM.timer=setInterval(addNote,3200);
 }
-function renderSwaps(){
-  const act = state.swaps.filter(s=>s.status!=='done'), done = state.swaps.filter(s=>s.status==='done');
-  let learned=0, taught=0;
-  state.swaps.forEach(s=>{ if(s.pay!=='earn') learned+=s.done; if(s.pay!=='credit') taught+=s.done; });
-  const list = ui.tab==='active'?act:done;
-  return `<div class="sec"><div><h2>我的交换</h2><p class="muted">约课、上课打卡、结课互评都在这里</p></div><a class="btn sm pri" href="#/match">+ 找新的交换</a></div>
-  <div class="stats">
-    <div class="card stat"><b>${act.length}</b><span>进行中的交换</span></div>
-    <div class="card stat"><b>${learned}</b><span>累计学习课时</span></div>
-    <div class="card stat"><b>${taught}</b><span>累计教学课时</span></div>
-    <div class="card stat"><b>${state.credits}</b><span>时间币余额</span></div>
-  </div>
-  <div class="tabs"><button class="${ui.tab==='active'?'on':''}" onclick="ui.tab='active';render()">进行中 (${act.length})</button><button class="${ui.tab==='done'?'on':''}" onclick="ui.tab='done';render()">已结课 (${done.length})</button></div>
-  <div class="grid">${list.length?list.map(swapCard).join(''):`<div class="card empty" style="grid-column:1/-1"><b>${ui.tab==='active'?'🌱':'🏁'}</b>${ui.tab==='active'?'还没有进行中的交换，去匹配页找找吧':'还没有结课的交换'}</div>`}</div>`;
+function classNotes(ev){
+  const key=Object.keys(NOTE_BANK).find(k=>skillMatch(k,ev.skill)) || 'default';
+  const goal=state.profile.goal||'先入门，培养兴趣';
+  return [`🎯 目标确认：${ev.learn?goal:'了解 TA 的基础和目标'}`, ...NOTE_BANK[key], '📌 课后练习：把今天的内容每天练 15 分钟，下节课前拍个小视频发给对方'];
 }
-function cancelSwap(id){ state.swaps = state.swaps.filter(s=>s.id!==id); save(); toast('已撤回'); render(); }
-function finishLesson(id){
-  const s = state.swaps.find(x=>x.id===id), u = userById(s.uid);
-  const free = s.trial && s.done===0;
-  if(s.pay==='credit' && !free && state.credits<1){ toast('时间币不足，先去教别人赚一点吧'); return; }
-  s.done++;
-  if(free) toast('试听课完成，这节不扣币 🎁');
-  else if(s.pay==='credit'){ addLedger(`向 ${u.name} 学「${s.learn}」1 课时`,-1); toast('打卡成功，-1 时间币'); }
-  else if(s.pay==='earn'){ addLedger(`教 ${u.name}「${s.teach}」1 课时`,1); toast('教学完成，+1 时间币 ⏱'); }
-  else toast('互换课时打卡成功，课时互抵');
-  if(s.done>=s.total){ s.status='done'; setTimeout(()=>openRate(id),400); }
-  save(); render();
+function endClass(){
+  const ev=ROOM.ev; if(!ev) return;
+  clearInterval(ROOM.timer); $('#room').classList.remove('show');
+  const notes=[...document.querySelectorAll('#rnotes .note')].map(n=>n.lastChild.textContent);
+  ev.status='done'; ev.ended=Date.now(); ev.notes=notes.length?notes:classNotes(ev).slice(0,3); ROOM.ev=null;
+  billing(ev); save();
+  go('chat','agent');
+  FEEDBACK.ask(ev);
 }
-function openChat(id){
-  const s = state.swaps.find(x=>x.id===id), u = userById(s.uid);
-  openModal(`<h3>和 ${esc(u.name)} 的留言</h3><p class="small muted" style="margin-bottom:14px">约时间、发作业、提问都可以在这里</p>
-    <div style="display:grid;gap:8px;max-height:280px;overflow:auto;margin-bottom:12px">${s.msgs.map(m=>`<div class="msg" style="${m.from==='me'?'background:var(--pri-50);margin-left:40px':'margin-right:40px'}"><b>${m.from==='me'?'我':esc(u.name)}：</b>${esc(m.t)}</div>`).join('')}</div>
-    <div class="addrow"><input class="inp" id="chatIn" placeholder="说点什么…" onkeydown="if(event.key==='Enter')sendChat('${id}')"><button class="btn pri" onclick="sendChat('${id}')">发送</button></div>`);
-  setTimeout(()=>$('#chatIn')?.focus(),50);
+function billing(ev){
+  if(ev.trial) return;
+  const u=userById(ev.uid), h=Math.round(ev.dur/60*10)/10;
+  if(ev.pay==='credit') addLedger(`向 ${u.name} 学「${ev.learn}」${h} 课时`,-h);
+  else if(ev.pay==='earn') addLedger(`教 ${u.name}「${ev.teach}」${h} 课时`,h);
+  else addLedger(`与 ${u.name} 技能互换 ${h} 课时（互抵）`,0);
 }
-function sendChat(id){
-  const v = $('#chatIn').value.trim(); if(!v) return;
-  const s = state.swaps.find(x=>x.id===id);
-  s.msgs.push({from:'me',t:v}); save(); openChat(id); render();
-  setTimeout(()=>{ s.msgs.push({from:s.uid,t:'收到～下节课见！'}); save(); if($('#mask').classList.contains('show')) openChat(id); render(); },1200);
-}
-function openRate(id){
-  const s = state.swaps.find(x=>x.id===id), u = userById(s.uid);
-  openModal(`<h3>🎓 和 ${esc(u.name)} 的交换结课啦</h3><p class="small muted" style="margin-bottom:16px">你的评价会成为 TA 的信用记录，也帮助其他人找到靠谱的老师</p>
-    <div class="stars" id="stars">${[1,2,3,4,5].map(n=>`<span data-n="${n}" class="${n<=5?'on':''}" onclick="setStars(${n})">★</span>`).join('')}</div>
-    <div class="tags" style="margin:16px 0">${['讲解清晰','很有耐心','准时守约','干货满满','值得再约'].map(t=>`<label class="tag" style="cursor:pointer"><input type="checkbox" style="margin:0 4px 0 0"> ${t}</label>`).join('')}</div>
-    <textarea class="inp" placeholder="写点感受吧（选填）"></textarea>
-    <div class="mfoot"><button class="btn" onclick="closeModal()">稍后</button><button class="btn pri" onclick="submitRate('${id}')">提交评价</button></div>`);
-  setStars(5);
-}
-function setStars(n){ openRate._n=n; document.querySelectorAll('#stars span').forEach(e=>e.classList.toggle('on',+e.dataset.n<=n)); }
-function submitRate(id){ state.rated[id]=openRate._n||5; save(); closeModal(); toast('感谢评价！'); render(); }
+function addLedger(t,d){ state.credits=Math.round((state.credits+d)*10)/10; state.ledger.unshift({t,d,at:Date.now()}); save(); renderRail(); }
 
-/* ============ 页面：档案 ============ */
-function renderProfile(){
-  const me = state.me;
-  return `<div class="sec"><div><h2>我的技能档案</h2><p class="muted">档案越完整，匹配越准。修改后立即生效。</p></div><a class="btn sm" href="#/match">查看匹配结果 →</a></div>
-  <div class="pgrid">
-    <div style="display:grid;gap:16px">
-      <div class="card panel"><h3>👤 基本信息</h3>
-        <div style="display:flex;gap:14px;align-items:center;margin-bottom:14px">${avatar(me,56)}<div class="small muted">完成档案 + 实名，可获得「✓ 认证」标识</div></div>
-        <label class="field"><span>昵称</span><input class="inp" value="${esc(me.name)}" onchange="state.me.name=this.value||'我';saveRender()"></label>
-        <label class="field"><span>城市</span><input class="inp" value="${esc(me.city)}" onchange="state.me.city=this.value;saveRender()"></label>
-        <label class="field"><span>一句话介绍</span><textarea class="inp" onchange="state.me.bio=this.value;saveRender()">${esc(me.bio)}</textarea></label>
-        <label class="field"><span>方便的时间</span><select class="inp" onchange="state.me.avail=this.value;saveRender()">${['工作日晚上','周末上午','周末下午','周末全天','随时可约'].map(x=>`<option ${x===me.avail?'selected':''}>${x}</option>`).join('')}</select></label>
-        <div class="field"><span>上课方式</span><div class="checks">${['线上','线下'].map(x=>`<label><input type="checkbox" ${me.modes.includes(x)?'checked':''} onchange="toggleMode('${x}',this.checked)"> ${x}</label>`).join('')}</div></div>
-      </div>
-      <div class="card panel" id="credits"><h3>⏱ 时间币 <span style="margin-left:auto;font-size:22px">${state.credits}</span></h3>
-        <div class="rules"><div>· 教别人 1 课时 = +1 币；向别人学 1 课时 = −1 币</div><div>· 技能互换的课时互相抵扣，不花币</div><div>· 首课 15 分钟试听免费；新用户赠送 3 币</div><div>· 1 小时就是 1 小时：不论教什么，时间等价</div></div>
-        <div class="ledger">${state.ledger.map(l=>`<div><span>${esc(l.t)}</span><span class="${l.d>=0?'plus':'minus'}">${l.d>=0?'+':''}${l.d}</span></div>`).join('')}</div>
-      </div>
-    </div>
-    <div style="display:grid;gap:16px">
-      <div class="card panel"><h3><span class="lbl teach" style="width:auto;font-size:16px">📤 我能教的</span></h3>
-        <div class="tags">${me.teach.map((t,i)=>tag(t.skill,'teach',{level:t.level,x:`delSkill('teach',${i})`})).join('')||'<span class="muted small">还没有添加</span>'}</div>
-        <div class="addrow"><input class="inp" id="addTeach" list="skillList" placeholder="例如：吉他、Python、烘焙" onkeydown="if(event.key==='Enter')addSkill('teach')"><select class="inp" id="addTeachLv">${LEVELS.map(l=>`<option ${l==='熟练'?'selected':''}>${l}</option>`).join('')}</select><button class="btn pri" onclick="addSkill('teach')">添加</button></div>
-      </div>
-      <div class="card panel"><h3><span class="lbl learn" style="width:auto;font-size:16px">📥 我想学的</span></h3>
-        <div class="tags">${me.learn.map((l,i)=>tag(l.skill,'learn',{x:`delSkill('learn',${i})`})).join('')||'<span class="muted small">还没有添加</span>'}</div>
-        <div class="addrow"><input class="inp" id="addLearn" list="skillList" placeholder="例如：摄影、日语、游泳" onkeydown="if(event.key==='Enter')addSkill('learn')"><button class="btn pri" onclick="addSkill('learn')">添加</button></div>
-        <div class="hint" style="margin-top:10px">热门：${['吉他','摄影','日语','健身','UI设计','烘焙'].filter(s=>!me.learn.some(l=>l.skill===s)).map(s=>`<a style="color:var(--pri);cursor:pointer;margin-right:8px" onclick="quickLearn('${s}')">+${s}</a>`).join('')}</div>
-      </div>
-      <div class="card panel"><h3>🧪 演示数据</h3><p class="small muted" style="margin-bottom:12px">当前为产品雏形，数据保存在你的浏览器本地。可随时恢复初始示例数据。</p><button class="btn sm" onclick="resetDemo()">恢复示例数据</button></div>
-    </div>
-  </div>
-  <datalist id="skillList">${Object.keys(SKILL_CAT).map(s=>`<option value="${s}">`).join('')}</datalist>`;
-}
-function saveRender(){ save(); render(); toast('已保存，匹配结果已更新'); }
-function toggleMode(x,on){ const m=state.me.modes; if(on&&!m.includes(x)) m.push(x); if(!on) state.me.modes=m.filter(v=>v!==x); saveRender(); }
-function addSkill(kind){
-  const el = $(kind==='teach'?'#addTeach':'#addLearn'); const v = el.value.trim(); if(!v) return;
-  const list = state.me[kind]; if(list.some(x=>norm(x.skill)===norm(v))){ toast('已经添加过了'); return; }
-  list.push(kind==='teach'?{skill:v,level:$('#addTeachLv').value}:{skill:v});
-  saveRender();
-}
-function quickLearn(s){ state.me.learn.push({skill:s}); saveRender(); }
-function delSkill(kind,i){ state.me[kind].splice(i,1); saveRender(); }
-function resetDemo(){ if(!confirm('恢复示例数据？你的修改会被清除。')) return; state = seed(); save(); render(); toast('已恢复示例数据'); }
+/* =====================================================================
+   课后反馈
+   ===================================================================== */
+const FEEDBACK = {
+  ask(ev){
+    const u=userById(ev.uid);
+    sayUI('agent',`课程结束啦 🎓 和 **${u.name}** 的「${ev.title}」感觉怎么样？你的评价会帮其他同学找到靠谱的伙伴。`,ui=>ui.card(ui.col([
+      ui.text('整体体验','h5'), ui.rating('/rating'),
+      ui.text('印象标签','h5'), ui.choice('/tags',['讲解清晰','很有耐心','准时守约','干货满满','氛围轻松','节奏偏快','内容偏简单'],7),
+      ui.field('想对 TA 说点什么（选填）','/comment','例如：第一次觉得入门没那么难！'),
+      ui.text('接下来？','h5'), ui.choice('/next',[ev.trial?'继续约正式课':'约下一节课','看看其他伙伴','暂时不用'],1),
+      ui.row([ui.button('提交评价','fb.submit',{eid:ev.id},true)])
+    ])),{rating:5,tags:['讲解清晰','很有耐心'],comment:'',next:[ev.trial?'继续约正式课':'约下一节课']},{ms:900});
+  },
+  submit(eid,s){
+    const ev=state.events.find(e=>e.id===eid), u=userById(ev.uid), d=s.data, r=+d.rating||5, next=(d.next||[])[0];
+    ev.rating=r; save();
+    const h=Math.round(ev.dur/60*10)/10;
+    me('agent',`${'⭐'.repeat(r)} ${(d.tags||[]).join('、')}${d.comment?'\n'+d.comment:''}`);
+    say('agent',`谢谢反馈！你的 ${r} 星评价已经同步到 ${u.name} 的信用档案 🙌\n${ev.trial?'这节是试听课，**不扣时间币** 🎁':(ev.pay==='credit'?`本节扣除 ${h} 时间币，余额 **${state.credits}**`:ev.pay==='earn'?`你获得了 ${h} 时间币，余额 **${state.credits}** ⏱`:'本节为技能互换，课时互抵，不花时间币')}`,{ms:900});
+    say('agent','📝 这是我整理的本节课笔记，已经同时发给你们俩：\n'+(ev.notes||[]).map(n=>'• '+n).join('\n'),{ms:1200});
+    if(next==='继续约正式课'||next==='约下一节课'){
+      const P=state.profile; const dur=parseInt(P.dur)||60;
+      const base=BOOK.laterSlot(u); const start=base>ev.start+DAY?base:base+7*DAY;
+      const n=state.events.filter(e=>e.uid===ev.uid&&!e.trial).length+1;
+      const ev2=mkEvent({uid:ev.uid,start,dur,trial:false,mode:ev.mode,place:ev.place,n});
+      enqueue('agent', async()=>{
+        state.events.push(ev2); save(); renderRail();
+        push(ev.uid,{from:'agent',text:`📅 你们的第 ${n} 节正式课已约好：${fmtWhen(ev2.start)} · ${dur} 分钟 · ${ev2.mode}，已同步到双方日程。`});
+        push(ev.uid,{from:ev.uid,text:'太好了，下次见！记得把练习视频发我～'});
+      });
+      sayUI('agent',`已经帮你和 ${u.name} 约好下一节正式课（${P.freq}，每次 ${dur} 分钟），TA 也确认了 👇`,ui=>eventCardUI(ui,ev2,{head:'📅 已同步到双方日程'}),{},{ms:1200});
+    } else if(next==='看看其他伙伴'){ say('agent','好的，我再帮你看看其他合适的伙伴～',{ms:600}); AGENT.match([ev.uid]); }
+    else say('agent','好的～需要的时候随时叫我 😊',{ms:600});
+  }
+};
 
-/* ============ 页面：用户主页 ============ */
-function renderUser(id){
-  const u = userById(id); if(!u) return `<div class="card empty" style="margin-top:24px"><b>🤷</b>没有找到这个用户</div>`;
-  const m = matchInfo(u);
-  const n = parseInt(id.slice(1));
-  const reviews = [0,1,2].map(k=>REVIEW_POOL[(n+k)%REVIEW_POOL.length]);
-  return `<div style="margin-top:20px"><a class="btn sm ghost" href="javascript:history.back()">← 返回</a></div>
-  <div class="card uhero">${avatar(u,72)}
-    <div style="flex:1;min-width:200px"><h1>${esc(u.name)} ${u.verified?'<span class="vf">✓ 技能认证</span>':''}</h1>
-      <p class="muted">${esc(u.city)} · <span class="star">★</span> ${u.rating.toFixed(1)} · ${u.count} 次交换 · ${esc(u.avail)} · ${u.modes.join('/')}</p>
-      <p style="margin-top:8px">${esc(u.bio)}</p></div>
-    <div style="text-align:center">${m.type!=='none'?`<div class="ring" style="--p:${m.score};margin:0 auto 8px"><span><div>${m.score}<small>匹配度</small></div></span></div>`:''}<button class="btn pri" onclick="openSwap('${u.id}')">发起交换</button></div>
-  </div>
-  <div class="pgrid">
-    <div class="card panel"><h3>技能</h3>
-      <div class="row" style="margin-bottom:12px"><span class="lbl teach">能教</span><div class="tags">${u.teach.map(t=>tag(t.skill,'teach',{level:t.level,hi:m.theyTeach.some(x=>x.skill===t.skill)})).join('')}</div></div>
-      <div class="row"><span class="lbl learn">想学</span><div class="tags">${u.learn.map(l=>tag(l.skill,'learn',{hi:state.me.teach.some(t=>skillMatch(t.skill,l.skill))})).join('')}</div></div>
-      ${m.type!=='none'?`<div class="note" style="margin-top:16px">${typeBadge(m.type)}　${m.type==='both'?`TA 能教你 ${m.theyTeach.map(x=>x.skill).join('、')}，你能教 TA ${m.iTeach.map(x=>x.skill).join('、')}，可以直接互换！`:m.type==='learn'?`TA 能教你 ${m.theyTeach.map(x=>x.skill).join('、')}，可以用时间币约课。`:`TA 想学 ${m.iTeach.map(x=>x.skill).join('、')}，你来教可以赚时间币。`}</div>`:''}
-    </div>
-    <div class="card panel"><h3>学员评价 <span class="small muted">${u.count} 条</span></h3>
-      ${reviews.map(r=>`<div class="review">${avatar({id:r[0],name:r[0]},32)}<div><b class="small">${r[0]}</b> <span class="star small">★★★★★</span> <span class="tag" style="font-size:11px;padding:1px 8px">${r[2]}</span><p class="small" style="margin-top:4px">${r[1]}</p></div></div>`).join('')}
-    </div>
-  </div>`;
+/* =====================================================================
+   渲染
+   ===================================================================== */
+function go(view,tid){
+  state.view=view; if(tid) state.active=tid;
+  if(view==='chat'){ const th=thread(state.active); if(th) th.unread=0; if(tid) state.mlist=false; }
+  save(); renderAll();
+}
+function renderAll(){
+  $('#app').classList.toggle('nolist', state.view!=='chat');
+  $('#app').classList.toggle('mlist', state.view==='chat' && state.mlist);
+  renderRail(); renderList(); renderMain();
+}
+function unreadTotal(){ return Object.values(state.threads).reduce((a,t)=>a+(t.unread||0),0); }
+function renderRail(){
+  const n=unreadTotal(); const up=state.events.filter(e=>e.status!=='done').length;
+  const P=state.profile||state.draft;
+  $('#rail').innerHTML=`<div class="logo" title="技能换换">⇄</div>
+    <button class="nb${state.view==='chat'?' on':''}" data-act="go" data-view="chat"><span class="ic">💬</span>对话${n?`<span class="dot">${n}</span>`:''}</button>
+    <button class="nb${state.view==='cal'?' on':''}" data-act="go" data-view="cal"><span class="ic">📅</span>日程${up?`<span class="dot" style="background:var(--pri)">${up}</span>`:''}</button>
+    <button class="nb${state.view==='me'?' on':''}" data-act="go" data-view="me"><span class="ic">👤</span>我的</button>
+    <div class="sp"></div>
+    <div class="coinv" data-act="go" data-view="me" title="时间币"><b>${state.credits}</b>时间币</div>
+    <span class="meav">${avatarHTML({id:'me',name:P.name||'我'},36)}</span>`;
+}
+function previewOf(th){
+  if(typingNow[th.id]) return typingNow[th.id]==='agent'&&th.id!=='agent'?'小换正在整理…':'正在输入…';
+  const m=th.msgs[th.msgs.length-1]; if(!m) return '';
+  const who=m.from==='me'?'我：':(m.from==='agent'&&th.id!=='agent'?'小换：':'');
+  return who+(m.text?m.text.replace(/\*\*/g,'').replace(/\n/g,' '):'[卡片]');
+}
+function renderList(){
+  if(state.view!=='chat'){ $('#list').innerHTML=''; return; }
+  const ids=Object.keys(state.threads).filter(id=>id!=='agent').sort((a,b)=>state.threads[b].last-state.threads[a].last);
+  const item=id=>{ const th=state.threads[id]; const isA=id==='agent'; const u=isA?{id:'agent',name:'小换'}:userById(id);
+    return `<div class="citem${state.active===id?' on':''}" data-act="thread" data-tid="${id}">${avatarHTML(u,44)}<div class="bd"><div class="nm"><span>${esc(u.name)}${isA?'<span class="pin">AI 顾问</span>':''}</span><small>${th.msgs.length?fmtAgo(th.last):''}</small></div><div class="pv"><span>${esc(previewOf(th))}</span>${th.unread?`<b class="ub">${th.unread}</b>`:''}</div></div></div>`; };
+  $('#list').innerHTML=`<div class="list-h"><h2>消息</h2></div><div class="citems">${item('agent')}${ids.map(item).join('')}${ids.length?'':'<div class="list-tip">匹配到伙伴后，点卡片上的「去对话」，私聊会出现在这里。</div>'}</div>`;
+}
+function renderMain(){
+  if(state.view==='cal') return renderCal();
+  if(state.view==='me') return renderMe();
+  renderChat();
+}
+function msgHTML(tid,m){
+  if(m.from==='sys') return `<div class="m sys"><span class="pill">${esc(m.text)}</span></div>`;
+  if(m.from==='me') return `<div class="m me"><div class="col"><div class="bub">${md(m.text)}</div></div></div>`;
+  const isA=m.from==='agent'; const u=isA?{id:'agent',name:'小换'}:userById(m.from);
+  const inPrivate=isA&&tid!=='agent';
+  return `<div class="m ${isA?'ai':'peer'}">${avatarHTML(u,36)}<div class="col">${inPrivate?'<div class="who"><b>✨ 小换</b> · AI 助手（双方可见）</div>':''}${m.text?`<div class="bub${inPrivate?' aiin':''}">${md(m.text)}</div>`:''}${m.sid?surfHTML(m.sid):''}</div></div>`;
+}
+function typingHTML(from){ const u=from==='agent'?{id:'agent',name:'小换'}:userById(from); return `<div class="m ai" id="typing">${avatarHTML(u,36)}<div class="col"><div class="bub typing"><i></i><i></i><i></i></div></div></div>`; }
+function renderTyping(tid){ const box=$('#msgs-inner'); if(!box) return; const old=$('#typing'); if(old) old.remove(); box.insertAdjacentHTML('beforeend',typingHTML(typingNow[tid])); scrollDown(); }
+function scrollDown(instant){ const el=$('#msgs'); if(!el) return; if(instant){ el.style.scrollBehavior='auto'; el.scrollTop=el.scrollHeight; el.style.scrollBehavior=''; } else el.scrollTop=el.scrollHeight; }
+function appendMsg(tid,m){
+  const box=$('#msgs-inner'); if(!box) return;
+  const t=$('#typing'); const html=msgHTML(tid,m);
+  if(t) t.insertAdjacentHTML('beforebegin',html); else box.insertAdjacentHTML('beforeend',html);
+  scrollDown(); updateSuggest();
+}
+function renderChat(){
+  const tid=state.threads[state.active]?state.active:'agent'; state.active=tid;
+  const th=thread(tid), isA=tid==='agent', u=isA?null:userById(tid);
+  const head=isA
+    ? `<button class="back" data-act="back" aria-label="返回">‹</button>${avatarHTML({id:'agent'},40)}<div style="min-width:0"><div class="t">小换 <span class="online"></span></div><div class="s">AI 技能交换顾问 · 建档、匹配、约课、提醒</div></div>`
+    : `<button class="back" data-act="back" aria-label="返回">‹</button>${avatarHTML(u,40)}<div style="min-width:0"><div class="t">${esc(u.name)}${u.verified?' <span style="color:#0b7dc1;font-size:12px">✓ 认证</span>':''}</div><div class="s">${esc(u.city)} · ★${u.rating.toFixed(1)} · 匹配度 ${th.m.score}% · ${{both:'技能互换',learn:'时间币学习',teach:'你来教'}[th.m.type]}</div></div><div class="r"><button class="hbtn ai" data-act="book" data-uid="${tid}">✨ <span class="lbl">小换整理约课</span></button></div>`;
+  $('#main').innerHTML=`<div class="chat-head">${head}</div>
+    <div class="msgs" id="msgs"><div class="msgs-inner" id="msgs-inner">${th.msgs.map(m=>msgHTML(tid,m)).join('')}${typingNow[tid]?typingHTML(typingNow[tid]):''}</div></div>
+    <div class="suggest" id="suggest"></div>
+    <div class="composer"><div class="box"><textarea id="input" rows="1" placeholder="${isA?'和小换说点什么…':'给 '+esc(u.name)+' 发消息…'}"></textarea><button class="send" data-act="send">发送</button></div></div>`;
+  updateSuggest(); scrollDown(true);
+}
+function suggestions(tid){
+  if(tid==='agent'){
+    if(state.onb==='teach') return ['我会 Python 和英语口语','我会弹吉他和唱歌','我擅长做饭和烘焙'];
+    if(state.onb==='learn') return ['想学吉他和摄影','想学日语','想学健身和瑜伽'];
+    if(state.onb==='done') return ['帮我重新匹配','我的课程安排','我还有多少时间币','修改我的档案'];
+    return [];
+  }
+  const th=thread(tid); if(!th||!state.profile) return [];
+  const x=th.m, P=state.profile, st=th.stage||0;
+  const goal=P.goal||(GOAL_HINT[x.learn]||'').replace('比如：','');
+  if(state.events.some(e=>e.uid===tid)) return ['好的，到时候见～','需要提前准备什么吗？','谢谢你！'];
+  if(st===0) return x.type==='both'?[`你好！我想学${x.learn}，可以用${x.teach}跟你换吗？`,`嗨～看到你也想学${x.teach}，我们互换吧！`]:x.type==='learn'?[`你好！想跟你学${x.learn}，可以用时间币约课吗？`,`你好，请问你一般怎么教${x.learn}？`]:[`你好！看到你想学${x.teach}，我可以教你～`,`Hi～我${x.teach}还不错，可以带你入门`];
+  if(st===1) return x.type==='teach'?['我会先了解你的基础，再从最实用的部分讲起','我习惯边做小项目边学']:[goal?`我现在${x.myLevel}，${goal}`:`我现在${x.myLevel}，想先入门试试`,'零基础，想先培养兴趣'];
+  if(st===2) return [`我${P.avail[0]}比较方便，线上就行`,'周末可以线下见面','我时间比较灵活，你定吧'];
+  if(st===3) return ['好呀，今天先试听一下！','周末那个时间可以','线上就好'];
+  return ['好的，谢谢！','到时候见～'];
+}
+function updateSuggest(){ const el=$('#suggest'); if(!el) return; el.innerHTML=suggestions(state.active).map(s=>`<button data-act="sug">${esc(s)}</button>`).join(''); }
+function send(text){
+  const inp=$('#input'); const v=(text??(inp?inp.value:'')).trim(); if(!v) return;
+  if(text==null&&inp){ inp.value=''; inp.style.height=''; }
+  const tid=state.active; me(tid,v);
+  if(tid==='agent') AGENT.onText(v); else PARTNER.onText(tid,v);
 }
 
-/* ============ 路由 ============ */
-const NAV = [['discover','🏠','发现'],['match','✨','匹配'],['swaps','📅','我的交换'],['profile','👤','我的档案']];
-function render(){
-  const h = location.hash.replace(/^#\/?/,'') || 'discover';
-  const [page,arg] = h.split('/');
-  const pending = state.swaps.filter(s=>s.status!=='done').length;
-  $('#nav').innerHTML = NAV.map(([k,ic,l])=>`<a href="#/${k}" class="${page===k?'on':''}"><span class="ic">${ic}</span>${l}${k==='swaps'&&pending?`<span class="dot">${pending}</span>`:''}</a>`).join('');
-  $('#coinNum').textContent = state.credits;
-  $('#meChip').innerHTML = avatar(state.me,32)+`<span class="nm small">${esc(state.me.name)}</span>`;
-  const app = $('#app');
-  const focusQ = document.activeElement && document.activeElement.id==='q';
-  if(page==='match') app.innerHTML = renderMatch();
-  else if(page==='swaps') app.innerHTML = renderSwaps();
-  else if(page==='profile') app.innerHTML = renderProfile();
-  else if(page==='user') app.innerHTML = renderUser(arg);
-  else { app.innerHTML = renderDiscover(); renderGrid(); if(focusQ){ const q=$('#q'); q.focus(); q.setSelectionRange(q.value.length,q.value.length); } }
-  app.insertAdjacentHTML('beforeend','<footer>技能换换 SkillSwap · 产品雏形 · 用你会的，换你想学的</footer>');
+/* ---- 日程 ---- */
+function stHTML(ev){ const s=statusOf(ev); return `<span class="st ${s}" data-st="${ev.id}">${{up:'即将开始',live:'进行中',done:'已完成'}[s]}</span>`; }
+function renderCal(){
+  const evs=state.events.slice().sort((a,b)=>a.start-b.start);
+  const days=[...Array(14)].map((_,i)=>{ const d=new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()+i); return d; });
+  const sel=state.calDay;
+  const inDay=(e,d)=>{ const s=new Date(e.start); s.setHours(0,0,0,0); return s.getTime()===d.getTime(); };
+  const shown=sel?evs.filter(e=>inDay(e,new Date(sel))):evs;
+  const up=shown.filter(e=>e.status!=='done'), done=shown.filter(e=>e.status==='done').reverse();
+  const card=ev=>{ const u=userById(ev.uid); const s=statusOf(ev);
+    return `<div class="ev"><div class="tm"><b>${fmtHM(ev.start)}</b><small>${fmtDay(ev.start)}</small><br><small>${ev.dur} 分钟</small></div>
+      <div style="min-width:0"><div class="ti">${avatarHTML(u,24)} ${esc(ev.title)} · ${esc(u.name)} ${stHTML(ev)}</div>
+      <div class="meta"><span>${ev.mode==='线上'?`🔗 <a href="${esc(roomURL(ev))}">${esc(roomURL(ev))}</a>`:'📍 '+esc(ev.place)}</span><span>${esc(payText(ev))}${ev.trial?' · 首课试听免费':''}</span><span class="sync">✓ 已同步到你和 ${esc(u.name)} 的日程 · 开课前小换会提醒</span>${ev.rating?`<span>你的评价：${'⭐'.repeat(ev.rating)}</span>`:''}</div>
+      <div class="acts">${s!=='done'?`<button class="btn pri" data-act="join" data-eid="${ev.id}">${ev.mode==='线上'?'进入课堂':'到达签到'}</button><button class="btn" data-act="ics" data-eid="${ev.id}">加入手机日历</button>`:''}<button class="btn" data-act="thread" data-tid="${ev.uid}">💬 和 ${esc(u.name)} 聊天</button></div></div></div>`; };
+  $('#main').innerHTML=`<div class="page"><div class="page-in">
+    <h1>日程</h1><div class="sub">小换帮你约好的课都在这里，双方日程自动同步</div>
+    <div class="days"><button class="day${!sel?' on':''}" data-act="calday" data-d="" style="width:64px"><small>全部</small><b>${evs.length}</b></button>${days.map((d,i)=>{ const has=evs.some(e=>inDay(e,d)); return `<button class="day${i===0?' today':''}${sel===d.getTime()?' on':''}" data-act="calday" data-d="${d.getTime()}"><small>${i===0?'今天':'周'+WEEK[d.getDay()]}</small><b>${d.getDate()}</b>${has?'<i></i>':''}</button>`; }).join('')}</div>
+    ${!evs.length?'<div class="empty"><b>📅</b>还没有课程安排<br><span style="font-size:13px">和小换聊聊，找到伙伴、聊好时间后，小换会把课程同步到这里</span><div style="margin-top:14px"><button class="btn pri" data-act="thread" data-tid="agent">去找小换</button></div></div>':''}
+    ${up.length?`<div class="sech">待上课 · ${up.length}</div>${up.map(card).join('')}`:''}
+    ${done.length?`<div class="sech">已完成 · ${done.length}</div>${done.map(card).join('')}`:''}
+    ${evs.length&&!shown.length?'<div class="empty"><b>🌤</b>这天没有课程</div>':''}
+  </div></div>`;
 }
-window.addEventListener('hashchange',()=>{ render(); window.scrollTo(0,0); });
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
-state.swaps.filter(s=>s.status==='pending').forEach(s=>scheduleAccept(s.id));
-render();
+
+/* ---- 我的 ---- */
+function renderMe(){
+  const P=state.profile;
+  if(!P){ $('#main').innerHTML='<div class="page"><div class="page-in"><h1>我的</h1><div class="sub">技能档案</div><div class="empty"><b>🪪</b>还没有技能档案<br><span style="font-size:13px">和小换聊 1 分钟就能生成</span><div style="margin-top:14px"><button class="btn pri" data-act="thread" data-tid="agent">去和小换聊聊</button></div></div></div></div>'; return; }
+  const done=state.events.filter(e=>e.status==='done');
+  const hrs=Math.round(done.reduce((a,e)=>a+e.dur,0)/60*10)/10;
+  $('#main').innerHTML=`<div class="page"><div class="page-in">
+    <h1>我的</h1><div class="sub">技能档案由小换根据你们的对话生成</div>
+    <div class="grid2">
+      <div class="card">
+        <div style="display:flex;gap:14px;align-items:center;margin-bottom:14px">${avatarHTML({id:'me',name:P.name},60)}<div><div style="font-size:20px;font-weight:700">${esc(P.name)}</div><div class="kv">${esc(P.city)} · ${done.length?`已上 ${done.length} 节课`:'新加入'}</div></div></div>
+        ${P.exp?`<div class="kv">“${esc(P.exp)}”</div>`:''}
+        <div class="kv" style="margin-top:12px">📤 我能教</div><div class="tags">${P.teach.map(t=>tagHTML(t.skill,'teach',t.level)).join('')}</div>
+        <div class="kv">📥 我想学</div><div class="tags">${P.learn.map(l=>tagHTML(l.skill,'learn',l.level)).join('')}</div>
+        ${P.goal?`<div class="kv">🎯 ${esc(P.goal)}</div>`:''}
+        <div class="tags" style="margin-top:12px">${[P.mode==='都可以'?'💻📍 线上 / 线下':P.mode==='线上'?'💻 线上':'📍 线下','⏱ '+P.dur+' / 次','🔁 '+P.freq,...P.avail.map(a=>'📅 '+a)].map(x=>`<span class="a2-badge soft">${esc(x)}</span>`).join('')}</div>
+        <button class="btn ai" data-act="edit" style="margin-top:6px">✨ 让小换帮我修改档案</button>
+      </div>
+      <div class="card">
+        <h3>⏱ 时间币</h3>
+        <div class="stats"><div class="stat"><b>${state.credits}</b><span>余额</span></div><div class="stat"><b>${done.length}</b><span>已上课程</span></div><div class="stat"><b>${hrs}</b><span>累计小时</span></div></div>
+        <div class="rules"><div>· 教别人 1 小时 +1 币，向别人学 1 小时 −1 币</div><div>· 技能互换的课时互相抵扣，不花币</div><div>· 每段新关系首课 15 分钟试听免费</div></div>
+        <div class="ledger">${state.ledger.map(l=>`<div><span>${esc(l.t)}</span><span class="${l.d>0?'plus':l.d<0?'minus':'zero'}">${l.d>0?'+':''}${l.d}</span></div>`).join('')}</div>
+      </div>
+    </div>
+    <div style="margin-top:20px;text-align:center"><button class="btn" data-act="logout" style="color:var(--muted)">退出登录</button></div>
+  </div></div>`;
+}
+
+/* =====================================================================
+   事件
+   ===================================================================== */
+document.addEventListener('click',e=>{
+  const b2=e.target.closest('[data-a2btn]'); if(b2){ onA2Button(b2.closest('.a2ui').dataset.sid,b2.dataset.a2btn); return; }
+  const chip=e.target.closest('.a2-chip'); if(chip){
+    const sid=chip.closest('.a2ui').dataset.sid, s=state.surfaces[sid]; if(!s||s.locked) return;
+    const cid=chip.closest('[data-a2mc]').dataset.a2mc, p=s.components[cid].MultipleChoice, v=chip.dataset.v;
+    let sel=(getPath(s.data,p.selections.path)||[]).slice();
+    if(p.maxAllowedSelections===1) sel=[v]; else if(sel.includes(v)) sel=sel.filter(x=>x!==v); else { if(sel.length>=p.maxAllowedSelections){ toast(`最多选 ${p.maxAllowedSelections} 个`); return; } sel.push(v); }
+    setPath(s.data,p.selections.path,sel); save();
+    chip.parentElement.querySelectorAll('.a2-chip').forEach(c=>c.classList.toggle('on',sel.includes(c.dataset.v)));
+    return;
+  }
+  const star=e.target.closest('[data-a2rate] button'); if(star){
+    const sid=star.closest('.a2ui').dataset.sid, s=state.surfaces[sid]; if(!s||s.locked) return;
+    const p=s.components[star.parentElement.dataset.a2rate].Rating, n=+star.dataset.n;
+    setPath(s.data,p.value.path,n); save();
+    star.parentElement.querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.n<=n));
+    return;
+  }
+  const a=e.target.closest('[data-act]');
+  if(!a){ const link=e.target.closest('a[href*="#room="]'); if(link){ e.preventDefault(); openRoomByHash(link.getAttribute('href')); } return; }
+  const act=a.dataset.act;
+  if(act==='go') go(a.dataset.view);
+  else if(act==='thread') go('chat',a.dataset.tid);
+  else if(act==='send') send();
+  else if(act==='sug') send(a.textContent);
+  else if(act==='book'){ if(thread(a.dataset.uid)) BOOK.card(a.dataset.uid,true); }
+  else if(act==='join') joinClass(a.dataset.eid);
+  else if(act==='ics') downloadICS(a.dataset.eid);
+  else if(act==='calday'){ state.calDay=a.dataset.d?+a.dataset.d:null; renderCal(); }
+  else if(act==='back'){ state.mlist=true; renderAll(); }
+  else if(act==='bclose') $('#banner').classList.remove('show');
+  else if(act==='edit'){ go('chat','agent'); say('agent','好的，我们重新过一遍，之前填的我都帮你保留了 ✍️',{ms:500}); AGENT.askTeach(); }
+  else if(act==='logout'){ if(confirm('确定退出登录吗？本设备上的对话和日程将被清除。')){ try{localStorage.removeItem(KEY);}catch(_){} location.reload(); } }
+  else if(act==='mic'){ ROOM.mic=!ROOM.mic; a.classList.toggle('off',!ROOM.mic); a.textContent=ROOM.mic?'🎤 静音':'🔇 已静音'; }
+  else if(act==='cam'){ ROOM.cam=!ROOM.cam; a.classList.toggle('off',!ROOM.cam); a.textContent=ROOM.cam?'📷 关摄像头':'📷 已关闭'; const t=$('#mytile'); if(t) t.classList.toggle('off',!ROOM.cam); }
+  else if(act==='share') toast('屏幕共享已开启');
+  else if(act==='endClass') endClass();
+});
+document.addEventListener('input',e=>{
+  const inp=e.target.closest('[data-a2bind]'); if(inp){ const s=state.surfaces[inp.closest('.a2ui').dataset.sid]; if(s&&!s.locked){ setPath(s.data,inp.dataset.a2bind,inp.value); save(); } return; }
+  if(e.target.id==='input'){ const t=e.target; t.style.height='auto'; t.style.height=Math.min(140,t.scrollHeight)+'px'; }
+});
+document.addEventListener('keydown',e=>{
+  if(e.target.id==='input' && e.key==='Enter' && !e.shiftKey && !e.isComposing && e.keyCode!==229){ e.preventDefault(); send(); }
+  else if(e.target.classList && e.target.classList.contains('a2-input') && e.key==='Enter' && !e.isComposing && e.keyCode!==229){ const btn=e.target.closest('.a2ui').querySelector('.a2-btn.pri'); if(btn) btn.click(); }
+});
+function openRoomByHash(h){ const code=(String(h).split('#room=')[1]||'').trim(); const ev=state.events.find(e=>e.code===code); if(ev) joinClass(ev.id); else toast('课堂链接已失效或不属于当前账号'); }
+window.addEventListener('hashchange',()=>{ if(location.hash.startsWith('#room=')){ const h=location.hash; history.replaceState(null,'',location.pathname+location.search); openRoomByHash(h); } });
+window.addEventListener('resize',()=>{ $('#app').classList.toggle('mlist', state.view==='chat'&&state.mlist); });
+
+/* =====================================================================
+   启动
+   ===================================================================== */
+if(/[?&]a2ui\b/.test(location.search)) $('#insp').classList.add('show');
+window.A2UI = {log:A2UI_LOG, surfaces:()=>state.surfaces};
+state.mlist=false; state.view='chat';
+renderAll();
+if(!state.started) AGENT.start(); else AGENT.resume();
+if(location.hash.startsWith('#room=')){ const h=location.hash; history.replaceState(null,'',location.pathname+location.search); setTimeout(()=>openRoomByHash(h),300); }
+setInterval(tick,2000); tick();
 </script>
 </body>
 </html>
