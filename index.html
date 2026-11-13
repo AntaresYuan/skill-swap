@@ -5,291 +5,381 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
 <title>技能换换 · AI 技能交换</title>
 <meta name="description" content="用你会的，换你想学的。AI 顾问小换帮你建立技能档案、匹配交换伙伴、约课并提醒上课。">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%235b5bd6'/><stop offset='1' stop-color='%23d65b9a'/></linearGradient></defs><rect width='64' height='64' rx='16' fill='url(%23g)'/><path d='M18 26h22l-6-6M46 38H24l6 6' stroke='white' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f0f11" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><radialGradient id='a' cx='.3' cy='.3' r='.9'><stop offset='0' stop-color='%23fff' stop-opacity='.9'/><stop offset='.35' stop-color='%23b18cff'/><stop offset='.7' stop-color='%237c5cff'/><stop offset='1' stop-color='%23ff7ab6'/></radialGradient></defs><circle cx='32' cy='32' r='28' fill='url(%23a)'/></svg>">
 <style>
 :root{
-  --bg:#f4f5f9;--panel:#fff;--text:#1d2130;--muted:#6b7280;--line:#e6e8ef;--soft:#f1f2f7;
-  --pri:#5b5bd6;--pri-d:#4848c2;--pri-50:#eef0ff;
-  --teach:#0e9467;--teach-50:#e6f6ef;--learn:#e2570c;--learn-50:#fff0e6;
-  --gold:#f2a516;--red:#e5484d;
-  --ai:linear-gradient(135deg,#5b5bd6 0%,#9b5bd6 55%,#d65b9a 100%);
-  --shadow:0 1px 2px rgba(16,24,40,.04),0 4px 14px rgba(16,24,40,.06);
+  --bg:#ffffff;--side:#f8f8f9;--panel:#ffffff;--text:#18181b;--text2:#3f3f46;--muted:#71717a;--faint:#a1a1aa;
+  --line:#e7e7ea;--line2:#f0f0f2;--soft:#f4f4f5;--hover:#efeff1;
+  --primary:#18181b;--on-primary:#ffffff;
+  --accent:#6d5bf6;--accent-soft:#f3f1ff;--accent-line:#e2dcff;
+  --teach:#0f9f6e;--teach-soft:#e9f7f1;--learn:#ea6a12;--learn-soft:#fff2e8;
+  --gold:#f5a524;--red:#ef4444;--green:#22c55e;
+  --brand:linear-gradient(135deg,#7c5cff 0%,#b65cff 50%,#ff7ab6 100%);
+  --shadow-xs:0 1px 2px rgba(24,24,27,.05);
+  --shadow-sm:0 1px 2px rgba(24,24,27,.04),0 2px 8px rgba(24,24,27,.05);
+  --shadow-md:0 4px 12px rgba(24,24,27,.06),0 12px 32px rgba(24,24,27,.08);
+  --r:14px;
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#111219;--panel:#1a1c25;--text:#e9eaf0;--muted:#9aa0ae;--line:#2a2d3a;--soft:#232634;
-  --pri:#7c7cf0;--pri-d:#9393ff;--pri-50:#262850;--teach:#34c08f;--teach-50:#15372b;--learn:#ff8a4c;--learn-50:#3b2415;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  --bg:#0f0f11;--side:#141416;--panel:#18181b;--text:#ededef;--text2:#d4d4d8;--muted:#a1a1aa;--faint:#71717a;
+  --line:#27272a;--line2:#202023;--soft:#1f1f23;--hover:#232327;
+  --primary:#fafafa;--on-primary:#18181b;
+  --accent:#9d8cff;--accent-soft:#1e1a33;--accent-line:#352d5c;
+  --teach:#34d399;--teach-soft:#10261e;--learn:#fb923c;--learn-soft:#2b1a0e;
+  --shadow-xs:none;--shadow-sm:0 1px 2px rgba(0,0,0,.4);--shadow-md:0 8px 30px rgba(0,0,0,.45);
 }}
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
-button,input,textarea,select{font:inherit;color:inherit}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.65 -apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;letter-spacing:.01em}
+button,input,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 button{cursor:pointer}
-a{color:var(--pri)}
+a{color:inherit}
+svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
+svg.i.fill{fill:currentColor;stroke:none}
 
-/* ---------- shell ---------- */
-.app{display:grid;grid-template-columns:76px 300px 1fr;height:100vh;height:100dvh}
-.app.nolist{grid-template-columns:76px 1fr}
-.app.nolist .list{display:none}
-.rail{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;padding:16px 0 14px;gap:6px}
-.logo{width:42px;height:42px;border-radius:13px;background:var(--ai);color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px;margin-bottom:14px}
-.rail .nb{width:62px;border:0;background:none;border-radius:12px;padding:8px 0 6px;display:flex;flex-direction:column;align-items:center;gap:1px;font-size:12px;color:var(--muted);position:relative}
-.rail .nb .ic{font-size:21px;line-height:1.2}
-.rail .nb:hover{background:var(--soft)}
-.rail .nb.on{background:var(--pri-50);color:var(--pri);font-weight:600}
-.rail .sp{flex:1}
-.dot{position:absolute;top:3px;right:9px;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;font-weight:600;display:grid;place-items:center;line-height:1}
-.coinv{display:flex;flex-direction:column;align-items:center;font-size:11px;color:#a15c00;background:#fff6e0;border:1px solid #fde3ad;border-radius:12px;padding:6px 8px;margin-bottom:8px;line-height:1.3;cursor:pointer}
-.coinv b{font-size:16px}
-@media (prefers-color-scheme:dark){.coinv{background:#3a2c10;color:#ffc65c;border-color:#5a4417}}
+/* ---------- orb (小换) ---------- */
+.orb{display:inline-block;flex:none;border-radius:50%;position:relative;background:
+  radial-gradient(circle at 32% 28%,rgba(255,255,255,.95) 0,rgba(255,255,255,0) 32%),
+  conic-gradient(from 210deg,#7c5cff,#b65cff,#ff7ab6,#ffb36b,#7c5cff);box-shadow:inset 0 -2px 6px rgba(60,20,140,.25)}
+.orb::after{content:'';position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 70% 80%,rgba(124,92,255,.5),transparent 60%)}
+.orb.spin{animation:orbspin 1.6s linear infinite}
+@keyframes orbspin{to{transform:rotate(360deg)}}
+.orb.breathe{animation:breathe 3.2s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.05);filter:saturate(1.25) brightness(1.05)}}
 
-.list{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0;height:100vh;height:100dvh}
-.list-h{padding:20px 18px 12px;display:flex;align-items:center;justify-content:space-between}
-.list-h h2{margin:0;font-size:19px}
-.citems{overflow-y:auto;flex:1;padding:0 8px 12px}
-.citem{display:flex;gap:12px;padding:11px 10px;border-radius:12px;cursor:pointer;align-items:center}
-.citem:hover{background:var(--soft)}
-.citem.on{background:var(--pri-50)}
-.citem .bd{flex:1;min-width:0}
-.citem .nm{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-weight:600;font-size:14px}
-.citem .nm small{font-weight:400;color:var(--muted);font-size:11px;white-space:nowrap}
-.citem .pv{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;display:flex;justify-content:space-between;gap:8px}
-.citem .pv span{overflow:hidden;text-overflow:ellipsis}
-.citem .ub{flex:none;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--red);color:#fff;font-size:11px;display:grid;place-items:center}
-.pin{font-size:10px;color:var(--pri);background:var(--pri-50);padding:0 6px;border-radius:4px;margin-left:6px;font-weight:600}
-.list-tip{margin:8px 10px;padding:12px;border-radius:12px;background:var(--soft);font-size:12px;color:var(--muted)}
-
-.main{min-width:0;display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
-.av{display:inline-grid;place-items:center;border-radius:50%;color:#fff;font-weight:600;flex:none;line-height:1}
-.bot{background:var(--ai)!important}
+/* ---------- layout ---------- */
+.app{display:grid;grid-template-columns:272px 1fr;height:100vh;height:100dvh}
+.side{background:var(--side);border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:0;height:100vh;height:100dvh}
+.brand{display:flex;align-items:center;gap:10px;padding:18px 18px 14px;font-weight:650;font-size:16px;letter-spacing:.02em}
+.brand small{font-weight:500;font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:0 6px;margin-left:2px}
+.nav{padding:4px 10px;display:flex;flex-direction:column;gap:2px}
+.nv{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;border:0;background:none;color:var(--text2);font-size:14px;text-align:left;width:100%}
+.nv:hover{background:var(--hover)}
+.nv.on{background:var(--panel);color:var(--text);box-shadow:var(--shadow-xs);outline:1px solid var(--line)}
+.nv .cnt{margin-left:auto;font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.nv .cnt.hot{background:var(--red);color:#fff;border-radius:9px;padding:0 6px;min-width:18px;text-align:center;line-height:18px}
+.sec-l{font-size:12px;color:var(--faint);padding:18px 20px 6px;font-weight:500}
+.threads{flex:1;overflow-y:auto;padding:0 10px 10px}
+.th{display:flex;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;cursor:pointer}
+.th:hover{background:var(--hover)}
+.th.on{background:var(--panel);box-shadow:var(--shadow-xs);outline:1px solid var(--line)}
+.th .bd{flex:1;min-width:0}
+.th .nm{font-size:14px;font-weight:550;display:flex;justify-content:space-between;gap:6px}
+.th .nm small{font-weight:400;font-size:11px;color:var(--faint);white-space:nowrap}
+.th .pv{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.th .ud{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none}
+.side-tip{margin:4px 10px;padding:12px 12px;border:1px dashed var(--line);border-radius:12px;font-size:12.5px;color:var(--muted);line-height:1.6}
+.acct{border-top:1px solid var(--line);padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.acct:hover{background:var(--hover)}
+.acct .nm{font-size:14px;font-weight:550;line-height:1.3}
+.acct .sub{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.coin{display:inline-grid;place-items:center;width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,#ffd36b,#f5a524);color:#7a4a00;font-size:9px;font-weight:800;box-shadow:inset 0 -1px 0 rgba(0,0,0,.12)}
+.main{min-width:0;display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:var(--bg);position:relative}
+.scrim{display:none}
+.av{display:inline-grid;place-items:center;border-radius:50%;font-weight:600;flex:none;line-height:1;letter-spacing:0}
+.vf{color:#3b82f6;display:inline-flex}
+.vf svg{width:15px;height:15px}
 
 /* ---------- chat ---------- */
-.chat-head{height:66px;flex:none;display:flex;align-items:center;gap:12px;padding:0 20px;border-bottom:1px solid var(--line);background:var(--panel)}
-.chat-head .t{font-weight:600;display:flex;align-items:center;gap:6px}
-.chat-head .s{font-size:12px;color:var(--muted)}
-.chat-head .r{margin-left:auto;display:flex;gap:8px}
-.online{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block}
-.back{display:none;border:0;background:none;font-size:28px;line-height:1;padding:0 4px 4px 0;color:var(--text)}
-.hbtn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 12px;font-size:13px;font-weight:500;white-space:nowrap}
-.hbtn.ai{border:0;background:var(--ai);color:#fff}
-.hbtn.ai:hover{filter:brightness(1.08)}
-.msgs{flex:1;overflow-y:auto;padding:22px 20px 10px;scroll-behavior:smooth}
-.msgs-inner{max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
-.m{display:flex;gap:10px;align-items:flex-start;animation:pop .22s ease-out}
-@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.m.me{flex-direction:row-reverse}
-.m .col{display:flex;flex-direction:column;gap:8px;min-width:0;flex:1;align-items:flex-start}
-.m.me .col{align-items:flex-end}
-.bub{padding:10px 14px;border-radius:16px;background:var(--panel);border:1px solid var(--line);max-width:min(600px,86%);word-break:break-word;box-shadow:var(--shadow)}
-.m.ai .bub,.m.peer .bub{border-top-left-radius:6px}
-.m.me .bub{background:var(--pri);color:#fff;border-color:transparent;border-top-right-radius:6px;box-shadow:none}
-.bub.aiin{background:linear-gradient(var(--panel),var(--panel)) padding-box,var(--ai) border-box;border:1.5px solid transparent}
-.who{font-size:12px;color:var(--muted);margin-bottom:-4px}
-.who b{background:var(--ai);-webkit-background-clip:text;background-clip:text;color:transparent}
-.m.sys{justify-content:center}
-.m.sys .pill{font-size:12px;color:var(--muted);background:var(--soft);padding:4px 12px;border-radius:999px;text-align:center}
-.typing{display:flex;gap:4px;padding:14px 16px}
-.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);opacity:.4;animation:blink 1.2s infinite}
-.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
-@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
-.suggest{display:flex;gap:8px;overflow-x:auto;padding:8px 20px 0;max-width:840px;margin:0 auto;width:100%;scrollbar-width:none}
-.suggest:empty{display:none}
-.suggest button{flex:none;border:1px solid color-mix(in srgb,var(--pri) 45%,transparent);color:var(--pri);background:var(--panel);border-radius:999px;padding:6px 13px;font-size:13px;white-space:nowrap}
-.suggest button:hover{background:var(--pri-50)}
-.composer{padding:10px 20px 16px;flex:none}
-.composer .box{max-width:800px;margin:0 auto;display:flex;gap:8px;align-items:flex-end;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:8px 8px 8px 16px;box-shadow:var(--shadow)}
-.composer .box:focus-within{border-color:var(--pri)}
-.composer textarea{flex:1;border:0;outline:0;resize:none;background:transparent;max-height:140px;padding:7px 0;line-height:1.5}
-.send{border:0;background:var(--pri);color:#fff;border-radius:11px;padding:8px 16px;font-weight:600}
-.send:hover{background:var(--pri-d)}
-.bub a{color:inherit;text-decoration:underline;word-break:break-all}
+.head{height:58px;flex:none;display:flex;align-items:center;gap:12px;padding:0 20px;border-bottom:1px solid var(--line2);background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:saturate(1.4) blur(12px);position:relative;z-index:2}
+.head .t{font-weight:600;font-size:15px;display:flex;align-items:center;gap:6px;line-height:1.3}
+.head .s{font-size:12px;color:var(--muted);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.head .r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.menu{display:none;border:0;background:none;padding:6px;margin-left:-6px;border-radius:8px;color:var(--text)}
+.menu:hover{background:var(--hover)}
+.hbtn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px 6px 11px;font-size:13px;font-weight:550;white-space:nowrap;box-shadow:var(--shadow-xs)}
+.hbtn:hover{background:var(--hover)}
+.hbtn .spark{color:var(--accent)}
+.msgs{flex:1;overflow-y:auto;scroll-behavior:smooth}
+.stream-col{max-width:760px;margin:0 auto;padding:28px 24px 12px;display:flex;flex-direction:column;gap:22px}
+.hero{text-align:center;padding:26px 0 6px}
+.hero .orb{width:56px;height:56px}
+.hero h1{font-size:26px;font-weight:650;letter-spacing:.02em;margin:18px 0 6px}
+.hero p{color:var(--muted);margin:0 auto;max-width:460px;font-size:14.5px}
+.pills{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:16px}
+.pills span{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--panel)}
+.pills svg{width:14px;height:14px;color:var(--accent)}
+.m{display:flex;gap:12px;align-items:flex-start;animation:rise .28s ease-out}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.m.me{justify-content:flex-end}
+.m .body{min-width:0;flex:1;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.m.ai .orb{width:26px;height:26px;margin-top:1px}
+.ai-text{font-size:15px;line-height:1.75;color:var(--text);max-width:100%;word-break:break-word}
+.ai-text b{font-weight:620}
+.ai-text a{color:var(--accent);text-decoration:none;word-break:break-all}
+.stream.typing{white-space:pre-wrap}
+.stream.typing::after{content:'';display:inline-block;width:7px;height:15px;margin-left:2px;vertical-align:-2px;border-radius:2px;background:var(--text);animation:caret .9s steps(1) infinite}
+@keyframes caret{50%{opacity:0}}
+.bubble{padding:9px 15px;border-radius:18px;max-width:min(560px,82%);word-break:break-word;font-size:15px;line-height:1.6}
+.m.me .bubble{background:var(--soft);border-bottom-right-radius:6px}
+.m.peer .bubble{background:var(--panel);border:1px solid var(--line);border-bottom-left-radius:6px;box-shadow:var(--shadow-xs)}
+.m.peer .av{margin-top:2px}
+.ai-in{display:flex;flex-direction:column;gap:6px;max-width:100%}
+.ai-in .lab{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.ai-in .lab b{font-weight:600;background:var(--brand);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ai-in .box{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:14px;padding:10px 14px;font-size:14.5px;line-height:1.7}
+.sys{display:flex;align-items:center;gap:12px;color:var(--faint);font-size:12px}
+.sys::before,.sys::after{content:'';flex:1;height:1px;background:var(--line)}
+.thinking{display:flex;align-items:center;gap:10px;height:26px}
+.shimmer{font-size:14px;font-weight:500;background:linear-gradient(90deg,var(--faint) 0%,var(--faint) 40%,var(--text) 50%,var(--faint) 60%,var(--faint) 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shim 1.6s linear infinite}
+@keyframes shim{from{background-position:100% 0}to{background-position:-100% 0}}
+.dots{display:inline-flex;gap:4px;padding:6px 2px}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--faint);animation:blink 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.18s}.dots i:nth-child(3){animation-delay:.36s}
+@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
 
-/* ---------- A2UI renderer ---------- */
-.a2ui{width:100%;max-width:640px}
-.a2ui:has(.a2-list){max-width:820px}
-.a2-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);min-width:0}
-.a2-col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.dock{flex:none;padding:0 24px 10px;background:linear-gradient(to bottom,transparent,var(--bg) 30%)}
+.dock-in{max-width:760px;margin:0 auto}
+.suggest{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:none}
+.suggest:empty{display:none}
+.suggest button{flex:none;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);color:var(--text2);border-radius:999px;padding:6px 13px;font-size:13px;white-space:nowrap;box-shadow:var(--shadow-xs);transition:.15s}
+.suggest button:hover{border-color:var(--faint);color:var(--text)}
+.suggest button svg{width:13px;height:13px;color:var(--faint)}
+.composer{border:1px solid var(--line);background:var(--panel);border-radius:22px;box-shadow:var(--shadow-md);padding:12px 12px 10px 18px;transition:border-color .15s}
+.composer:focus-within{border-color:var(--faint)}
+.composer textarea{display:block;width:100%;border:0;outline:0;resize:none;background:transparent;max-height:160px;min-height:26px;line-height:1.6;font-size:15px;padding:2px 0}
+.composer textarea::placeholder{color:var(--faint)}
+.c-row{display:flex;align-items:center;gap:4px;margin-top:8px}
+.ib{border:0;background:none;color:var(--muted);width:32px;height:32px;border-radius:9px;display:grid;place-items:center}
+.ib:hover{background:var(--hover);color:var(--text)}
+.c-row .grow{flex:1}
+.c-hint{font-size:12px;color:var(--faint);margin-right:8px}
+.send{width:34px;height:34px;border-radius:50%;border:0;background:var(--primary);color:var(--on-primary);display:grid;place-items:center;transition:.15s}
+.send:disabled{background:var(--line);color:var(--faint);cursor:default}
+.send svg{width:17px;height:17px;stroke-width:2.2}
+.disclaim{text-align:center;font-size:11.5px;color:var(--faint);padding:8px 0 2px}
+
+/* ---------- A2UI ---------- */
+.a2ui{width:100%;max-width:620px;transition:opacity .35s,transform .35s}
+.a2ui.pre{opacity:0;transform:translateY(6px)}
+.a2ui:has(.a2-list){max-width:760px}
+.a2-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow-sm);min-width:0}
+.a2-col{display:flex;flex-direction:column;gap:12px;min-width:0}
 .a2-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
 .a2-row.between{justify-content:space-between;flex-wrap:nowrap}
 .a2-row .a2-row{flex-wrap:nowrap}
-.a2-row .a2-col{gap:0}
-.a2-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;width:100%}
+.a2-row>.a2-col{gap:2px}
+.a2-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;width:100%}
 .a2-list.v{grid-template-columns:1fr}
-.a2-list>.a2-card{display:flex;flex-direction:column}
-.a2-list>.a2-card>.a2-col{flex:1}
+.a2-list>.a2-card{display:flex;flex-direction:column;padding:0;overflow:hidden}
+.a2-list>.a2-card>.a2-col{flex:1;padding:0 18px 18px;gap:12px}
 .a2-list>.a2-card>.a2-col>.a2-btn:last-child{margin-top:auto}
-.a2-hr{border:0;border-top:1px dashed var(--line);margin:2px 0;width:100%}
-.t-h3{font-size:18px;font-weight:700;line-height:1.35}
-.t-h4{font-size:16px;font-weight:700;line-height:1.35}
-.t-h5{font-size:14.5px;font-weight:600;line-height:1.35}
-.t-caption{font-size:12.5px;color:var(--muted);line-height:1.55}
-.t-body{font-size:14px;line-height:1.6}
-.a2-chips{display:flex;flex-wrap:wrap;gap:7px}
-.a2-chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 13px;font-size:13.5px;transition:.12s}
-.a2-chip:hover{border-color:var(--pri);color:var(--pri)}
-.a2-chip.on{background:var(--pri);border-color:var(--pri);color:#fff}
-.a2-field{display:grid;gap:5px;width:100%}
-.a2-field>span{font-size:12.5px;color:var(--muted)}
-.a2-input{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--panel);outline:0;width:100%}
-.a2-input:focus{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-50)}
-.a2-btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 16px;font-weight:600;font-size:14px;transition:.12s}
-.a2-btn:hover{border-color:var(--pri);color:var(--pri)}
-.a2-btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
-.a2-btn.pri:hover{background:var(--pri-d);color:#fff}
+.a2-hr{border:0;border-top:1px solid var(--line2);margin:2px 0;width:100%}
+.t-h3{font-size:18px;font-weight:650;line-height:1.35}
+.t-h4{font-size:16px;font-weight:650;line-height:1.4}
+.t-h5{font-size:13.5px;font-weight:600;line-height:1.4;color:var(--text)}
+.t-caption{font-size:13px;color:var(--muted);line-height:1.6}
+.t-body{font-size:14px;line-height:1.65;color:var(--text2)}
+.t-body b,.t-caption b{color:var(--text);font-weight:600}
+.lbl{font-size:12px;color:var(--faint);min-width:52px}
+.a2-chips{display:flex;flex-wrap:wrap;gap:8px}
+.a2-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);color:var(--text2);border-radius:999px;padding:6px 14px;font-size:13.5px;transition:.12s;box-shadow:var(--shadow-xs)}
+.a2-chip:hover{border-color:var(--faint);color:var(--text)}
+.a2-chip svg{width:14px;height:14px;stroke-width:2.4;display:none}
+.a2-chip.on{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.a2-chip.on svg{display:inline}
+.a2-field{display:grid;gap:6px;width:100%}
+.a2-field>span{font-size:13px;color:var(--muted)}
+.a2-input{border:1px solid var(--line);border-radius:10px;padding:9px 12px;background:var(--panel);outline:0;width:100%;transition:.12s}
+.a2-input::placeholder{color:var(--faint)}
+.a2-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.a2-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:8px 16px;font-weight:560;font-size:14px;transition:.12s;box-shadow:var(--shadow-xs)}
+.a2-btn:hover{background:var(--hover)}
+.a2-btn.pri{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.a2-btn.pri:hover{opacity:.88}
+.a2-btn svg{width:16px;height:16px}
 .a2-list .a2-btn{width:100%}
-.a2-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:999px;font-size:13px;background:var(--soft);white-space:nowrap}
-.a2-tag em{font-style:normal;font-size:11px;opacity:.8}
-.a2-tag.teach{background:var(--teach-50);color:var(--teach)}
-.a2-tag.learn{background:var(--learn-50);color:var(--learn)}
-.a2-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:2px 9px;border-radius:7px;background:var(--soft);color:var(--muted);white-space:nowrap;align-self:flex-start}
-.a2-badge.pri{background:var(--pri-50);color:var(--pri)}
-.a2-badge.teach{background:var(--teach-50);color:var(--teach)}
-.a2-badge.learn{background:var(--learn-50);color:var(--learn)}
-.a2-badge.score{background:var(--ai);color:#fff;font-size:13px;padding:3px 10px;align-self:center}
-.a2-badge.soft{font-weight:500}
-.a2-rating{display:flex;gap:4px}
-.a2-rating button{border:0;background:none;font-size:30px;line-height:1;color:var(--line);padding:0 2px}
+.tag{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:8px;font-size:13px;background:var(--soft);color:var(--text);white-space:nowrap;font-weight:500}
+.tag i{width:6px;height:6px;border-radius:50%;background:var(--faint)}
+.tag em{font-style:normal;font-size:11.5px;color:var(--muted);font-weight:400}
+.tag.teach{background:var(--teach-soft)}.tag.teach i{background:var(--teach)}
+.tag.learn{background:var(--learn-soft)}.tag.learn i{background:var(--learn)}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap;align-self:flex-start;background:var(--panel)}
+.badge svg{width:13px;height:13px}
+.badge.pri{border-color:var(--accent-line);background:var(--accent-soft);color:var(--accent);font-weight:600}
+.badge.teach{border-color:transparent;background:var(--teach-soft);color:var(--teach);font-weight:600}
+.badge.learn{border-color:transparent;background:var(--learn-soft);color:var(--learn);font-weight:600}
+.meta{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text2);line-height:1.5;min-width:0}
+.meta svg{width:15px;height:15px;color:var(--muted);margin-top:2px}
+.meta span{min-width:0;word-break:break-all}
+.meta a{color:var(--accent);text-decoration:none}
+.a2-rating{display:flex;gap:2px}
+.a2-rating button{border:0;background:none;padding:2px;color:var(--line)}
+.a2-rating button svg{width:28px;height:28px}
 .a2-rating button.on{color:var(--gold)}
+.steps{display:flex;flex-direction:column;gap:10px}
+.step{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--faint)}
+.step .ic{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;flex:none;border:1.5px solid var(--line)}
+.step.done{color:var(--text2)}
+.step.done .ic{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.step.done .ic svg{width:12px;height:12px;stroke-width:3}
+.step.run{color:var(--text)}
+.step.run .ic{border-color:var(--accent);border-top-color:transparent;animation:orbspin .8s linear infinite}
+.step small{color:var(--faint);margin-left:auto;font-size:12px}
+.pcard-h{margin:0 -18px}
+.pcard-cover{height:64px;position:relative}
+.pcard-top{display:flex;align-items:flex-end;justify-content:space-between;padding:0 18px;margin-top:-29px;position:relative;z-index:1}
+.pcard-top .av{border:3px solid var(--panel);box-shadow:var(--shadow-sm)}
+.score{display:flex;flex-direction:column;align-items:flex-end;line-height:1.15;padding-bottom:2px}
+.score b{font-size:20px;font-weight:700;background:var(--brand);-webkit-background-clip:text;background-clip:text;color:transparent}
+.score small{font-size:11px;color:var(--muted)}
+.pcard-name{padding:10px 18px 0}
+.pcard-name .n{font-weight:650;font-size:16px;display:flex;align-items:center;gap:5px}
+.pcard-name .s{font-size:12.5px;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pcard-name .s svg{width:12px;height:12px;color:var(--gold)}
 .a2ui.locked .a2-chip,.a2ui.locked .a2-input,.a2ui.locked .a2-rating{pointer-events:none}
-.a2ui.locked .a2-chip:not(.on){opacity:.45}
+.a2ui.locked .a2-chip:not(.on){opacity:.4}
 .a2ui.locked .a2-btn:not(.chosen){display:none}
-.a2ui.locked .a2-btn.chosen{pointer-events:none;background:var(--soft);border-color:var(--line);color:var(--muted)}
-.a2ui.locked .a2-btn.chosen::before{content:'✓ '}
+.a2ui.locked .a2-btn.chosen{pointer-events:none;background:var(--soft);border-color:var(--line);color:var(--muted);box-shadow:none}
 
-/* ---------- calendar & me ---------- */
-.page{flex:1;overflow-y:auto;padding:26px 28px 40px}
-.page-in{max-width:900px;margin:0 auto}
-.page h1{font-size:24px;margin:0 0 4px}
-.page .sub{color:var(--muted);font-size:14px;margin-bottom:20px}
-.days{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:20px;scrollbar-width:thin}
-.day{flex:none;width:58px;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:8px 0;text-align:center;position:relative}
-.day small{display:block;font-size:11px;color:var(--muted)}
-.day b{font-size:18px}
-.day.today{border-color:var(--pri)}
-.day.on{background:var(--pri);border-color:var(--pri);color:#fff}
-.day.on small{color:#fff}
-.day i{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--learn)}
-.sech{font-size:14px;font-weight:600;color:var(--muted);margin:22px 0 10px}
-.ev{display:grid;grid-template-columns:86px 1fr;gap:16px;padding:16px 18px;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);margin-bottom:12px}
-.ev .tm{border-right:1px dashed var(--line);padding-right:12px}
-.ev .tm b{font-size:20px;display:block;line-height:1.2}
-.ev .tm small{font-size:12px;color:var(--muted)}
-.ev .ti{font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.ev .meta{font-size:13px;color:var(--muted);margin:6px 0 10px;display:flex;flex-direction:column;gap:2px;min-width:0}
-.ev .meta a{word-break:break-all}
+/* ---------- pages ---------- */
+.page{flex:1;overflow-y:auto}
+.page-in{max-width:880px;margin:0 auto;padding:32px 28px 48px}
+.page h1{font-size:24px;font-weight:650;margin:0 0 4px;letter-spacing:.02em}
+.page .sub{color:var(--muted);font-size:14px;margin-bottom:24px}
+.days{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:24px;scrollbar-width:none}
+.day{flex:none;width:54px;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:7px 0 9px;text-align:center;position:relative;color:var(--text)}
+.day small{display:block;font-size:11px;color:var(--muted);line-height:1.4}
+.day b{font-size:17px;font-weight:600}
+.day:hover{background:var(--hover)}
+.day.today small{color:var(--accent);font-weight:600}
+.day.on{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.day.on small{color:inherit;opacity:.75}
+.day i{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--accent)}
+.sech{font-size:13px;font-weight:600;color:var(--muted);margin:26px 0 10px;display:flex;align-items:center;gap:8px}
+.ev{display:grid;grid-template-columns:76px 1fr;gap:18px;padding:18px 20px;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-sm);margin-bottom:12px;position:relative;overflow:hidden}
+.ev::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.ev.done::before{background:var(--teach)}
+.ev .tm b{font-size:20px;display:block;line-height:1.2;font-weight:650;font-variant-numeric:tabular-nums}
+.ev .tm small{font-size:12px;color:var(--muted);display:block}
+.ev .ti{font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.ev .metas{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
 .ev .acts{display:flex;gap:8px;flex-wrap:wrap}
-.st{font-size:11.5px;font-weight:600;padding:2px 9px;border-radius:999px}
-.st.up{background:var(--pri-50);color:var(--pri)}
-.st.live{background:#ffe9e9;color:var(--red)}
-.st.done{background:var(--teach-50);color:var(--teach)}
-@media (prefers-color-scheme:dark){.st.live{background:#3d1c1e}}
-.sync{font-size:12px;color:var(--teach)}
-.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 14px;font-size:13.5px;font-weight:500;white-space:nowrap}
-.btn:hover{border-color:var(--pri);color:var(--pri)}
-.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff}
-.btn.pri:hover{background:var(--pri-d);color:#fff}
-.btn.ai{background:var(--ai);border:0;color:#fff}
-.btn.ai:hover{color:#fff;filter:brightness(1.08)}
-.empty{text-align:center;padding:56px 20px;color:var(--muted);background:var(--panel);border:1px dashed var(--line);border-radius:16px}
-.empty b{display:block;font-size:42px;margin-bottom:8px}
-.grid2{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:start}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:20px}
-.card h3{margin:0 0 12px;font-size:16px;display:flex;align-items:center;gap:8px}
-.tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
-.kv{font-size:13px;color:var(--muted);margin-bottom:4px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-.stat{background:var(--soft);border-radius:12px;padding:12px}
-.stat b{font-size:22px;display:block;line-height:1.2}
+.st{font-size:11.5px;font-weight:600;padding:1px 9px;border-radius:999px;display:inline-flex;align-items:center;gap:5px}
+.st::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+.st.up{background:var(--accent-soft);color:var(--accent)}
+.st.live{background:#fee2e2;color:#dc2626}
+.st.done{background:var(--teach-soft);color:var(--teach)}
+@media (prefers-color-scheme:dark){.st.live{background:#3a1515;color:#f87171}}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 14px;font-size:13.5px;font-weight:550;white-space:nowrap;color:var(--text);box-shadow:var(--shadow-xs)}
+.btn:hover{background:var(--hover)}
+.btn svg{width:15px;height:15px}
+.btn.pri{background:var(--primary);border-color:var(--primary);color:var(--on-primary)}
+.btn.pri:hover{opacity:.88}
+.btn.ghost{border-color:transparent;background:none;box-shadow:none;color:var(--muted)}
+.empty{text-align:center;padding:60px 20px;color:var(--muted);border:1px dashed var(--line);border-radius:18px;font-size:14px}
+.empty .ei{width:44px;height:44px;border-radius:12px;background:var(--soft);display:grid;place-items:center;margin:0 auto 14px;color:var(--muted)}
+.empty .ei svg{width:22px;height:22px}
+.empty h3{color:var(--text);font-size:16px;margin:0 0 4px;font-weight:600}
+.grid2{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow-sm);overflow:hidden}
+.card .pad{padding:20px}
+.card h3{margin:0 0 14px;font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+.kv{font-size:12.5px;color:var(--faint);margin:14px 0 8px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.stat{background:var(--soft);border-radius:12px;padding:12px 14px}
+.stat b{font-size:22px;display:block;line-height:1.2;font-weight:650;font-variant-numeric:tabular-nums}
 .stat span{font-size:12px;color:var(--muted)}
-.ledger div{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:8px 0;border-bottom:1px dashed var(--line)}
-.plus{color:var(--teach);font-weight:600}.minus{color:var(--learn);font-weight:600}.zero{color:var(--muted)}
-.rules{font-size:13px;color:var(--muted);display:grid;gap:4px;margin-bottom:10px}
+.ledger div{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:9px 0;border-top:1px solid var(--line2);color:var(--text2)}
+.plus{color:var(--teach);font-weight:600}.minus{color:var(--learn);font-weight:600}.zero{color:var(--faint)}
+.rules{font-size:12.5px;color:var(--muted);display:grid;gap:4px;margin-bottom:14px;padding:12px 14px;background:var(--soft);border-radius:12px}
+.topbar{display:none}
 
-/* ---------- banner / toast ---------- */
-.banner{position:fixed;top:14px;left:50%;transform:translate(-50%,-160%);transition:.35s cubic-bezier(.2,.9,.3,1.2);z-index:70;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,.18);padding:12px 14px;display:flex;align-items:center;gap:12px;width:min(520px,calc(100vw - 24px))}
-.banner:not(.show){opacity:0;pointer-events:none}
-.banner.show{transform:translate(-50%,0);opacity:1}
-.banner .tx{flex:1;font-size:14px;min-width:0}
-.banner .tx small{display:block;color:var(--muted);font-size:12px}
-.banner .x{border:0;background:none;color:var(--muted);font-size:18px}
-.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:#1d2130;color:#fff;padding:10px 18px;border-radius:12px;font-size:14px;opacity:0;transition:.25s;z-index:80;pointer-events:none;max-width:calc(100vw - 32px)}
+/* ---------- notification / toast ---------- */
+.notif{position:fixed;top:16px;right:16px;z-index:70;width:min(380px,calc(100vw - 24px));background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:blur(16px) saturate(1.5);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow-md);padding:14px;display:flex;gap:12px;transform:translateY(-12px);opacity:0;pointer-events:none;transition:.3s cubic-bezier(.2,.9,.3,1.1)}
+.notif.show{transform:none;opacity:1;pointer-events:auto}
+.notif .orb{width:34px;height:34px}
+.notif .tx{flex:1;min-width:0;font-size:13.5px;line-height:1.5}
+.notif .tx b{display:block;font-size:14px}
+.notif .tx span{color:var(--muted)}
+.notif .acts{display:flex;gap:8px;margin-top:10px}
+.notif .x{border:0;background:none;color:var(--faint);height:24px;width:24px;display:grid;place-items:center;border-radius:6px}
+.notif .x:hover{background:var(--hover)}
+.toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(12px);background:var(--primary);color:var(--on-primary);padding:10px 16px;border-radius:12px;font-size:13.5px;opacity:0;transition:.25s;z-index:80;pointer-events:none;max-width:calc(100vw - 32px);box-shadow:var(--shadow-md)}
 .toast.show{opacity:1;transform:translateX(-50%)}
 
 /* ---------- classroom ---------- */
-.room{position:fixed;inset:0;z-index:60;background:#0d0e14;color:#fff;display:none;flex-direction:column}
+.room{position:fixed;inset:0;z-index:60;background:#0b0b0d;color:#f4f4f5;display:none;flex-direction:column}
 .room.show{display:flex}
-.room-top{display:flex;align-items:center;gap:16px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
-.room-top .ttl{font-weight:600}
-.room-top .ttl small{display:block;font-weight:400;color:#9aa0ae;font-size:12px}
-.room-top .clock{margin-left:auto;font-variant-numeric:tabular-nums;background:rgba(255,255,255,.08);padding:5px 12px;border-radius:999px;font-size:14px}
-.rec{color:#ff6b6b;font-size:13px}
-.room-body{flex:1;display:grid;grid-template-columns:1fr 320px;min-height:0}
-.stage{position:relative;padding:18px;display:flex;min-height:0}
-.tile{flex:1;border-radius:18px;background:radial-gradient(circle at 50% 40%,#2c2f45,#16171f);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;position:relative;overflow:hidden}
-.tile .nm{position:absolute;left:14px;bottom:12px;background:rgba(0,0,0,.45);padding:3px 10px;border-radius:8px;font-size:13px}
-.tile .ring{border-radius:50%;padding:6px;animation:talk 1.6s infinite}
-@keyframes talk{0%,100%{box-shadow:0 0 0 0 rgba(124,124,240,0)}50%{box-shadow:0 0 0 10px rgba(124,124,240,.35)}}
-.tile.me{position:absolute;right:30px;bottom:30px;width:180px;height:120px;flex:none;border:2px solid rgba(255,255,255,.15)}
-.tile.me.off{background:#222}
-.tile.me.off .av{opacity:.3}
-.caption{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);background:rgba(0,0,0,.55);padding:6px 14px;border-radius:10px;font-size:14px;max-width:70%;text-align:center}
-.offline-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:20px 24px;text-align:center;max-width:420px;margin:0 16px}
-.notes{border-left:1px solid rgba(255,255,255,.08);padding:18px;overflow-y:auto;background:#12131b}
-.notes h4{margin:0 0 4px;font-size:15px}
-.notes .nsub{font-size:12px;color:#9aa0ae;margin-bottom:12px}
-.note{font-size:13.5px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.06);margin-bottom:8px;animation:pop .3s}
-.note small{display:block;color:#9aa0ae;font-size:11px}
-.room-ctl{display:flex;justify-content:center;gap:12px;padding:14px;border-top:1px solid rgba(255,255,255,.08);flex-wrap:wrap}
-.room-ctl button{border:0;background:rgba(255,255,255,.1);color:#fff;border-radius:14px;padding:10px 16px;font-size:14px;min-width:64px}
-.room-ctl button.off{background:#3b1d22;color:#ff8f8f}
-.room-ctl .end{background:var(--red);font-weight:600;padding:10px 22px}
+.room-top{display:flex;align-items:center;gap:14px;padding:14px 22px;flex-wrap:wrap}
+.room-top .ttl{font-weight:600;font-size:15px}
+.room-top .ttl small{display:block;font-weight:400;color:#a1a1aa;font-size:12px}
+.rec{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#fca5a5;background:rgba(239,68,68,.12);padding:3px 10px;border-radius:999px}
+.rec::before{content:'';width:7px;height:7px;border-radius:50%;background:#ef4444;animation:blink 1.4s infinite}
+.clock{margin-left:auto;font-variant-numeric:tabular-nums;background:rgba(255,255,255,.07);padding:5px 12px;border-radius:999px;font-size:13px}
+.room-body{flex:1;display:grid;grid-template-columns:1fr 340px;gap:14px;padding:0 14px;min-height:0}
+.stage{position:relative;display:flex;min-height:0}
+.tile{flex:1;border-radius:20px;background:radial-gradient(120% 90% at 50% 30%,#26262c,#121215);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.tile .nm{position:absolute;left:14px;bottom:14px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);padding:4px 10px;border-radius:8px;font-size:12.5px;display:flex;align-items:center;gap:6px}
+.tile .nm svg{width:13px;height:13px}
+.talk{border-radius:50%;padding:5px;animation:talk 1.8s infinite}
+@keyframes talk{0%,100%{box-shadow:0 0 0 0 rgba(157,140,255,0)}50%{box-shadow:0 0 0 12px rgba(157,140,255,.22)}}
+.tile.me{position:absolute;right:18px;bottom:18px;width:200px;height:128px;flex:none;border:1px solid rgba(255,255,255,.14);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.tile.me.off{background:#18181b}
+.tile.me.off .av{opacity:.25}
+.caption{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);background:rgba(0,0,0,.6);backdrop-filter:blur(8px);padding:7px 14px;border-radius:10px;font-size:14px;max-width:62%;text-align:center}
+.offline-card{text-align:center;max-width:380px;padding:0 20px}
+.offline-card .pin{width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,.08);display:grid;place-items:center;margin:0 auto 14px}
+.offline-card .pin svg{width:24px;height:24px}
+.notes{border-radius:20px;background:#141417;border:1px solid rgba(255,255,255,.06);padding:18px;overflow-y:auto}
+.notes h4{margin:0;font-size:14px;display:flex;align-items:center;gap:8px}
+.notes .orb{width:20px;height:20px}
+.notes .nsub{font-size:12px;color:#a1a1aa;margin:4px 0 14px}
+.note{font-size:13.5px;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.05);margin-bottom:8px;animation:rise .3s;line-height:1.55}
+.note small{display:block;color:#71717a;font-size:11px}
+.room-ctl{display:flex;justify-content:center;gap:12px;padding:16px}
+.rbtn{width:48px;height:48px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;display:grid;place-items:center}
+.rbtn:hover{background:rgba(255,255,255,.16)}
+.rbtn.off{background:#fff;color:#18181b}
+.rbtn.end{background:#ef4444;width:auto;padding:0 22px;border-radius:999px;display:flex;gap:8px;align-items:center;font-weight:600;font-size:14px}
+.rbtn.end:hover{background:#dc2626}
 
 /* ---------- A2UI inspector (?a2ui) ---------- */
-.insp{position:fixed;right:0;top:0;bottom:0;width:420px;background:#0f1117;color:#c9d1d9;z-index:90;display:none;flex-direction:column;font:12px/1.45 ui-monospace,Menlo,monospace;border-left:1px solid #222}
+.insp{position:fixed;right:0;top:0;bottom:0;width:420px;background:#0b0b0d;color:#d4d4d8;z-index:90;display:none;flex-direction:column;font:12px/1.45 ui-monospace,Menlo,monospace;border-left:1px solid #27272a}
 .insp.show{display:flex}
-.insp h4{margin:0;padding:10px 12px;border-bottom:1px solid #222;font:600 13px -apple-system,sans-serif;color:#fff;display:flex;justify-content:space-between}
+.insp h4{margin:0;padding:10px 12px;border-bottom:1px solid #27272a;font:600 13px -apple-system,sans-serif;color:#fff;display:flex;justify-content:space-between}
 .insp .lg{flex:1;overflow:auto;padding:8px 12px}
-.insp pre{margin:0 0 10px;white-space:pre-wrap;word-break:break-all;border-left:3px solid #5b5bd6;padding-left:8px}
-.insp pre.up{border-color:#34c08f}
+.insp pre{margin:0 0 10px;white-space:pre-wrap;word-break:break-all;border-left:3px solid #7c5cff;padding-left:8px}
+.insp pre.up{border-color:#34d399}
 
 /* ---------- responsive ---------- */
-@media (max-width:1000px){.app{grid-template-columns:76px 260px 1fr}.room-body{grid-template-columns:1fr 260px}}
+@media (max-width:900px){.room-body{grid-template-columns:1fr 280px}}
 @media (max-width:760px){
-  .app,.app.nolist{grid-template-columns:1fr}
-  .rail{position:fixed;left:0;right:0;bottom:0;z-index:40;flex-direction:row;justify-content:space-around;padding:4px 6px calc(4px + env(safe-area-inset-bottom));border-right:0;border-top:1px solid var(--line)}
-  .logo,.rail .sp,.coinv,.rail .meav{display:none}
-  .rail .nb{width:auto;flex:1}
-  .main,.list{height:calc(100dvh - 62px - env(safe-area-inset-bottom))}
-  .app .list{display:none}
-  .app.mlist .list{display:flex}
-  .app.mlist .main{display:none}
-  .back{display:inline-block}
-  .chat-head{padding:0 12px;height:60px;gap:10px}
-  .chat-head .s{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52vw}
-  .chat-head .hbtn .lbl{display:none}
-  .msgs{padding:14px 12px 6px}
-  .suggest{padding:6px 12px 0}
-  .composer{padding:8px 12px 10px}
-  .bub{max-width:88%}
+  .app{grid-template-columns:1fr}
+  .side{position:fixed;left:0;top:0;bottom:0;width:284px;z-index:50;transform:translateX(-102%);transition:transform .28s cubic-bezier(.2,.8,.2,1);box-shadow:var(--shadow-md)}
+  .app.drawer .side{transform:none}
+  .app.drawer .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:45}
+  .menu{display:grid}
+  .head{padding:0 12px;gap:10px;height:54px}
+  .hbtn .lb{display:none}
+  .hbtn{padding:6px 10px}
+  .stream-col{padding:18px 16px 10px;gap:18px}
+  .dock{padding:0 12px 8px}
+  .bubble{max-width:86%}
   .a2-list{grid-template-columns:1fr}
-  .page{padding:18px 16px 30px}
+  .hero h1{font-size:22px}
+  .topbar{display:flex;align-items:center;gap:8px;height:54px;padding:0 12px;border-bottom:1px solid var(--line2);font-weight:600}
+  .page-in{padding:20px 16px 36px}
   .grid2{grid-template-columns:1fr}
-  .ev{grid-template-columns:62px 1fr;gap:12px;padding:14px}
-  .room-body{grid-template-columns:1fr;grid-template-rows:1fr 190px}
-  .notes{border-left:0;border-top:1px solid rgba(255,255,255,.08)}
-  .tile.me{width:110px;height:80px;right:24px;bottom:24px}
-  .room-ctl button{min-width:0;padding:10px 12px}
+  .ev{grid-template-columns:58px 1fr;gap:12px;padding:16px}
+  .room-body{grid-template-columns:1fr;grid-template-rows:1fr 180px;padding:0 10px}
+  .tile.me{width:112px;height:80px;right:12px;bottom:12px}
+  .caption{max-width:86%;font-size:13px;bottom:104px}
   .insp{width:100%}
+  .c-hint{display:none}
 }
 </style>
 </head>
 <body>
 <div class="app" id="app">
-  <nav class="rail" id="rail"></nav>
-  <aside class="list" id="list"></aside>
+  <aside class="side" id="side"></aside>
+  <div class="scrim" data-act="closeDrawer"></div>
   <main class="main" id="main"></main>
 </div>
-<div class="banner" id="banner"></div>
+<div class="notif" id="notif"></div>
 <div class="room" id="room"></div>
 <div class="toast" id="toast"></div>
 <aside class="insp" id="insp"><h4>A2UI 消息流 <span style="cursor:pointer" onclick="this.closest('.insp').classList.remove('show')">✕</span></h4><div class="lg" id="insplog"></div></aside>
@@ -319,6 +409,41 @@ const ceilMin = t => Math.ceil(t/MIN)*MIN;
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove('show'),2600); }
 const isMobile = () => matchMedia('(max-width:760px)').matches;
 
+const ICONS = {
+  sparkle:'<path d="M12 3.5l1.7 4.6 4.6 1.7-4.6 1.7L12 16.1l-1.7-4.6-4.6-1.7 4.6-1.7z"/><path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>',
+  calendar:'<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  user:'<circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5c.6-3.8 3.7-6.2 7.5-6.2s6.9 2.4 7.5 6.2"/>',
+  chat:'<path d="M20.5 11.6a8.2 8.2 0 0 1-12 7.3L3.5 20.5l1.6-4.6a8.2 8.2 0 1 1 15.4-4.3z"/>',
+  up:'<path d="M12 19V5.5M6 11.5l6-6 6 6"/>',
+  clip:'<path d="M20.5 11.3l-8.3 8.3a5 5 0 0 1-7.1-7.1l8.3-8.3a3.3 3.3 0 0 1 4.7 4.7l-8.3 8.3a1.7 1.7 0 0 1-2.4-2.4l7.6-7.6"/>',
+  mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5v3.5"/>',
+  micoff:'<path d="M15 9.5V6a3 3 0 0 0-5.7-1.3M9 9v2a3 3 0 0 0 4.6 2.5M5.5 11a6.5 6.5 0 0 0 10.7 5M18.5 11a6.4 6.4 0 0 1-.4 2.2M12 17.5v3.5M3.5 3.5l17 17"/>',
+  check:'<path d="M5 12.5l4.3 4.3L19 7.2"/>',
+  clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  pin:'<path d="M12 21s-6.5-5.8-6.5-11a6.5 6.5 0 0 1 13 0c0 5.2-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/>',
+  video:'<rect x="3" y="6.5" width="12.5" height="11" rx="2.5"/><path d="M15.5 10.5l5.5-3v9l-5.5-3"/>',
+  videooff:'<path d="M10 6.5h3a2.5 2.5 0 0 1 2.5 2.5v3M15.5 15.5V15a2.5 2.5 0 0 1-2.5 2.5H5.5A2.5 2.5 0 0 1 3 15V9a2.5 2.5 0 0 1 2-2.4M15.5 10.5l5.5-3v9M3.5 3.5l17 17"/>',
+  screen:'<rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8.5 20h7M12 16.5V20"/>',
+  phone:'<path d="M3.2 14.6c4.9-4.4 12.7-4.4 17.6 0 .5.5.5 1.2.1 1.7l-1.6 1.8c-.4.4-1 .5-1.5.2l-2.4-1.3a1.2 1.2 0 0 1-.6-1.1l.1-1.6a10.4 10.4 0 0 0-5.8 0l.1 1.6c0 .5-.2.9-.6 1.1l-2.4 1.3c-.5.3-1.1.2-1.5-.2l-1.6-1.8a1.2 1.2 0 0 1 .1-1.7z"/>',
+  link:'<path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/>',
+  star:'<path d="M12 3.6l2.5 5.2 5.7.8-4.1 4 1 5.7L12 16.6l-5.1 2.7 1-5.7-4.1-4 5.7-.8z"/>',
+  verified:'<path d="M12 2.8l2.3 1.7 2.9.1 1 2.7 2.3 1.8-.9 2.8.9 2.8-2.3 1.8-1 2.7-2.9.1L12 21.2l-2.3-1.7-2.9-.1-1-2.7-2.3-1.8.9-2.8-.9-2.8 2.3-1.8 1-2.7 2.9-.1z" fill="currentColor" stroke="none"/><path d="M8.6 12.1l2.3 2.3 4.5-4.6" stroke="#fff" stroke-width="2"/>',
+  menu:'<path d="M4 7h16M4 12h16M4 17h10"/>',
+  x:'<path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>',
+  right:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  swap:'<path d="M7.5 4L4 7.5 7.5 11M4 7.5h13M16.5 13l3.5 3.5-3.5 3.5M20 16.5H7"/>',
+  edit:'<path d="M4 20h4L18.6 9.4a2.6 2.6 0 0 0-3.7-3.7L4.3 16.3z"/><path d="M13.5 7l3.5 3.5"/>',
+  download:'<path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 20h14"/>',
+  logout:'<path d="M14.5 4H18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3.5M10 16l-4-4 4-4M6 12h10"/>',
+  bell:'<path d="M6.5 16v-5a5.5 5.5 0 0 1 11 0v5l1.5 2h-14z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>',
+  gift:'<rect x="3.5" y="8" width="17" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12M12 8c-1.5-3.5-5-3.5-5-1.5S10 8 12 8zm0 0c1.5-3.5 5-3.5 5-1.5S14 8 12 8z"/>',
+  coins:'<circle cx="9.5" cy="9.5" r="6"/><path d="M15.6 9.6a6 6 0 1 1-6 6"/>',
+  target:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8" fill="currentColor"/>',
+  repeat:'<path d="M17 3.5l3 3-3 3M4 11.5v-1a4 4 0 0 1 4-4h12M7 20.5l-3-3 3-3M20 12.5v1a4 4 0 0 1-4 4H4"/>',
+  note:'<path d="M14 3.5H6.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V9z"/><path d="M14 3.5V9h5.5M8.5 13h7M8.5 16.5h5"/>'
+};
+const I = (n,cls='') => `<svg class="i ${cls}" viewBox="0 0 24 24">${ICONS[n]||''}</svg>`;
+
 /* =====================================================================
    平台数据
    ===================================================================== */
@@ -332,7 +457,6 @@ const SKILL_CAT = {
   '烘焙':'生活','做饭':'生活','咖啡拉花':'生活',
   'Excel':'职场','PPT':'职场','简历面试':'职场','公众号写作':'职场'
 };
-const CAT_ICON = {音乐:'🎸',编程:'💻',设计:'🎨',语言:'🗣️',摄影:'📷',运动:'🏃',生活:'🍳',职场:'💼',其他:'✨'};
 const ALIASES = {
   '吉他':['吉他','guitar'],'尤克里里':['尤克里里','ukulele'],'钢琴':['钢琴','piano'],'唱歌':['唱歌','声乐'],
   'Python':['python'],'前端开发':['前端','javascript','react','网页开发'],'数据分析':['数据分析','sql'],
@@ -377,7 +501,7 @@ const NOTE_BANK = {
   日语:['五十音：あ行～さ行 发音和书写','日常寒暄：おはよう / ありがとう / すみません','用日剧台词练语调','记忆法：假名联想卡片'],
   钢琴:['坐姿、手型与指法编号','中央 C 定位与五指位置','右手旋律《小星星》','节拍器 60 拍慢练'],
   健身:['体态评估：圆肩、骨盆前倾检查','动作模式：深蹲、俯卧撑标准动作','制定每周 3 次、每次 40 分钟的计划','饮食：蛋白质摄入和热量缺口'],
-  default:['了解你的基础和学习目标','核心概念快速过一遍','老师示范 + 你跟着做第一个练习','针对你的问题逐个答疑']
+  default:['了解你的基础和学习目标','核心概念快速过一遍','老师示范，你跟着做第一个练习','针对你的问题逐个答疑']
 };
 
 /* =====================================================================
@@ -389,15 +513,17 @@ function fresh(){
     draft:{name:'',city:'',teach:[],learn:[],goal:'',exp:'',mode:'都可以',dur:'60 分钟',avail:[],freq:'每周 1 次'},
     profile:null, threads:{agent:{id:'agent',msgs:[],unread:0,last:Date.now()}},
     surfaces:{}, events:[], credits:3, ledger:[{t:'新用户注册赠送',d:3,at:Date.now()}],
-    view:'chat', active:'agent', mlist:false, calDay:null};
+    view:'chat', active:'agent', calDay:null};
 }
 let state = (()=>{ try{ const s=JSON.parse(localStorage.getItem(KEY)); if(s && s.threads && s.threads.agent) return s; }catch(e){} return fresh(); })();
 function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
 const typingNow = {};
+const UIS = {drawer:false};
 
 /* =====================================================================
    A2UI —— Agent 用 JSON 消息描述界面，客户端渲染，用户操作以 userAction 回传
    消息：surfaceUpdate / dataModelUpdate / beginRendering / deleteSurface
+   客户端扩展目录：Avatar / Tag / Badge / Rating / Meta / ProfileHeader / Steps
    ===================================================================== */
 const A2UI_LOG = [];
 function a2uiLog(dir, msg){
@@ -410,35 +536,35 @@ function setPath(o,p,v){ const ks=String(p).split('/').filter(Boolean); if(!ks.l
 function toContents(o){ return Object.entries(o).map(([key,v])=> Array.isArray(v)?{key,valueList:v.map(x=>({valueString:String(x)}))} : typeof v==='number'?{key,valueNumber:v} : typeof v==='boolean'?{key,valueBoolean:v} : (v&&typeof v==='object')?{key,valueMap:toContents(v)} : {key,valueString:String(v??'')}); }
 function fromVal(e){ if('valueString' in e) return e.valueString; if('valueNumber' in e) return e.valueNumber; if('valueBoolean' in e) return e.valueBoolean; if('valueMap' in e) return fromContents(e.valueMap); if('valueList' in e) return e.valueList.map(fromVal); }
 function fromContents(c){ const o={}; (c||[]).forEach(e=>o[e.key]=fromVal(e)); return o; }
-
 function a2uiReceive(msg){
   a2uiLog('down', msg);
   if(msg.surfaceUpdate){ const {surfaceId,components}=msg.surfaceUpdate; const s=state.surfaces[surfaceId]||(state.surfaces[surfaceId]={components:{},data:{},root:null,locked:false,chosen:null}); components.forEach(c=>s.components[c.id]=c.component); }
-  else if(msg.dataModelUpdate){ const {surfaceId,path,contents}=msg.dataModelUpdate; const s=state.surfaces[surfaceId]; if(s) setPath(s.data, path||'/', fromContents(contents)); }
+  else if(msg.dataModelUpdate){ const {surfaceId,path,contents}=msg.dataModelUpdate; const s=state.surfaces[surfaceId]; if(s){ setPath(s.data, path||'/', fromContents(contents)); save(); refreshSurface(surfaceId); } }
   else if(msg.beginRendering){ const s=state.surfaces[msg.beginRendering.surfaceId]; if(s) s.root=msg.beginRendering.root; }
   else if(msg.deleteSurface){ delete state.surfaces[msg.deleteSurface.surfaceId]; }
 }
-
-// Agent 端组件构建（标准组件 + 客户端扩展目录 Avatar / Tag / Badge / Rating）
 let B = null;
 function comp(type, props){ const id='c'+(++B.n); B.list.push({id, component:{[type]:props}}); return id; }
 const L = s => ({literalString:String(s)});
 const kids = a => ({explicitList:a.filter(Boolean)});
 const UI = {
   text:(t,hint='body')=>comp('Text',{text:L(t),usageHint:hint}),
-  label:t=>UI.text(t,'caption'),
+  label:t=>comp('Text',{text:L(t),usageHint:'label'}),
   row:(a,o={})=>comp('Row',{children:kids(a),alignment:'center',distribution:o.between?'spaceBetween':'start'}),
   col:a=>comp('Column',{children:kids(a)}),
   list:(a,dir='horizontal')=>comp('List',{children:kids(a),direction:dir}),
   card:child=>comp('Card',{child}),
   divider:()=>comp('Divider',{}),
-  button:(label,name,ctx={},primary=false)=>comp('Button',{child:UI.text(label),primary,action:{name,context:Object.entries(ctx).map(([key,v])=>({key,value:L(v)}))}}),
+  button:(label,name,ctx={},primary=false,icon)=>comp('Button',{child:UI.text(label),primary,...(icon?{icon}:{}),action:{name,context:Object.entries(ctx).map(([key,v])=>({key,value:L(v)}))}}),
   choice:(path,opts,max=1)=>comp('MultipleChoice',{selections:{path},options:opts.map(o=>({label:L(o.label??o),value:String(o.value??o)})),maxAllowedSelections:max}),
   field:(label,path,ph='')=>comp('TextField',{label:L(label),text:{path},textFieldType:'shortText',placeholder:ph}),
   avatar:(u,size=40)=>comp('Avatar',{name:L(u.name),seed:L(u.id),size}),
   tag:(t,tone,level)=>comp('Tag',{text:L(t),tone,...(level?{level:L(level)}:{})}),
-  badge:(t,tone='soft')=>comp('Badge',{text:L(t),tone}),
-  rating:path=>comp('Rating',{value:{path},max:5})
+  badge:(t,tone='',icon)=>comp('Badge',{text:L(t),tone,...(icon?{icon}:{})}),
+  meta:(icon,t)=>comp('Meta',{icon,text:L(t)}),
+  rating:path=>comp('Rating',{value:{path},max:5}),
+  profile:(u,score)=>comp('ProfileHeader',{userId:L(u.id),score}),
+  steps:(items,path)=>comp('Steps',{items:items.map(L),done:{path}})
 };
 function buildSurface(fn, data={}){
   B={n:0,list:[]}; const root=fn(UI); const list=B.list; B=null;
@@ -446,8 +572,6 @@ function buildSurface(fn, data={}){
   [{surfaceUpdate:{surfaceId:sid,components:list}},{dataModelUpdate:{surfaceId:sid,path:'/',contents:toContents(data)}},{beginRendering:{surfaceId:sid,root}}].forEach(a2uiReceive);
   return sid;
 }
-
-// 客户端渲染器
 function bval(s,v){ if(v==null) return ''; if('literalString' in v) return v.literalString; if('literalNumber' in v) return v.literalNumber; if('literalBoolean' in v) return v.literalBoolean; if('path' in v) return getPath(s.data,v.path); return ''; }
 function surfHTML(sid){ const s=state.surfaces[sid]; if(!s||!s.root) return ''; return `<div class="a2ui${s.locked?' locked':''}" data-sid="${sid}">${compHTML(s,s.root)}</div>`; }
 function compHTML(s,id){
@@ -455,19 +579,22 @@ function compHTML(s,id){
   const [type,p]=Object.entries(c)[0];
   const ch=()=>(p.children&&p.children.explicitList||[]).map(k=>compHTML(s,k)).join('');
   switch(type){
-    case 'Text': return `<div class="t-${p.usageHint||'body'}">${md(bval(s,p.text))}</div>`;
+    case 'Text': return p.usageHint==='label'?`<span class="lbl">${esc(bval(s,p.text))}</span>`:`<div class="t-${p.usageHint||'body'}">${md(bval(s,p.text))}</div>`;
     case 'Row': return `<div class="a2-row${p.distribution==='spaceBetween'?' between':''}">${ch()}</div>`;
     case 'Column': return `<div class="a2-col">${ch()}</div>`;
     case 'List': return `<div class="a2-list${p.direction==='vertical'?' v':''}">${ch()}</div>`;
     case 'Card': return `<div class="a2-card">${compHTML(s,p.child)}</div>`;
     case 'Divider': return '<hr class="a2-hr">';
-    case 'Button': { const t=s.components[p.child]; const label=t&&t.Text?bval(s,t.Text.text):''; return `<button class="a2-btn${p.primary?' pri':''}${s.chosen===id?' chosen':''}" data-a2btn="${id}">${esc(label)}</button>`; }
-    case 'MultipleChoice': { const sel=getPath(s.data,p.selections.path)||[]; return `<div class="a2-chips" data-a2mc="${id}">${p.options.map(o=>`<button class="a2-chip${sel.includes(o.value)?' on':''}" data-v="${esc(o.value)}">${esc(bval(s,o.label))}</button>`).join('')}</div>`; }
+    case 'Button': { const t=s.components[p.child]; const label=t&&t.Text?bval(s,t.Text.text):''; const chosen=s.chosen===id; return `<button class="a2-btn${p.primary?' pri':''}${chosen?' chosen':''}" data-a2btn="${id}">${chosen?I('check'):(p.icon?I(p.icon):'')}${esc(label)}${p.primary&&!chosen&&!p.icon?I('right'):''}</button>`; }
+    case 'MultipleChoice': { const sel=getPath(s.data,p.selections.path)||[]; return `<div class="a2-chips" data-a2mc="${id}">${p.options.map(o=>`<button class="a2-chip${sel.includes(o.value)?' on':''}" data-v="${esc(o.value)}">${I('check')}${esc(bval(s,o.label))}</button>`).join('')}</div>`; }
     case 'TextField': return `<label class="a2-field">${p.label&&bval(s,p.label)?`<span>${esc(bval(s,p.label))}</span>`:''}<input class="a2-input" data-a2bind="${esc(p.text.path)}" value="${esc(getPath(s.data,p.text.path)??'')}" placeholder="${esc(p.placeholder||'')}"></label>`;
     case 'Avatar': return avatarHTML({id:bval(s,p.seed),name:bval(s,p.name)},p.size||40);
     case 'Tag': return tagHTML(bval(s,p.text),p.tone,p.level?bval(s,p.level):'');
-    case 'Badge': return `<span class="a2-badge ${p.tone||''}">${esc(bval(s,p.text))}</span>`;
-    case 'Rating': { const v=+getPath(s.data,p.value.path)||0; return `<div class="a2-rating" data-a2rate="${id}">${[1,2,3,4,5].map(n=>`<button class="${n<=v?'on':''}" data-n="${n}">★</button>`).join('')}</div>`; }
+    case 'Badge': return `<span class="badge ${p.tone||''}">${p.icon?I(p.icon):''}${esc(bval(s,p.text))}</span>`;
+    case 'Meta': return `<div class="meta">${I(p.icon)}<span>${md(bval(s,p.text))}</span></div>`;
+    case 'Rating': { const v=+getPath(s.data,p.value.path)||0; return `<div class="a2-rating" data-a2rate="${id}">${[1,2,3,4,5].map(n=>`<button class="${n<=v?'on':''}" data-n="${n}">${I('star','fill')}</button>`).join('')}</div>`; }
+    case 'ProfileHeader': { const u=userById(bval(s,p.userId)); if(!u) return ''; return `<div class="pcard-h"><div class="pcard-cover" style="background:${coverOf(u.id)}"></div><div class="pcard-top">${avatarHTML(u,58)}<div class="score"><b>${p.score}%</b><small>匹配度</small></div></div><div class="pcard-name"><div class="n">${esc(u.name)}${u.verified?`<span class="vf" title="技能已认证">${I('verified')}</span>`:''}</div><div class="s">${esc(u.city)} · ${I('star','fill')}${u.rating.toFixed(1)} · ${u.count} 次交换</div></div></div>`; }
+    case 'Steps': { const done=+getPath(s.data,p.done.path)||0; return `<div class="steps">${p.items.map((it,i)=>{ const st=i<done?'done':i===done?'run':''; return `<div class="step ${st}"><span class="ic">${i<done?I('check'):''}</span>${md(bval(s,it))}${i<done?'<small>完成</small>':''}</div>`; }).join('')}</div>`; }
   }
   return '';
 }
@@ -486,14 +613,15 @@ function onA2Button(sid,cid){
 /* =====================================================================
    视图片段
    ===================================================================== */
-const COLORS = ['#5b5bd6','#0e9467','#e2570c','#d6409f','#0b7dc1','#8e4ec6','#c2410c','#0d9488'];
+const hueOf = id => { let h=7; for(const c of String(id)) h=(h*131+c.charCodeAt(0))>>>0; return Math.round((h*137.508)%360); };
+const dark = () => matchMedia('(prefers-color-scheme:dark)').matches;
 function avatarHTML(u,size=40){
-  if(u.id==='agent') return `<span class="av bot" style="width:${size}px;height:${size}px;font-size:${Math.round(size*.42)}px">换</span>`;
-  const i=[...String(u.id)].reduce((a,c)=>a+c.charCodeAt(0),0)%COLORS.length;
-  return `<span class="av" style="width:${size}px;height:${size}px;background:${COLORS[i]};font-size:${Math.round(size*.42)}px">${esc([...(u.name||'我')][0])}</span>`;
+  if(u.id==='agent') return `<span class="orb" style="width:${size}px;height:${size}px"></span>`;
+  const h=hueOf(u.id), bg=dark()?`hsl(${h} 32% 24%)`:`hsl(${h} 70% 92%)`, fg=dark()?`hsl(${h} 70% 82%)`:`hsl(${h} 45% 34%)`;
+  return `<span class="av" style="width:${size}px;height:${size}px;background:${bg};color:${fg};font-size:${Math.round(size*.4)}px">${esc([...(u.name||'我')][0])}</span>`;
 }
-function catOf(s){ if(SKILL_CAT[s]) return SKILL_CAT[s]; const k=Object.keys(SKILL_CAT).find(k=>skillMatch(k,s)); return k?SKILL_CAT[k]:'其他'; }
-function tagHTML(s,tone,level){ return `<span class="a2-tag ${tone||''}">${CAT_ICON[catOf(s)]} ${esc(s)}${level?` <em>${esc(level)}</em>`:''}</span>`; }
+function coverOf(id){ const h=hueOf(id); return dark()?`linear-gradient(120deg,hsl(${h} 35% 22%),hsl(${(h+40)%360} 40% 18%))`:`linear-gradient(120deg,hsl(${h} 80% 90%),hsl(${(h+40)%360} 85% 93%) 60%,hsl(${(h+80)%360} 80% 95%))`; }
+function tagHTML(s,tone,level){ return `<span class="tag ${tone||''}"><i></i>${esc(s)}${level?`<em>${esc(level)}</em>`:''}</span>`; }
 
 /* =====================================================================
    匹配
@@ -515,12 +643,11 @@ function matchInfo(u,P=state.profile){
   score+=Math.round((u.rating-4)*15)+(u.verified?3:0)+(theyTeach[0]&&tRank(theyTeach[0].level)>=3?2:0);
   score=Math.max(12,Math.min(99,score));
   const t=theyTeach[0], i=iTeach[0];
-  let reason = type==='both' ? `${u.name}${t.level}${t.skill}，又正好想学你的${i.skill}，你们可以直接互换，谁都不用花时间币。`
-    : type==='learn' ? `${u.name}${t.level}${t.skill}。${u.style.replace(/^我/,'TA ')}`
-    : `${u.name}正想学${i.skill}（现在${i.theirLevel}），你来教每课时赚 1 时间币，攒着去学${P.learn[0]?P.learn[0].skill:'想学的技能'}。`;
+  let reason = type==='both' ? `${t.level}${t.skill}，又正好想学你的${i.skill}，可以直接互换，谁都不用花时间币。`
+    : type==='learn' ? `${t.level}${t.skill}。${u.style.replace(/^我/,'TA ')}`
+    : `正想学${i.skill}（现在${i.theirLevel}），你来教每课时赚 1 时间币，攒着去学${P.learn[0]?P.learn[0].skill:'想学的技能'}。`;
   if(avail.length) reason+=`你们都在${avail.join('、')}有空`+(modes.includes('线下')?`，还都在${u.city}，可以线下见面。`:'。');
-  const tags=[...(modes.length?modes:u.modes).map(m=>m==='线上'?'💻 线上':'📍 线下'), ...(avail.length?avail:u.avail).slice(0,2).map(a=>'📅 '+a)];
-  return {type,theyTeach,iTeach,score,reason,tags,avail,modes};
+  return {type,theyTeach,iTeach,score,reason,avail,modes};
 }
 const PAY = {both:'swap',learn:'credit',teach:'earn'};
 
@@ -528,25 +655,40 @@ const PAY = {both:'swap',learn:'credit',teach:'earn'};
    消息与会话
    ===================================================================== */
 function thread(tid){ return state.threads[tid]; }
-function visible(tid){ return state.view==='chat' && state.active===tid && !(isMobile()&&state.mlist); }
+function visible(tid){ return state.view==='chat' && state.active===tid; }
 function push(tid,m){
   const th=thread(tid); m.id=++state.seq; m.at=Date.now(); th.msgs.push(m); th.last=m.at;
   if(m.from!=='me' && m.from!=='sys' && !visible(tid)) th.unread=(th.unread||0)+1;
   save();
   if(visible(tid)) appendMsg(tid,m);
-  renderList(); renderRail();
+  renderSide();
   return m;
 }
 const queues = {};
 function enqueue(tid,fn){ queues[tid]=(queues[tid]||Promise.resolve()).then(fn).catch(e=>console.error(e)); return queues[tid]; }
-async function showTyping(tid,from,ms){
-  typingNow[tid]=from; if(visible(tid)) renderTyping(tid); renderList();
+async function showTyping(tid,from,ms,label){
+  typingNow[tid]={from,label}; if(visible(tid)) renderTyping(tid); renderSide();
   await sleep(ms);
-  delete typingNow[tid]; const t=$('#typing'); if(t&&visible(tid)) t.remove(); renderList();
+  delete typingNow[tid]; const t=$('#typing'); if(t&&visible(tid)) t.remove(); renderSide();
 }
-const typeMs = t => Math.min(1500, 450 + String(t||'').length*14);
-function say(tid,text,{from='agent',ms}={}){ return enqueue(tid, async()=>{ await showTyping(tid,from,ms??typeMs(text)); push(tid,{from,text}); }); }
-function sayUI(tid,text,build,data,{from='agent',ms,after}={}){ return enqueue(tid, async()=>{ await showTyping(tid,from,ms??typeMs(text)+300); const sid=buildSurface(build,data); push(tid,{from,text,sid}); if(after) after(sid); }); }
+const typeMs = t => Math.min(1100, 380 + String(t||'').length*8);
+async function reveal(tid,m){
+  if(m.from!=='agent' || !visible(tid)) return;
+  const el=document.querySelector(`[data-mid="${m.id}"]`); if(!el) return;
+  const tx=el.querySelector('.stream'), sf=el.querySelector('.a2ui');
+  if(sf) sf.classList.add('pre');
+  if(tx && m.text){
+    const full=tx.innerHTML, plain=m.text.replace(/\*\*/g,'');
+    tx.classList.add('typing'); tx.textContent='';
+    const step=Math.max(1,Math.ceil(plain.length/36));
+    for(let i=0;i<plain.length;i+=step){ tx.textContent=plain.slice(0,i+step); if((i/step)%5===0) scrollDown(); await sleep(16); }
+    tx.classList.remove('typing'); tx.innerHTML=full;
+  }
+  if(sf){ await sleep(40); sf.classList.remove('pre'); }
+  scrollDown();
+}
+function say(tid,text,{from='agent',ms,think}={}){ return enqueue(tid, async()=>{ await showTyping(tid,from,ms??typeMs(text),think); const m=push(tid,{from,text}); await reveal(tid,m); }); }
+function sayUI(tid,text,build,data,{from='agent',ms,after,think}={}){ return enqueue(tid, async()=>{ await showTyping(tid,from,ms??typeMs(text)+250,think); const sid=buildSurface(build,data); const m=push(tid,{from,text,sid}); await reveal(tid,m); if(after) after(sid); }); }
 function me(tid,text){ push(tid,{from:'me',text}); }
 function sys(tid,text){ push(tid,{from:'sys',text}); }
 
@@ -569,58 +711,57 @@ const NEXT_STEP = {basic:'askTeach',teach:'askTeachLevel',teachLevel:'askLearn',
 const AGENT = {
   start(){
     state.started=true; save();
-    say('agent','嗨，我是**小换** 👋 你的 AI 技能交换顾问。\n在技能换换，**你会的就是学费**：教别人 1 小时，就能换别人教你 1 小时。',{ms:700});
-    say('agent','我先花 1 分钟了解一下你，然后一次性把最合适的交换伙伴推荐给你。先认识一下？',{ms:900});
+    say('agent','你好，我是**小换**，你的 AI 技能交换顾问。\n在技能换换，**你会的就是学费**：教别人 1 小时，就能换别人教你 1 小时。',{ms:800});
+    say('agent','我会先花 1 分钟了解你，再一次性把最合适的交换伙伴推荐给你。先认识一下？',{ms:500});
     AGENT.askBasic();
   },
-  // 刷新页面后若当前步骤卡片已提交但下一步尚未发出，则继续
   resume(){
     if(!state.started || state.onb==='done') return;
     const th=thread('agent'); const open=th.msgs.some(m=>m.sid&&state.surfaces[m.sid]&&!state.surfaces[m.sid].locked);
-    if(!open){ say('agent','我们接着来～',{ms:400}); AGENT[NEXT_STEP[state.onb]||'askBasic'](); }
+    if(!open){ say('agent','我们接着来。',{ms:400}); AGENT[NEXT_STEP[state.onb]||'askBasic'](); }
   },
   askBasic(){
     sayUI('agent','',ui=>ui.card(ui.col([
       ui.text('怎么称呼你？','h5'), ui.field('','/name','你的昵称'),
-      ui.text('你在哪个城市？（方便匹配线下课）','h5'), ui.choice('/city',CITIES,1),
-      ui.row([ui.button('下一步','onb.basic',{},true)])
-    ])),{name:D().name||'',city:[D().city||'上海']},{after:()=>{state.onb='basic';save();updateSuggest();}});
+      ui.text('你在哪个城市？方便匹配线下课','h5'), ui.choice('/city',CITIES,1),
+      ui.row([ui.button('继续','onb.basic',{},true)])
+    ])),{name:D().name||'',city:[D().city||'上海']},{ms:500,after:()=>{state.onb='basic';save();updateSuggest();}});
   },
   askTeach(){
     const pre=D().teach.map(t=>t.skill); const opts=uniq([...POP_TEACH,...pre]);
-    sayUI('agent','先说说**你愿意教别人什么**？可以多选；列表里没有的，写在下面或者直接在输入框里告诉我 👇',ui=>ui.card(ui.col([
-      ui.text('📤 我能教','h5'), ui.choice('/teach',opts,8), ui.field('其他技能（用逗号分隔）','/other','例如：尤克里里, 咖啡拉花'),
+    sayUI('agent','先说说**你愿意教别人什么**？可以多选；列表里没有的，写在下面，或者直接在输入框里告诉我。',ui=>ui.card(ui.col([
+      ui.text('我能教','h5'), ui.choice('/teach',opts,8), ui.field('其他技能（用逗号分隔）','/other','例如：尤克里里, 咖啡拉花'),
       ui.row([ui.button('就这些','onb.teach',{},true)])
     ])),{teach:pre,other:''},{after:()=>{state.onb='teach';save();updateSuggest();}});
   },
   askTeachLevel(){
     const T=D().teach;
-    sayUI('agent','不错！那你在这些技能上**大概是什么水平**？这能帮我找到真正需要你的人。',ui=>ui.card(ui.col([
-      ...T.map((t,i)=>ui.col([ui.text(`${CAT_ICON[catOf(t.skill)]} ${t.skill}`,'h5'), ui.choice('/lv/'+i,TEACH_LV,1)])),
-      ui.label('入门：能带零基础入门 · 熟练：能系统地教 · 精通：多年经验 / 有作品 · 专业级：从业 / 有证书'),
-      ui.field('一句话介绍你的教学经验（选填，会展示在你的档案上）','/exp','例如：在公司带过 3 个实习生写 Python'),
+    sayUI('agent','不错。你在这些技能上**大概是什么水平**？这能帮我找到真正需要你的人。',ui=>ui.card(ui.col([
+      ...T.map((t,i)=>ui.col([ui.text(t.skill,'h5'), ui.choice('/lv/'+i,TEACH_LV,1)])),
+      ui.text('入门：能带零基础入门　熟练：能系统地教　精通：多年经验或有作品　专业级：从业或持证','caption'),
+      ui.field('一句话介绍你的教学经验（选填，会展示在档案上）','/exp','例如：在公司带过 3 个实习生写 Python'),
       ui.row([ui.button('确认','onb.teachLevel',{},true)])
     ])),{lv:Object.fromEntries(T.map((t,i)=>[i,[t.level||'熟练']])),exp:D().exp||''},{after:()=>{state.onb='teachLevel';save();updateSuggest();}});
   },
   askLearn(){
     const teachS=D().teach.map(t=>t.skill); const pre=D().learn.map(l=>l.skill);
     const opts=uniq([...POP_LEARN.filter(s=>!teachS.includes(s)),...pre]);
-    sayUI('agent','了解 👍 接下来，**你想学什么**？',ui=>ui.card(ui.col([
-      ui.text('📥 我想学','h5'), ui.choice('/learn',opts,6), ui.field('其他想学的（用逗号分隔）','/other','例如：咖啡拉花, 滑板'),
+    sayUI('agent','了解。接下来，**你想学什么**？',ui=>ui.card(ui.col([
+      ui.text('我想学','h5'), ui.choice('/learn',opts,6), ui.field('其他想学的（用逗号分隔）','/other','例如：咖啡拉花, 滑板'),
       ui.row([ui.button('就这些','onb.learn',{},true)])
     ])),{learn:pre,other:''},{after:()=>{state.onb='learn';save();updateSuggest();}});
   },
   askLearnLevel(){
     const Ls=D().learn; const hint=GOAL_HINT[Ls[0].skill]||'比如：先入门，培养兴趣，每周坚持练';
     sayUI('agent','你现在在这些方向上是**什么水平**？有想达到的目标也可以告诉我，我会转达给老师。',ui=>ui.card(ui.col([
-      ...Ls.map((l,i)=>ui.col([ui.text(`${CAT_ICON[catOf(l.skill)]} ${l.skill}`,'h5'), ui.choice('/ll/'+i,LEARN_LV,1)])),
+      ...Ls.map((l,i)=>ui.col([ui.text(l.skill,'h5'), ui.choice('/ll/'+i,LEARN_LV,1)])),
       ui.field('学习目标（选填）','/goal',hint),
       ui.row([ui.button('确认','onb.learnLevel',{},true)])
     ])),{ll:Object.fromEntries(Ls.map((l,i)=>[i,[l.level||'零基础']])),goal:D().goal||''},{after:()=>{state.onb='learnLevel';save();updateSuggest();}});
   },
   askPrefs(){
     const d=D();
-    sayUI('agent','最后，说说你的**上课偏好**，我会按这个帮你筛人、排时间：',ui=>ui.card(ui.col([
+    sayUI('agent','最后是你的**上课偏好**，我会按这个帮你筛人、排时间。',ui=>ui.card(ui.col([
       ui.text('上课方式','h5'), ui.choice('/mode',['线上','线下','都可以'],1),
       ui.text('单次时长','h5'), ui.choice('/dur',['30 分钟','45 分钟','60 分钟','90 分钟'],1),
       ui.text('方便的时间（可多选）','h5'), ui.choice('/avail',AVAILS,5),
@@ -629,42 +770,47 @@ const AGENT = {
     ])),{mode:[d.mode],dur:[d.dur],avail:d.avail.length?d.avail:['工作日晚上','周末下午'],freq:[d.freq]},{after:()=>{state.onb='prefs';save();updateSuggest();}});
   },
   showProfile(){
-    say('agent','好的，正在为你生成技能档案…',{ms:600});
-    sayUI('agent','这是根据你刚才说的整理出来的档案，确认没问题我就开始匹配 👇',ui=>ui.col([profileCardUI(ui,D()), ui.row([ui.button('没问题，开始匹配','onb.confirm',{},true), ui.button('我要修改','onb.edit')])]),{},{ms:1300,after:()=>{state.onb='profile';save();updateSuggest();}});
+    sayUI('agent','我根据你刚才说的整理了一份技能档案，确认无误我就开始匹配。',ui=>ui.col([profileCardUI(ui,D()), ui.row([ui.button('没问题，开始匹配','onb.confirm',{},true), ui.button('我要修改','onb.edit',{},false,'edit')])]),{},{ms:1500,think:'正在生成技能档案',after:()=>{state.onb='profile';save();updateSuggest();}});
   },
   match(exclude=[]){
     const P=state.profile;
     const list=USERS.filter(u=>!exclude.includes(u.id)).map(u=>({u,m:matchInfo(u,P)})).filter(x=>x.m.type!=='none').sort((a,b)=>b.m.score-a.m.score).slice(0,6);
-    say('agent','收到！我开始帮你匹配了，稍等几秒…',{ms:500});
-    say('agent','✓ **技能互补**：找能教你、也需要你的人\n✓ **水平匹配**：TA 的水平要高于你现在的水平\n✓ **时间和方式**：可约时间、线上 / 线下、所在城市\n✓ **口碑**：评分、认证、历史交换次数',{ms:1800});
-    if(!list.length){ say('agent','暂时没有找到合适的伙伴 😢 我已经帮你订阅了，有新用户发布相关技能时第一时间通知你。\n你也可以多加几个能教的技能，选择面会大很多。'); return; }
+    const steps=['分析技能互补：谁能教你，谁也需要你','校验水平：TA 的水平要高于你当前水平','比对时间与方式：可约时段、线上 / 线下、城市','综合口碑：评分、认证与历史交换'];
+    enqueue('agent', async()=>{
+      await showTyping('agent','agent',500,'正在匹配');
+      const sid=buildSurface(ui=>ui.card(ui.col([ui.row([ui.text('正在为你匹配交换伙伴','h5')]), ui.steps(steps,'/done')])),{done:0});
+      const m=push('agent',{from:'agent',text:'',sid}); await reveal('agent',m);
+      for(let i=1;i<=steps.length;i++){ await sleep(650); a2uiReceive({dataModelUpdate:{surfaceId:sid,path:'/',contents:[{key:'done',valueNumber:i}]}}); }
+      await sleep(300);
+    });
+    if(!list.length){ say('agent','暂时没有找到合适的伙伴。我已经帮你订阅了，有新用户发布相关技能时会第一时间通知你。\n你也可以多加几个能教的技能，选择面会大很多。'); return; }
     const nb=list.filter(x=>x.m.type==='both').length;
-    sayUI('agent',`为你找到 **${list.length} 位**合适的伙伴${nb?`，其中 **${nb} 位**可以直接技能互换`:''}，按匹配度排好了 👇`,ui=>ui.list(list.map(x=>matchCardUI(ui,x.u,x.m))),{},{ms:900});
-    say('agent','看中谁就点「**去对话**」直接私聊。聊得差不多了叫我一声（对话右上角的「✨ 小换整理约课」），我来帮你们敲定时间地点，同步到双方日程 📅');
+    sayUI('agent',`为你找到 **${list.length} 位**合适的伙伴${nb?`，其中 **${nb} 位**可以直接技能互换`:''}，已按匹配度排序。`,ui=>ui.list(list.map(x=>matchCardUI(ui,x.u,x.m))),{},{ms:400});
+    say('agent','看中谁就点「去对话」直接私聊。聊得差不多了，点对话右上角的「整理约课」叫我，我来帮你们敲定时间地点，并同步到双方日程。',{ms:300});
     const none=P.learn.filter(l=>!USERS.some(u=>u.teach.some(t=>skillMatch(t.skill,l.skill))));
-    if(none.length) say('agent',`另外，平台上暂时还没有人教 **${none.map(l=>l.skill).join('、')}**，我已经帮你订阅了，有人发布时第一时间告诉你 🔔`);
+    if(none.length) say('agent',`另外，平台上暂时还没有人教 **${none.map(l=>l.skill).join('、')}**。我已经帮你订阅，有人发布时第一时间告诉你。`);
   },
   validate(name,c,s){
     const d=s.data;
     if(name==='onb.basic' && !String(d.name||'').trim()){ toast('先告诉我怎么称呼你吧'); return false; }
-    if(name==='onb.teach' && !(d.teach||[]).length && !parseSkills(d.other).length){ toast('至少选一个你能教的技能吧'); return false; }
-    if(name==='onb.learn' && !(d.learn||[]).length && !parseSkills(d.other).length){ toast('至少选一个你想学的技能吧'); return false; }
+    if(name==='onb.teach' && !(d.teach||[]).length && !parseSkills(d.other).length){ toast('至少选一个你能教的技能'); return false; }
+    if(name==='onb.learn' && !(d.learn||[]).length && !parseSkills(d.other).length){ toast('至少选一个你想学的技能'); return false; }
     if(name==='onb.prefs' && !(d.avail||[]).length){ toast('至少选一个方便的时间段'); return false; }
   },
   onAction(name,c,s){
     const d=s.data, dr=D();
     switch(name){
-      case 'onb.basic': { dr.name=String(d.name).trim().slice(0,16); dr.city=(d.city||[])[0]||'上海'; save(); me('agent',`我是${dr.name}，在${dr.city}`); say('agent',`很高兴认识你，${dr.name}！`,{ms:500}); AGENT.askTeach(); break; }
+      case 'onb.basic': { dr.name=String(d.name).trim().slice(0,16); dr.city=(d.city||[])[0]||'上海'; save(); me('agent',`我是${dr.name}，在${dr.city}`); say('agent',`很高兴认识你，${dr.name}。`,{ms:450}); AGENT.askTeach(); break; }
       case 'onb.teach': { const list=uniq([...(d.teach||[]),...parseSkills(d.other)]); me('agent','我能教：'+list.join('、')); AGENT.setTeach(list); break; }
-      case 'onb.teachLevel': { dr.teach.forEach((t,i)=>t.level=((d.lv||{})[i]||[])[0]||'熟练'); dr.exp=String(d.exp||'').trim(); save(); me('agent',dr.teach.map(t=>`${t.skill} ${t.level}`).join(' · ')); AGENT.askLearn(); break; }
+      case 'onb.teachLevel': { dr.teach.forEach((t,i)=>t.level=((d.lv||{})[i]||[])[0]||'熟练'); dr.exp=String(d.exp||'').trim(); save(); me('agent',dr.teach.map(t=>`${t.skill} ${t.level}`).join('，')); AGENT.askLearn(); break; }
       case 'onb.learn': { const list=uniq([...(d.learn||[]),...parseSkills(d.other)]); me('agent','我想学：'+list.join('、')); AGENT.setLearn(list); break; }
-      case 'onb.learnLevel': { dr.learn.forEach((l,i)=>l.level=((d.ll||{})[i]||[])[0]||'零基础'); dr.goal=String(d.goal||'').trim(); save(); me('agent',dr.learn.map(l=>`${l.skill}：${l.level}`).join(' · ')+(dr.goal?`\n目标：${dr.goal}`:'')); AGENT.askPrefs(); break; }
-      case 'onb.prefs': { dr.mode=(d.mode||[])[0]||'都可以'; dr.dur=(d.dur||[])[0]||'60 分钟'; dr.avail=d.avail; dr.freq=(d.freq||[])[0]||'每周 1 次'; save(); me('agent',`${dr.mode} · ${dr.dur}/次 · ${dr.avail.join('、')} · ${dr.freq}`); AGENT.showProfile(); break; }
-      case 'onb.confirm': { state.profile=JSON.parse(JSON.stringify(dr)); state.onb='done'; save(); me('agent','没问题，开始匹配吧'); renderRail(); updateSuggest(); AGENT.match(); break; }
-      case 'onb.edit': { me('agent','我要修改一下'); say('agent','好的，我们重新过一遍，之前填的我都帮你保留了 ✍️',{ms:500}); AGENT.askTeach(); break; }
+      case 'onb.learnLevel': { dr.learn.forEach((l,i)=>l.level=((d.ll||{})[i]||[])[0]||'零基础'); dr.goal=String(d.goal||'').trim(); save(); me('agent',dr.learn.map(l=>`${l.skill}：${l.level}`).join('，')+(dr.goal?`\n目标：${dr.goal}`:'')); AGENT.askPrefs(); break; }
+      case 'onb.prefs': { dr.mode=(d.mode||[])[0]||'都可以'; dr.dur=(d.dur||[])[0]||'60 分钟'; dr.avail=d.avail; dr.freq=(d.freq||[])[0]||'每周 1 次'; save(); me('agent',`${dr.mode}，每次 ${dr.dur}，${dr.avail.join('、')}，${dr.freq}`); AGENT.showProfile(); break; }
+      case 'onb.confirm': { state.profile=JSON.parse(JSON.stringify(dr)); state.onb='done'; save(); me('agent','没问题，开始匹配吧'); renderSide(); updateSuggest(); AGENT.match(); break; }
+      case 'onb.edit': { me('agent','我要修改一下'); say('agent','好的，我们重新过一遍，之前填的都帮你保留了。',{ms:450}); AGENT.askTeach(); break; }
       case 'match.chat': openPartner(c.uid); break;
       case 'book.start': BOOK.card(c.uid,false); break;
-      case 'book.later': me(c.uid,'我们再聊聊'); say(c.uid,'好的～你们继续聊，需要的时候点右上角「✨ 小换整理约课」叫我就行。',{ms:500}); break;
+      case 'book.later': me(c.uid,'我们再聊聊'); say(c.uid,'好的，你们继续聊，需要的时候点右上角「整理约课」叫我就行。',{ms:450}); break;
       case 'book.confirm': BOOK.confirm(c.uid,s); break;
       case 'nav.calendar': go('cal'); break;
       case 'ics.download': downloadICS(c.eid); break;
@@ -678,62 +824,62 @@ const AGENT = {
   lockOpen(){ const th=thread('agent'); for(let i=th.msgs.length-1;i>=0;i--){ const m=th.msgs[i]; if(m.sid&&state.surfaces[m.sid]&&!state.surfaces[m.sid].locked){ lockSurface(m.sid); return; } } },
   onText(text){
     const st=state.onb;
-    if(st==='basic'){ const dr=D(); const name=text.replace(/^(我叫|叫我|我是|你可以叫我)/,'').replace(/[，,。.!！]/g,' ').trim().split(/\s+/)[0]; const city=CITIES.find(c=>text.includes(c)); dr.name=(name||text).slice(0,16); dr.city=city||dr.city||'上海'; save(); AGENT.lockOpen(); say('agent',`很高兴认识你，${dr.name}！`,{ms:500}); AGENT.askTeach(); return; }
-    if(st==='teach'||st==='learn'){ const list=parseSkills(text); if(!list.length){ say('agent','没太听懂 😅 可以直接点上面的技能，或者写成「Python、吉他」这样～'); return; } AGENT.lockOpen(); st==='teach'?AGENT.setTeach(list):AGENT.setLearn(list); return; }
-    if(st!=='done'){ say('agent','点上面卡片里的选项就好，选完点确认 ✅ 有问题也可以直接问我。'); return; }
+    if(st==='basic'){ const dr=D(); const name=text.replace(/^(我叫|叫我|我是|你可以叫我)/,'').replace(/[，,。.!！]/g,' ').trim().split(/\s+/)[0]; const city=CITIES.find(c=>text.includes(c)); dr.name=(name||text).slice(0,16); dr.city=city||dr.city||'上海'; save(); AGENT.lockOpen(); say('agent',`很高兴认识你，${dr.name}。`,{ms:450}); AGENT.askTeach(); return; }
+    if(st==='teach'||st==='learn'){ const list=parseSkills(text); if(!list.length){ say('agent','我没太理解，可以直接点上面的技能，或者写成「Python、吉他」这样。'); return; } AGENT.lockOpen(); st==='teach'?AGENT.setTeach(list):AGENT.setLearn(list); return; }
+    if(st!=='done'){ say('agent','点上面卡片里的选项就好，选完点确认。有问题也可以直接问我。'); return; }
     if(/匹配|推荐|找人|伙伴|换一批|其他人/.test(text)){ AGENT.match(); return; }
     if(/日程|课程|安排|上课|几点/.test(text)){ AGENT.agenda(); return; }
-    if(/币|余额|积分|计费|收费|多少钱/.test(text)){ say('agent',`你现在有 **${state.credits} 个时间币**。\n• 教别人 1 小时 = +1 币；向别人学 1 小时 = −1 币\n• 技能互换的课时互相抵扣，不花币\n• 每段新关系的首课 15 分钟试听免费`); return; }
-    if(/修改|档案|资料|重新填/.test(text)){ say('agent','好的，我们重新过一遍，之前填的我都帮你保留了 ✍️'); AGENT.askTeach(); return; }
-    if(/提醒/.test(text)){ say('agent','每节课开课前我都会在这里提醒你，并附上课堂入口；课程结束后我会来问问你的体验 😊'); return; }
-    if(/你好|hi|hello|在吗|嗨/i.test(text)){ say('agent',`在的～${state.profile.name}，有什么可以帮你？`); return; }
-    say('agent','这个我还在学习中 🤔 目前我可以帮你：\n• 重新匹配交换伙伴\n• 查看课程日程\n• 查询时间币\n• 修改技能档案');
+    if(/币|余额|积分|计费|收费|多少钱/.test(text)){ say('agent',`你现在有 **${state.credits} 个时间币**。\n· 教别人 1 小时 +1 币，向别人学 1 小时 −1 币\n· 技能互换的课时互相抵扣，不花币\n· 每段新关系的首课 15 分钟试听免费`); return; }
+    if(/修改|档案|资料|重新填/.test(text)){ say('agent','好的，我们重新过一遍，之前填的都帮你保留了。'); AGENT.askTeach(); return; }
+    if(/提醒/.test(text)){ say('agent','每节课开课前我都会在这里提醒你，并附上课堂入口；课程结束后我会来问问你的上课体验。'); return; }
+    if(/你好|hi|hello|在吗|嗨/i.test(text)){ say('agent',`在的，${state.profile.name}。有什么可以帮你？`); return; }
+    say('agent','这个我暂时还帮不上忙。目前我可以：\n· 重新匹配交换伙伴\n· 查看课程安排\n· 查询时间币\n· 修改技能档案');
   },
   agenda(){
     const up=state.events.filter(e=>e.status!=='done').sort((a,b)=>a.start-b.start);
-    if(!up.length){ say('agent','你还没有课程安排～在匹配结果里挑一位伙伴聊聊，聊好了我帮你们约课 📅'); return; }
-    sayUI('agent',`你有 **${up.length} 节**待上的课：`,ui=>ui.col(up.map(e=>eventCardUI(ui,e,{head:null,buttons:false})).concat([ui.row([ui.button('打开日程','nav.calendar',{},true)])])));
+    if(!up.length){ say('agent','你还没有课程安排。在匹配结果里挑一位伙伴聊聊，聊好了我帮你们约课。'); return; }
+    sayUI('agent',`你有 **${up.length} 节**待上的课：`,ui=>ui.col(up.map(e=>eventCardUI(ui,e,{head:null,buttons:false})).concat([ui.row([ui.button('打开日程','nav.calendar',{},true,'calendar')])])));
   }
 };
 
 function profileCardUI(ui,P){
-  const modeT=P.mode==='都可以'?'💻📍 线上 / 线下都可以':P.mode==='线上'?'💻 线上':'📍 线下';
+  const modeT=P.mode==='都可以'?'线上 / 线下都可以':P.mode;
   return ui.card(ui.col([
-    ui.row([ui.avatar({id:'me',name:P.name},52), ui.col([ui.text(P.name,'h4'), ui.label(`${P.city} · 新加入 · 时间币 ${state.credits}`)])]),
+    ui.row([ui.avatar({id:'me',name:P.name},48), ui.col([ui.text(P.name,'h4'), ui.text(`${P.city} · 新加入 · ${state.credits} 时间币`,'caption')])]),
     P.exp?ui.text(`“${P.exp}”`,'caption'):null,
     ui.divider(),
-    ui.label('📤 我能教'), ui.row(P.teach.map(t=>ui.tag(t.skill,'teach',t.level))),
-    ui.label('📥 我想学'), ui.row(P.learn.map(l=>ui.tag(l.skill,'learn',l.level))),
-    P.goal?ui.text('🎯 目标：'+P.goal,'caption'):null,
+    ui.row([ui.label('能教'), ...P.teach.map(t=>ui.tag(t.skill,'teach',t.level))]),
+    ui.row([ui.label('想学'), ...P.learn.map(l=>ui.tag(l.skill,'learn',l.level))]),
+    P.goal?ui.row([ui.label('目标'), ui.text(P.goal,'body')]):null,
     ui.divider(),
-    ui.row([ui.badge(modeT), ui.badge('⏱ '+P.dur+' / 次'), ui.badge('🔁 '+P.freq)]),
-    ui.row(P.avail.map(a=>ui.badge('📅 '+a)))
+    ui.row([ui.badge(modeT,'', 'video'), ui.badge(P.dur+' / 次','','clock'), ui.badge(P.freq,'','repeat'), ...P.avail.map(a=>ui.badge(a,'','calendar'))])
   ]));
 }
 function matchCardUI(ui,u,m){
-  const T={both:['⇄ 技能互换 · 课时互抵','pri'],learn:['⏱ 时间币学习 · 1 币/课时','learn'],teach:['📤 教 TA · 每课时 +1 币','teach']}[m.type];
+  const T={both:['技能互换 · 课时互抵','pri','swap'],learn:['时间币学习 · 1 币/课时','learn','coins'],teach:['你来教 · 每课时 +1 币','teach','coins']}[m.type];
   const t=m.theyTeach[0], i=m.iTeach[0];
+  const modes=(m.modes.length?m.modes:u.modes), av=(m.avail.length?m.avail:u.avail).slice(0,2);
   return ui.card(ui.col([
-    ui.row([ui.row([ui.avatar(u,44), ui.col([ui.text(u.name+(u.verified?' ✓':''),'h5'), ui.label(`${u.city} · ★${u.rating.toFixed(1)} · ${u.count} 次交换`)])]), ui.badge(m.score+'%','score')],{between:true}),
-    ui.badge(T[0],T[1]),
+    ui.profile(u,m.score),
+    ui.badge(T[0],T[1],T[2]),
     t?ui.row([ui.label('TA 教你'), ui.tag(t.skill,'teach',t.level)]):null,
     i?ui.row([ui.label('你教 TA'), ui.tag(i.skill,'learn','TA '+i.theirLevel)]):null,
     ui.text(m.reason,'caption'),
-    ui.row(m.tags.map(x=>ui.badge(x))),
-    ui.button('去对话','match.chat',{uid:u.id},true)
+    ui.row([...modes.map(x=>ui.badge(x,'',x==='线上'?'video':'pin')), ...av.map(a=>ui.badge(a,'','calendar'))]),
+    ui.button('去对话','match.chat',{uid:u.id},true,'chat')
   ]));
 }
-function eventCardUI(ui,ev,{head='🎉 约课成功 · 已同步到双方日程',buttons=true}={}){
+function eventCardUI(ui,ev,{head='约课成功，已同步到双方日程',buttons=true}={}){
   const u=userById(ev.uid);
   return ui.card(ui.col([
-    head?ui.text(head,'h5'):null,
-    ui.row([ui.avatar(u,38), ui.col([ui.text(`${ev.title} · ${u.name}`,'h5'), ui.label(`${fmtWhen(ev.start)} · ${ev.dur} 分钟 · ${ev.mode}`)])]),
-    ev.mode==='线上'?ui.text('🔗 课堂链接：'+roomURL(ev),'caption'):ui.text('📍 '+ev.place,'caption'),
-    ui.text(payText(ev)+(ev.trial?' · 首课试听免费':''),'caption'),
-    buttons?ui.row([ui.button('查看日程','nav.calendar'), ui.button('加入手机日历','ics.download',{eid:ev.id})]):null
+    head?ui.row([ui.badge(head,'teach','check')]):null,
+    ui.row([ui.avatar(u,40), ui.col([ui.text(`${ev.title} · ${u.name}`,'h5'), ui.text(`${fmtWhen(ev.start)} · ${ev.dur} 分钟`,'caption')])]),
+    ev.mode==='线上'?ui.meta('video','线上课堂 · '+roomURL(ev)):ui.meta('pin','线下 · '+ev.place),
+    ui.meta(ev.pay==='swap'?'swap':'coins',payText(ev)+(ev.trial?'，首课试听免费':'')),
+    buttons?ui.row([ui.button('查看日程','nav.calendar',{},false,'calendar'), ui.button('加入手机日历','ics.download',{eid:ev.id},false,'download')]):null
   ]));
 }
-function payText(ev){ return ev.pay==='swap'?`⇄ 技能互换（你学${ev.learn}，教 TA ${ev.teach}）`:ev.pay==='credit'?'⏱ 时间币 · 每课时 1 币':'📤 你来教 · 每课时 +1 币'; }
+function payText(ev){ return ev.pay==='swap'?`技能互换：你学${ev.learn}，教 TA ${ev.teach}`:ev.pay==='credit'?'时间币：每课时 1 币':'你来教：每课时 +1 币'; }
 
 /* =====================================================================
    私聊：匹配到的用户
@@ -744,14 +890,15 @@ function openPartner(uid){
     state.threads[uid]={id:uid,msgs:[],unread:0,last:Date.now(),stage:0,
       m:{type:m.type,score:m.score,learn:m.theyTeach[0]?.skill||null,learnLevel:m.theyTeach[0]?.level||'',myLevel:m.theyTeach[0]?.myLevel||'',teach:m.iTeach[0]?.skill||null,theirLevel:m.iTeach[0]?.theirLevel||''}};
     const x=state.threads[uid].m;
-    sys(uid,`你通过小换匹配认识了 ${u.name} · 匹配度 ${x.score}%`);
-    const intro = x.type==='both' ? `我已经把你们的互补点告诉了双方：**${u.name}** 能教你 **${x.learn}**（${x.learnLevel}），也正想学你的 **${x.teach}**。打个招呼吧，下面有我帮你准备的开场白 👇`
-      : x.type==='learn' ? `**${u.name}** 能教你 **${x.learn}**（${x.learnLevel}）。TA 暂时不需要你的技能，可以用时间币约课（1 币/课时，你现在有 ${state.credits} 币）。打个招呼吧 👇`
-      : `**${u.name}** 正想学 **${x.teach}**（现在${x.theirLevel}），你来教每课时能赚 1 时间币。打个招呼吧 👇`;
+    sys(uid,`你通过小换认识了 ${u.name} · 匹配度 ${x.score}%`);
+    const intro = x.type==='both' ? `我已经把你们的互补点告诉了双方：**${u.name}** 能教你 **${x.learn}**（${x.learnLevel}），也正想学你的 **${x.teach}**。打个招呼吧，下面是我帮你准备的开场白。`
+      : x.type==='learn' ? `**${u.name}** 能教你 **${x.learn}**（${x.learnLevel}）。TA 暂时不需要你的技能，可以用时间币约课（1 币/课时，你现在有 ${state.credits} 币）。`
+      : `**${u.name}** 正想学 **${x.teach}**（现在${x.theirLevel}），你来教每课时能赚 1 时间币。`;
     push(uid,{from:'agent',text:intro});
   }
   go('chat',uid);
 }
+function ev0Mode(uid){ const e=state.events.filter(e=>e.uid===uid&&e.status!=='done').sort((a,b)=>a.start-b.start)[0]; return e?e.mode:'线上'; }
 const PARTNER = {
   onText(uid,text){
     const th=thread(uid), u=userById(uid), x=th.m, P=state.profile, my=P.name;
@@ -775,26 +922,25 @@ const PARTNER = {
       else if(/线上/.test(text)) r='线上没问题，到时候直接用平台课堂就行，会自动生成会议链接。';
       else if(/币|钱|费|价格|多少/.test(text)) r = x.type==='both'?'我们互换的话课时互相抵扣，谁都不花币～':'按平台规则 1 小时 1 个时间币，试听那节不算～';
       else if(/谢谢|感谢/.test(text)) r='不客气～到时候见！';
-      else if(/准备/.test(text)) r=x.type==='teach'?'我先把自己的问题列一下，到时候请你多指点～':`不用特别准备，${ev0Mode(uid)==='线下'?'人到就行，工具我这边都有':'找个安静的地方，带上耳机'}，有想学的歌或者问题可以先发我～`;
+      else if(/准备/.test(text)) r=x.type==='teach'?'我先把自己的问题列一下，到时候请你多指点～':`不用特别准备，${ev0Mode(uid)==='线下'?'人到就行，工具我这边都有':'找个安静的地方，带上耳机'}，有想学的内容可以先发我～`;
       else if(/试听|好|行|可以|ok|没问题|嗯|周|今天|待会|点/i.test(text)) r='好嘞！那让小换帮我们把时间和地点整理一下吧 😄';
       else r=['好的～','收到！','没问题 👌'][st%3]+' 有什么想法随时说。';
     }
     enqueue(uid, async()=>{
-      await sleep(500);
-      await showTyping(uid,uid,Math.min(2200,900+r.length*20));
+      await sleep(450);
+      await showTyping(uid,uid,Math.min(2000,800+r.length*18));
       push(uid,{from:uid,text:r});
       if(st===2 || (st>=3 && /小换/.test(r) && !th.hinted)){
         th.hinted=true; save();
-        await sleep(600);
-        await showTyping(uid,'agent',900);
-        const sid=buildSurface(ui=>ui.row([ui.button('好的，帮我整理','book.start',{uid},true), ui.button('再聊聊','book.later',{uid})]));
-        push(uid,{from:'agent',text:'看起来你们已经聊到时间了 ✨ 要我帮你们整理成约课单，同步到双方日程吗？',sid});
+        await sleep(500);
+        await showTyping(uid,'agent',800,'小换正在阅读聊天记录');
+        const sid=buildSurface(ui=>ui.row([ui.button('帮我们整理','book.start',{uid},true,'sparkle'), ui.button('再聊聊','book.later',{uid})]));
+        const m=push(uid,{from:'agent',text:'看起来你们已经聊到时间了。要我把聊天内容整理成约课单，同步到双方日程吗？',sid});
+        await reveal(uid,m);
       }
     });
   }
 };
-
-function ev0Mode(uid){ const e=state.events.filter(e=>e.uid===uid&&e.status!=='done').sort((a,b)=>a.start-b.start)[0]; return e?e.mode:'线上'; }
 
 /* =====================================================================
    约课：AI 整理 → 双方确认 → 日程
@@ -812,43 +958,44 @@ const BOOK = {
     const th=thread(uid), u=userById(uid), P=state.profile, x=th.m;
     const soon=ceilMin(Date.now()+3*MIN), later=BOOK.laterSlot(u);
     const a2=u.avail.find(a=>slotFromAvail(a)!==later&&P.avail.includes(a))||u.avail.find(a=>slotFromAvail(a)!==later);
-    const opts=[{label:`今天 ${fmtHM(soon)}（待会儿就上）`,value:String(soon)},{label:fmtWhen(later),value:String(later)}];
+    const opts=[{label:`今天 ${fmtHM(soon)} · 待会儿就上`,value:String(soon)},{label:fmtWhen(later),value:String(later)}];
     if(a2) opts.push({label:fmtWhen(slotFromAvail(a2)),value:String(slotFromAvail(a2))});
     opts.sort((a,b)=>+a.value-+b.value);
     let modes=commonModes(u,P); if(!modes.length) modes=u.modes.filter(m=>m==='线上'); if(!modes.length) modes=['线上'];
     const defMode=th.wantMode&&modes.includes(th.wantMode)?th.wantMode:modes[0];
     const defSlot=th.wantSlot==='later'?String(later):String(soon);
     const pay=PAY[x.type];
-    const course = x.type==='both'?`${u.name} 教你 **${x.learn}** ⇄ 你教 ${u.name} **${x.teach}**`:x.type==='learn'?`${u.name} 教你 **${x.learn}**`:`你教 ${u.name} **${x.teach}**`;
-    const payT = pay==='swap'?'⇄ 技能互换：课时互相抵扣，双方都不花时间币':pay==='credit'?`⏱ 时间币：每课时 1 币（你的余额 ${state.credits}）`:'📤 你来教：每课时 +1 时间币';
-    const bullets=[`• ${u.name}：建议先上 15 分钟试听`];
-    if(th.wantMode) bullets.push(`• 你：希望${th.wantMode}上课`);
-    if(th.wantSlot) bullets.push(th.wantSlot==='soon'?'• 你：今天就想先试试':'• 你：周末那个时间更方便');
-    bullets.push(`• 你们共同的空闲：${(u.avail.filter(a=>P.avail.includes(a)).join('、'))||u.avail[0]}`);
+    const course = x.type==='both'?`${u.name} 教你 **${x.learn}**，你教 ${u.name} **${x.teach}**`:x.type==='learn'?`${u.name} 教你 **${x.learn}**`:`你教 ${u.name} **${x.teach}**`;
+    const payT = pay==='swap'?'技能互换，课时互相抵扣，双方都不花时间币':pay==='credit'?`时间币，每课时 1 币（你的余额 ${state.credits}）`:'你来教，每课时 +1 时间币';
+    const bullets=[`· ${u.name} 建议先上 15 分钟试听`];
+    if(th.wantMode) bullets.push(`· 你希望${th.wantMode}上课`);
+    if(th.wantSlot) bullets.push(th.wantSlot==='soon'?'· 你想今天就先试试':'· 你更倾向周末那个时间');
+    bullets.push(`· 你们共同的空闲：${(u.avail.filter(a=>P.avail.includes(a)).join('、'))||u.avail[0]}`);
     if(echo) me(uid,'@小换 帮我们整理一下约课');
-    sayUI(uid,'好的，我读了一下你们的聊天，整理成了下面这张约课单 👇 确认后会同时发到你们俩的日程上。',ui=>ui.card(ui.col([
-      ui.text('📋 约课确认单','h4'),
+    sayUI(uid,'我读了一下你们的聊天，整理成了下面这张约课单。确认后会同时发到你们俩的日程上。',ui=>ui.card(ui.col([
+      ui.row([ui.text('约课确认单','h4'), ui.badge('由小换生成','pri','sparkle')],{between:true}),
       ui.text('**聊天要点**\n'+bullets.join('\n'),'caption'),
       ui.divider(),
       ui.row([ui.label('课程'), ui.text(course)]),
       ui.row([ui.label('计费'), ui.text(payT)]),
-      ui.row([ui.label('首课'), ui.text(`15 分钟免费试听 · 之后每次 ${P.dur}`)]),
+      ui.row([ui.label('首课'), ui.text(`15 分钟免费试听，之后每次 ${P.dur}`)]),
+      ui.divider(),
       ui.text('上课时间','h5'), ui.choice('/slot',opts,1),
       ui.text('上课方式','h5'), ui.choice('/mode',modes,1),
-      modes.includes('线下')?ui.field('线下地点（选线上可忽略）','/place'):ui.text('💻 线上课会自动生成课堂链接，双方点开即可上课','caption'),
-      ui.row([ui.button('确认并发给双方','book.confirm',{uid},true), ui.button('再聊聊','book.later',{uid})])
-    ])),{slot:[defSlot],mode:[defMode],place:u.place},{ms:1500});
+      modes.includes('线下')?ui.field('线下地点（选线上可忽略）','/place'):ui.meta('video','线上课会自动生成课堂链接，双方点开即可上课'),
+      ui.row([ui.button('确认并发给双方','book.confirm',{uid},true,'check'), ui.button('再聊聊','book.later',{uid})])
+    ])),{slot:[defSlot],mode:[defMode],place:u.place},{ms:1500,think:'正在整理聊天记录'});
   },
   confirm(uid,s){
     const u=userById(uid), d=s.data;
     let start=+((d.slot||[])[0]); if(!start||start<Date.now()+MIN) start=ceilMin(Date.now()+2*MIN);
     const mode=(d.mode||[])[0]||'线上';
     const ev=mkEvent({uid,start,dur:15,trial:true,mode,place:mode==='线下'?(String(d.place||'').trim()||u.place):''});
-    say(uid,`📨 约课单已发给 ${u.name}，等待 TA 确认…`,{ms:500});
-    enqueue(uid, async()=>{ await sleep(600); await showTyping(uid,uid,1300); push(uid,{from:uid,text:'收到，已确认 👍 到时候见！'}); state.events.push(ev); save(); renderRail(); });
-    sayUI(uid,'',ui=>eventCardUI(ui,ev),{},{ms:700});
-    say(uid,'⏰ 开课前我会提醒你们俩，课程结束后我也会来问问上课体验。',{ms:600});
-    sayUI('agent',`📅 新日程：你和 **${u.name}** 约好了「${ev.title}」`,ui=>eventCardUI(ui,ev,{head:null}),{},{ms:300});
+    say(uid,`约课单已发给 ${u.name}，等待 TA 确认。`,{ms:450});
+    enqueue(uid, async()=>{ await sleep(500); await showTyping(uid,uid,1200); push(uid,{from:uid,text:'收到，已确认 👍 到时候见！'}); state.events.push(ev); save(); renderSide(); });
+    sayUI(uid,'',ui=>eventCardUI(ui,ev),{},{ms:600,think:'正在同步日程'});
+    say(uid,'开课前我会提醒你们俩，课程结束后也会来问问上课体验。',{ms:400});
+    sayUI('agent',`新日程：你和 **${u.name}** 约好了「${ev.title}」。`,ui=>eventCardUI(ui,ev,{head:null}),{},{ms:300});
   }
 };
 function mkEvent({uid,start,dur,trial,mode,place,n=1}){
@@ -864,7 +1011,7 @@ function downloadICS(eid){
   const dt=t=>new Date(t).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,'');
   const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//SkillSwap//CN','BEGIN:VEVENT',`UID:${ev.id}@skillswap`,`DTSTAMP:${dt(Date.now())}`,`DTSTART:${dt(ev.start)}`,`DTEND:${dt(ev.start+ev.dur*MIN)}`,`SUMMARY:${ev.title} · ${u.name}（技能换换）`,`LOCATION:${ev.mode==='线上'?roomURL(ev):ev.place}`,`DESCRIPTION:${ev.mode==='线上'?'课堂链接 '+roomURL(ev):'线下课程'}`,'BEGIN:VALARM','TRIGGER:-PT15M','ACTION:DISPLAY','DESCRIPTION:技能换换：课程即将开始','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'})); a.download=`${ev.title}-${u.name}.ics`; document.body.appendChild(a); a.click(); a.remove();
-  toast('已生成日历文件，打开即可加入手机 / 电脑日历');
+  toast('已生成日历文件，打开即可加入手机或电脑日历');
 }
 
 /* =====================================================================
@@ -880,17 +1027,18 @@ function tick(){
 function remind(ev){
   const u=userById(ev.uid); const mins=Math.max(1,Math.round((ev.start-Date.now())/MIN));
   const when=Date.now()>=ev.start?'**已经开始了**':`还有 **${mins} 分钟**开始`;
-  sayUI('agent',`⏰ 上课提醒：你和 **${u.name}** 的「${ev.title}」${when}。${ev.mode==='线上'?'找个安静的地方，戴好耳机～':`记得提前出发，地点在 ${ev.place}`}`,ui=>ui.card(ui.col([
-    ui.row([ui.avatar(u,38), ui.col([ui.text(`${ev.title} · ${u.name}`,'h5'), ui.label(`${fmtWhen(ev.start)} · ${ev.dur} 分钟 · ${ev.mode}`)])]),
-    ev.mode==='线上'?ui.text('🔗 '+roomURL(ev),'caption'):ui.text('📍 '+ev.place,'caption'),
-    ui.row([ui.button(ev.mode==='线上'?'进入课堂':'到达签到','class.join',{eid:ev.id},true), ui.button('给 TA 发消息','event.chat',{uid:ev.uid})])
-  ])),{},{ms:600});
-  showBanner(ev, mins);
+  sayUI('agent',`上课提醒：你和 **${u.name}** 的「${ev.title}」${when}。${ev.mode==='线上'?'找个安静的地方，戴好耳机。':`记得提前出发，地点在${ev.place}。`}`,ui=>ui.card(ui.col([
+    ui.row([ui.badge(Date.now()>=ev.start?'进行中':`${mins} 分钟后开始`,'pri','bell')]),
+    ui.row([ui.avatar(u,40), ui.col([ui.text(`${ev.title} · ${u.name}`,'h5'), ui.text(`${fmtWhen(ev.start)} · ${ev.dur} 分钟`,'caption')])]),
+    ev.mode==='线上'?ui.meta('video','线上课堂 · '+roomURL(ev)):ui.meta('pin','线下 · '+ev.place),
+    ui.row([ui.button(ev.mode==='线上'?'进入课堂':'到达签到','class.join',{eid:ev.id},true,ev.mode==='线上'?'video':'pin'), ui.button('给 TA 发消息','event.chat',{uid:ev.uid},false,'chat')])
+  ])),{},{ms:500});
+  showNotif(ev, mins);
 }
-function showBanner(ev,mins){
-  const u=userById(ev.uid); const b=$('#banner');
-  b.innerHTML=`${avatarHTML({id:'agent'},36)}<div class="tx"><b>${esc(ev.title)} · ${esc(u.name)}</b><small>小换提醒：${Date.now()>=ev.start?'课程已开始':mins+' 分钟后开课'} · ${esc(ev.mode)}</small></div><button class="btn pri" data-act="join" data-eid="${ev.id}">${ev.mode==='线上'?'进入课堂':'签到'}</button><button class="x" data-act="bclose">✕</button>`;
-  b.classList.add('show'); clearTimeout(showBanner._t); showBanner._t=setTimeout(()=>b.classList.remove('show'),12000);
+function showNotif(ev,mins){
+  const u=userById(ev.uid); const b=$('#notif');
+  b.innerHTML=`<span class="orb breathe"></span><div class="tx"><b>${esc(ev.title)} · ${esc(u.name)}</b><span>${Date.now()>=ev.start?'课程已开始':mins+' 分钟后开课'} · ${esc(ev.mode)}</span><div class="acts"><button class="btn pri" data-act="join" data-eid="${ev.id}">${I(ev.mode==='线上'?'video':'pin')}${ev.mode==='线上'?'进入课堂':'签到'}</button><button class="btn" data-act="nclose">稍后</button></div></div><button class="x" data-act="nclose" aria-label="关闭">${I('x')}</button>`;
+  b.classList.add('show'); clearTimeout(showNotif._t); showNotif._t=setTimeout(()=>b.classList.remove('show'),14000);
 }
 
 /* =====================================================================
@@ -899,31 +1047,31 @@ function showBanner(ev,mins){
 const ROOM = {ev:null,t0:0,timer:null,mic:true,cam:true};
 function joinClass(eid){
   const ev=state.events.find(e=>e.id===eid); if(!ev) return;
-  if(ev.status==='done'){ toast('这节课已经结束啦'); return; }
-  $('#banner').classList.remove('show');
+  if(ev.status==='done'){ toast('这节课已经结束了'); return; }
+  $('#notif').classList.remove('show');
   const u=userById(ev.uid), P=state.profile;
   ROOM.ev=ev; ROOM.t0=Date.now(); ROOM.mic=true; ROOM.cam=true;
   const notes=classNotes(ev); let k=0;
   const online=ev.mode==='线上';
   $('#room').innerHTML=`
-    <div class="room-top"><div class="ttl">${esc(ev.title)} · ${esc(u.name)}<small>${online?'技能换换课堂 · '+esc(ev.code):'线下课程 · '+esc(ev.place)}</small></div><span class="rec">● 小换记录中</span><span class="clock" id="rclock">00:00 / ${ev.dur}:00</span></div>
+    <div class="room-top"><div class="ttl">${esc(ev.title)} · ${esc(u.name)}<small>${online?'技能换换课堂 · '+esc(ev.code):'线下课程 · '+esc(ev.place)}</small></div><span class="rec">小换记录中</span><span class="clock" id="rclock">00:00 / ${ev.dur}:00</span></div>
     <div class="room-body">
       <div class="stage">${online?`
-        <div class="tile"><div class="ring">${avatarHTML(u,120)}</div><div class="caption" id="rcap">${esc(u.name)} 已加入课堂</div><span class="nm">${esc(u.name)}</span></div>
-        <div class="tile me" id="mytile">${avatarHTML({id:'me',name:P.name},48)}<span class="nm">我</span></div>`:`
-        <div class="tile"><div class="offline-card"><div style="font-size:40px">📍</div><h3 style="margin:6px 0">线下课程进行中</h3><p style="color:#9aa0ae;margin:0 0 10px">${esc(ev.place)}</p><p style="margin:0">✅ 你已签到 ${fmtHM(Date.now())}　·　✅ ${esc(u.name)} 已到达</p></div><div class="caption" id="rcap">小换正在根据课堂内容记录笔记</div></div>`}
+        <div class="tile"><div class="talk">${avatarHTML(u,128)}</div><div class="caption" id="rcap">${esc(u.name)} 已加入课堂</div><span class="nm">${I('mic')}${esc(u.name)}</span></div>
+        <div class="tile me" id="mytile">${avatarHTML({id:'me',name:P.name},48)}<span class="nm" id="mynm">${I('mic')}我</span></div>`:`
+        <div class="tile"><div class="offline-card"><div class="pin">${I('pin')}</div><h3 style="margin:0 0 6px;font-weight:600">线下课程进行中</h3><p style="color:#a1a1aa;margin:0 0 14px">${esc(ev.place)}</p><p style="margin:0;font-size:14px">你已签到 ${fmtHM(Date.now())} · ${esc(u.name)} 已到达</p></div><div class="caption" id="rcap">小换正在记录课堂要点</div></div>`}
       </div>
-      <aside class="notes"><h4>✨ 小换 · AI 课堂笔记</h4><div class="nsub">自动记录要点，课后发给你们俩</div><div id="rnotes"></div></aside>
+      <aside class="notes"><h4><span class="orb breathe"></span>AI 课堂笔记</h4><div class="nsub">小换自动记录要点，课后发给你们俩</div><div id="rnotes"></div></aside>
     </div>
-    <div class="room-ctl">${online?'<button data-act="mic">🎤 静音</button><button data-act="cam">📷 关摄像头</button><button data-act="share">🖥 共享屏幕</button>':''}<button class="end" data-act="endClass">结束课程</button></div>`;
+    <div class="room-ctl">${online?`<button class="rbtn" data-act="mic" title="麦克风">${I('mic')}</button><button class="rbtn" data-act="cam" title="摄像头">${I('video')}</button><button class="rbtn" data-act="share" title="共享屏幕">${I('screen')}</button>`:''}<button class="rbtn end" data-act="endClass">${I('phone')}结束课程</button></div>`;
   $('#room').classList.add('show');
   clearInterval(ROOM.timer);
   const addNote=()=>{
     if(k>=notes.length){ clearInterval(ROOM.timer); return; }
     const box=$('#rnotes'); if(!box) return;
     box.insertAdjacentHTML('beforeend',`<div class="note"><small>${fmtHM(Date.now())}</small>${esc(notes[k])}</div>`);
-    const cap=$('#rcap'); const topic=notes[k].replace(/^[^一-龥A-Za-z]+/,'').split(/[：，,]/)[0];
-    if(cap) cap.textContent=`${u.name}：我们来看「${topic}」…`;
+    const cap=$('#rcap'); const topic=notes[k].split(/[：，,]/)[0];
+    if(cap) cap.textContent=`${u.name}：我们来看「${topic}」`;
     k++;
   };
   setTimeout(addNote,1200); ROOM.timer=setInterval(addNote,3200);
@@ -931,7 +1079,7 @@ function joinClass(eid){
 function classNotes(ev){
   const key=Object.keys(NOTE_BANK).find(k=>skillMatch(k,ev.skill)) || 'default';
   const goal=state.profile.goal||'先入门，培养兴趣';
-  return [`🎯 目标确认：${ev.learn?goal:'了解 TA 的基础和目标'}`, ...NOTE_BANK[key], '📌 课后练习：把今天的内容每天练 15 分钟，下节课前拍个小视频发给对方'];
+  return [`目标确认：${ev.learn?goal:'了解 TA 的基础和目标'}`, ...NOTE_BANK[key], '课后练习：每天练 15 分钟，下节课前拍个小视频发给对方'];
 }
 function endClass(){
   const ev=ROOM.ev; if(!ev) return;
@@ -949,7 +1097,7 @@ function billing(ev){
   else if(ev.pay==='earn') addLedger(`教 ${u.name}「${ev.teach}」${h} 课时`,h);
   else addLedger(`与 ${u.name} 技能互换 ${h} 课时（互抵）`,0);
 }
-function addLedger(t,d){ state.credits=Math.round((state.credits+d)*10)/10; state.ledger.unshift({t,d,at:Date.now()}); save(); renderRail(); }
+function addLedger(t,d){ state.credits=Math.round((state.credits+d)*10)/10; state.ledger.unshift({t,d,at:Date.now()}); save(); renderSide(); }
 
 /* =====================================================================
    课后反馈
@@ -957,34 +1105,34 @@ function addLedger(t,d){ state.credits=Math.round((state.credits+d)*10)/10; stat
 const FEEDBACK = {
   ask(ev){
     const u=userById(ev.uid);
-    sayUI('agent',`课程结束啦 🎓 和 **${u.name}** 的「${ev.title}」感觉怎么样？你的评价会帮其他同学找到靠谱的伙伴。`,ui=>ui.card(ui.col([
+    sayUI('agent',`课程结束了。和 **${u.name}** 的「${ev.title}」感觉怎么样？你的评价会帮其他同学找到靠谱的伙伴。`,ui=>ui.card(ui.col([
       ui.text('整体体验','h5'), ui.rating('/rating'),
       ui.text('印象标签','h5'), ui.choice('/tags',['讲解清晰','很有耐心','准时守约','干货满满','氛围轻松','节奏偏快','内容偏简单'],7),
-      ui.field('想对 TA 说点什么（选填）','/comment','例如：第一次觉得入门没那么难！'),
-      ui.text('接下来？','h5'), ui.choice('/next',[ev.trial?'继续约正式课':'约下一节课','看看其他伙伴','暂时不用'],1),
-      ui.row([ui.button('提交评价','fb.submit',{eid:ev.id},true)])
-    ])),{rating:5,tags:['讲解清晰','很有耐心'],comment:'',next:[ev.trial?'继续约正式课':'约下一节课']},{ms:900});
+      ui.field('想对 TA 说点什么（选填）','/comment','例如：第一次觉得入门没那么难'),
+      ui.text('接下来','h5'), ui.choice('/next',[ev.trial?'继续约正式课':'约下一节课','看看其他伙伴','暂时不用'],1),
+      ui.row([ui.button('提交评价','fb.submit',{eid:ev.id},true,'check')])
+    ])),{rating:5,tags:['讲解清晰','很有耐心'],comment:'',next:[ev.trial?'继续约正式课':'约下一节课']},{ms:800});
   },
   submit(eid,s){
     const ev=state.events.find(e=>e.id===eid), u=userById(ev.uid), d=s.data, r=+d.rating||5, next=(d.next||[])[0];
     ev.rating=r; save();
     const h=Math.round(ev.dur/60*10)/10;
-    me('agent',`${'⭐'.repeat(r)} ${(d.tags||[]).join('、')}${d.comment?'\n'+d.comment:''}`);
-    say('agent',`谢谢反馈！你的 ${r} 星评价已经同步到 ${u.name} 的信用档案 🙌\n${ev.trial?'这节是试听课，**不扣时间币** 🎁':(ev.pay==='credit'?`本节扣除 ${h} 时间币，余额 **${state.credits}**`:ev.pay==='earn'?`你获得了 ${h} 时间币，余额 **${state.credits}** ⏱`:'本节为技能互换，课时互抵，不花时间币')}`,{ms:900});
-    say('agent','📝 这是我整理的本节课笔记，已经同时发给你们俩：\n'+(ev.notes||[]).map(n=>'• '+n).join('\n'),{ms:1200});
+    me('agent',`${'★'.repeat(r)}${'☆'.repeat(5-r)}　${(d.tags||[]).join('、')}${d.comment?'\n'+d.comment:''}`);
+    say('agent',`谢谢反馈，你的 ${r} 星评价已同步到 ${u.name} 的信用档案。\n${ev.trial?'这节是试听课，**不扣时间币**。':(ev.pay==='credit'?`本节扣除 ${h} 时间币，余额 **${state.credits}**。`:ev.pay==='earn'?`你获得了 ${h} 时间币，余额 **${state.credits}**。`:'本节为技能互换，课时互抵，不花时间币。')}`,{ms:800});
+    say('agent','这是我整理的本节课笔记，已同时发给你们俩：\n'+(ev.notes||[]).map(n=>'· '+n).join('\n'),{ms:1000,think:'正在整理课堂笔记'});
     if(next==='继续约正式课'||next==='约下一节课'){
       const P=state.profile; const dur=parseInt(P.dur)||60;
       const base=BOOK.laterSlot(u); const start=base>ev.start+DAY?base:base+7*DAY;
       const n=state.events.filter(e=>e.uid===ev.uid&&!e.trial).length+1;
       const ev2=mkEvent({uid:ev.uid,start,dur,trial:false,mode:ev.mode,place:ev.place,n});
       enqueue('agent', async()=>{
-        state.events.push(ev2); save(); renderRail();
-        push(ev.uid,{from:'agent',text:`📅 你们的第 ${n} 节正式课已约好：${fmtWhen(ev2.start)} · ${dur} 分钟 · ${ev2.mode}，已同步到双方日程。`});
+        state.events.push(ev2); save(); renderSide();
+        push(ev.uid,{from:'agent',text:`你们的第 ${n} 节正式课已约好：${fmtWhen(ev2.start)}，${dur} 分钟，${ev2.mode}。已同步到双方日程。`});
         push(ev.uid,{from:ev.uid,text:'太好了，下次见！记得把练习视频发我～'});
       });
-      sayUI('agent',`已经帮你和 ${u.name} 约好下一节正式课（${P.freq}，每次 ${dur} 分钟），TA 也确认了 👇`,ui=>eventCardUI(ui,ev2,{head:'📅 已同步到双方日程'}),{},{ms:1200});
-    } else if(next==='看看其他伙伴'){ say('agent','好的，我再帮你看看其他合适的伙伴～',{ms:600}); AGENT.match([ev.uid]); }
-    else say('agent','好的～需要的时候随时叫我 😊',{ms:600});
+      sayUI('agent',`已经帮你和 ${u.name} 约好下一节正式课（${P.freq}，每次 ${dur} 分钟），TA 也确认了。`,ui=>eventCardUI(ui,ev2,{head:'已同步到双方日程'}),{},{ms:1100,think:'正在约下一节课'});
+    } else if(next==='看看其他伙伴'){ say('agent','好的，我再帮你看看其他合适的伙伴。',{ms:500}); AGENT.match([ev.uid]); }
+    else say('agent','好的，需要的时候随时叫我。',{ms:500});
   }
 };
 
@@ -993,38 +1141,31 @@ const FEEDBACK = {
    ===================================================================== */
 function go(view,tid){
   state.view=view; if(tid) state.active=tid;
-  if(view==='chat'){ const th=thread(state.active); if(th) th.unread=0; if(tid) state.mlist=false; }
-  save(); renderAll();
+  if(view==='chat'){ const th=thread(state.active); if(th) th.unread=0; }
+  UIS.drawer=false; save(); renderAll();
 }
-function renderAll(){
-  $('#app').classList.toggle('nolist', state.view!=='chat');
-  $('#app').classList.toggle('mlist', state.view==='chat' && state.mlist);
-  renderRail(); renderList(); renderMain();
-}
-function unreadTotal(){ return Object.values(state.threads).reduce((a,t)=>a+(t.unread||0),0); }
-function renderRail(){
-  const n=unreadTotal(); const up=state.events.filter(e=>e.status!=='done').length;
-  const P=state.profile||state.draft;
-  $('#rail').innerHTML=`<div class="logo" title="技能换换">⇄</div>
-    <button class="nb${state.view==='chat'?' on':''}" data-act="go" data-view="chat"><span class="ic">💬</span>对话${n?`<span class="dot">${n}</span>`:''}</button>
-    <button class="nb${state.view==='cal'?' on':''}" data-act="go" data-view="cal"><span class="ic">📅</span>日程${up?`<span class="dot" style="background:var(--pri)">${up}</span>`:''}</button>
-    <button class="nb${state.view==='me'?' on':''}" data-act="go" data-view="me"><span class="ic">👤</span>我的</button>
-    <div class="sp"></div>
-    <div class="coinv" data-act="go" data-view="me" title="时间币"><b>${state.credits}</b>时间币</div>
-    <span class="meav">${avatarHTML({id:'me',name:P.name||'我'},36)}</span>`;
-}
+function renderAll(){ $('#app').classList.toggle('drawer',UIS.drawer); renderSide(); renderMain(); }
 function previewOf(th){
-  if(typingNow[th.id]) return typingNow[th.id]==='agent'&&th.id!=='agent'?'小换正在整理…':'正在输入…';
+  const t=typingNow[th.id]; if(t) return t.from==='agent'?(th.id==='agent'?'思考中…':'小换正在整理…'):'正在输入…';
   const m=th.msgs[th.msgs.length-1]; if(!m) return '';
-  const who=m.from==='me'?'我：':(m.from==='agent'&&th.id!=='agent'?'小换：':'');
+  const who=m.from==='me'?'你：':(m.from==='agent'&&th.id!=='agent'?'小换：':'');
   return who+(m.text?m.text.replace(/\*\*/g,'').replace(/\n/g,' '):'[卡片]');
 }
-function renderList(){
-  if(state.view!=='chat'){ $('#list').innerHTML=''; return; }
+function renderSide(){
+  const P=state.profile||state.draft;
   const ids=Object.keys(state.threads).filter(id=>id!=='agent').sort((a,b)=>state.threads[b].last-state.threads[a].last);
-  const item=id=>{ const th=state.threads[id]; const isA=id==='agent'; const u=isA?{id:'agent',name:'小换'}:userById(id);
-    return `<div class="citem${state.active===id?' on':''}" data-act="thread" data-tid="${id}">${avatarHTML(u,44)}<div class="bd"><div class="nm"><span>${esc(u.name)}${isA?'<span class="pin">AI 顾问</span>':''}</span><small>${th.msgs.length?fmtAgo(th.last):''}</small></div><div class="pv"><span>${esc(previewOf(th))}</span>${th.unread?`<b class="ub">${th.unread}</b>`:''}</div></div></div>`; };
-  $('#list').innerHTML=`<div class="list-h"><h2>消息</h2></div><div class="citems">${item('agent')}${ids.map(item).join('')}${ids.length?'':'<div class="list-tip">匹配到伙伴后，点卡片上的「去对话」，私聊会出现在这里。</div>'}</div>`;
+  const ag=thread('agent'); const up=state.events.filter(e=>e.status!=='done').length;
+  const nav=(view,tid,icon,label,cnt,hot)=>{ const on=state.view===view&&(!tid||state.active===tid); return `<button class="nv${on?' on':''}" data-act="${tid?'thread':'go'}" data-view="${view}" ${tid?`data-tid="${tid}"`:''}>${icon}${label}${cnt?`<span class="cnt${hot?' hot':''}">${cnt}</span>`:''}</button>`; };
+  $('#side').innerHTML=`
+    <div class="brand"><span class="orb breathe" style="width:26px;height:26px"></span>技能换换<small>AI</small></div>
+    <nav class="nav">
+      ${nav('chat','agent','<span class="orb" style="width:18px;height:18px"></span>','小换 · AI 顾问',ag.unread||'',!!ag.unread)}
+      ${nav('cal',null,I('calendar'),'日程',up||'',false)}
+      ${nav('me',null,I('user'),'我的档案','',false)}
+    </nav>
+    <div class="sec-l">私聊</div>
+    <div class="threads">${ids.map(id=>{ const th=state.threads[id], u=userById(id); return `<div class="th${state.view==='chat'&&state.active===id?' on':''}" data-act="thread" data-tid="${id}">${avatarHTML(u,34)}<div class="bd"><div class="nm"><span>${esc(u.name)}</span><small>${fmtAgo(th.last)}</small></div><div class="pv">${esc(previewOf(th))}</div></div>${th.unread?'<span class="ud"></span>':''}</div>`; }).join('')||'<div class="side-tip">完成档案后，小换会为你推荐交换伙伴。点名片上的「去对话」，私聊会出现在这里。</div>'}</div>
+    <div class="acct" data-act="go" data-view="me">${avatarHTML({id:'me',name:P.name||'我'},34)}<div style="min-width:0"><div class="nm">${esc(P.name||'未命名')}</div><div class="sub"><span class="coin">¢</span>${state.credits} 时间币</div></div></div>`;
 }
 function renderMain(){
   if(state.view==='cal') return renderCal();
@@ -1032,31 +1173,41 @@ function renderMain(){
   renderChat();
 }
 function msgHTML(tid,m){
-  if(m.from==='sys') return `<div class="m sys"><span class="pill">${esc(m.text)}</span></div>`;
-  if(m.from==='me') return `<div class="m me"><div class="col"><div class="bub">${md(m.text)}</div></div></div>`;
-  const isA=m.from==='agent'; const u=isA?{id:'agent',name:'小换'}:userById(m.from);
-  const inPrivate=isA&&tid!=='agent';
-  return `<div class="m ${isA?'ai':'peer'}">${avatarHTML(u,36)}<div class="col">${inPrivate?'<div class="who"><b>✨ 小换</b> · AI 助手（双方可见）</div>':''}${m.text?`<div class="bub${inPrivate?' aiin':''}">${md(m.text)}</div>`:''}${m.sid?surfHTML(m.sid):''}</div></div>`;
+  if(m.from==='sys') return `<div class="sys" data-mid="${m.id}">${esc(m.text)}</div>`;
+  if(m.from==='me') return `<div class="m me" data-mid="${m.id}"><div class="bubble">${md(m.text)}</div></div>`;
+  if(m.from==='agent'){
+    if(tid!=='agent') return `<div class="m ai" data-mid="${m.id}"><span class="orb"></span><div class="body"><div class="ai-in"><div class="lab"><b>小换</b>AI 助手 · 双方可见</div>${m.text?`<div class="box stream">${md(m.text)}</div>`:''}</div>${m.sid?surfHTML(m.sid):''}</div></div>`;
+    return `<div class="m ai" data-mid="${m.id}"><span class="orb"></span><div class="body">${m.text?`<div class="ai-text stream">${md(m.text)}</div>`:''}${m.sid?surfHTML(m.sid):''}</div></div>`;
+  }
+  const u=userById(m.from);
+  return `<div class="m peer" data-mid="${m.id}">${avatarHTML(u,30)}<div class="bubble">${md(m.text)}</div></div>`;
 }
-function typingHTML(from){ const u=from==='agent'?{id:'agent',name:'小换'}:userById(from); return `<div class="m ai" id="typing">${avatarHTML(u,36)}<div class="col"><div class="bub typing"><i></i><i></i><i></i></div></div></div>`; }
-function renderTyping(tid){ const box=$('#msgs-inner'); if(!box) return; const old=$('#typing'); if(old) old.remove(); box.insertAdjacentHTML('beforeend',typingHTML(typingNow[tid])); scrollDown(); }
+function typingHTML(t){
+  if(t.from==='agent') return `<div class="m ai" id="typing"><span class="orb spin"></span><div class="thinking"><span class="shimmer">${esc(t.label||'思考中')}…</span></div></div>`;
+  return `<div class="m peer" id="typing">${avatarHTML(userById(t.from),30)}<div class="bubble"><span class="dots"><i></i><i></i><i></i></span></div></div>`;
+}
+function renderTyping(tid){ const box=$('#col'); if(!box) return; const old=$('#typing'); if(old) old.remove(); box.insertAdjacentHTML('beforeend',typingHTML(typingNow[tid])); scrollDown(); }
 function scrollDown(instant){ const el=$('#msgs'); if(!el) return; if(instant){ el.style.scrollBehavior='auto'; el.scrollTop=el.scrollHeight; el.style.scrollBehavior=''; } else el.scrollTop=el.scrollHeight; }
 function appendMsg(tid,m){
-  const box=$('#msgs-inner'); if(!box) return;
+  const box=$('#col'); if(!box) return;
   const t=$('#typing'); const html=msgHTML(tid,m);
   if(t) t.insertAdjacentHTML('beforebegin',html); else box.insertAdjacentHTML('beforeend',html);
   scrollDown(); updateSuggest();
 }
+const HERO = `<div class="hero"><span class="orb breathe"></span><h1>用你会的，换你想学的</h1><p>小换会先了解你能教什么、想学什么，再帮你找到互补的伙伴，约好课并提醒你上课。</p><div class="pills"><span>${I('swap')}技能互换，课时互抵</span><span>${I('coins')}1 小时 = 1 时间币</span><span>${I('gift')}首课 15 分钟免费试听</span></div></div>`;
 function renderChat(){
   const tid=state.threads[state.active]?state.active:'agent'; state.active=tid;
   const th=thread(tid), isA=tid==='agent', u=isA?null:userById(tid);
+  const menu=`<button class="menu" data-act="openDrawer" aria-label="菜单">${I('menu')}</button>`;
   const head=isA
-    ? `<button class="back" data-act="back" aria-label="返回">‹</button>${avatarHTML({id:'agent'},40)}<div style="min-width:0"><div class="t">小换 <span class="online"></span></div><div class="s">AI 技能交换顾问 · 建档、匹配、约课、提醒</div></div>`
-    : `<button class="back" data-act="back" aria-label="返回">‹</button>${avatarHTML(u,40)}<div style="min-width:0"><div class="t">${esc(u.name)}${u.verified?' <span style="color:#0b7dc1;font-size:12px">✓ 认证</span>':''}</div><div class="s">${esc(u.city)} · ★${u.rating.toFixed(1)} · 匹配度 ${th.m.score}% · ${{both:'技能互换',learn:'时间币学习',teach:'你来教'}[th.m.type]}</div></div><div class="r"><button class="hbtn ai" data-act="book" data-uid="${tid}">✨ <span class="lbl">小换整理约课</span></button></div>`;
-  $('#main').innerHTML=`<div class="chat-head">${head}</div>
-    <div class="msgs" id="msgs"><div class="msgs-inner" id="msgs-inner">${th.msgs.map(m=>msgHTML(tid,m)).join('')}${typingNow[tid]?typingHTML(typingNow[tid]):''}</div></div>
-    <div class="suggest" id="suggest"></div>
-    <div class="composer"><div class="box"><textarea id="input" rows="1" placeholder="${isA?'和小换说点什么…':'给 '+esc(u.name)+' 发消息…'}"></textarea><button class="send" data-act="send">发送</button></div></div>`;
+    ? `${menu}<span class="orb" style="width:30px;height:30px"></span><div style="min-width:0"><div class="t">小换</div><div class="s">AI 技能交换顾问</div></div>`
+    : `${menu}${avatarHTML(u,32)}<div style="min-width:0"><div class="t">${esc(u.name)}${u.verified?`<span class="vf">${I('verified')}</span>`:''}</div><div class="s">${esc(u.city)} · 匹配度 ${th.m.score}% · ${{both:'技能互换',learn:'时间币学习',teach:'你来教'}[th.m.type]}</div></div><div class="r"><button class="hbtn" data-act="book" data-uid="${tid}"><span class="spark">${I('sparkle')}</span><span class="lb">整理约课</span></button></div>`;
+  $('#main').innerHTML=`<header class="head">${head}</header>
+    <div class="msgs" id="msgs"><div class="stream-col" id="col">${isA?HERO:''}${th.msgs.map(m=>msgHTML(tid,m)).join('')}${typingNow[tid]?typingHTML(typingNow[tid]):''}</div></div>
+    <div class="dock"><div class="dock-in"><div class="suggest" id="suggest"></div>
+      <div class="composer"><textarea id="input" rows="1" placeholder="${isA?'问问小换，或直接告诉它你的想法':'给 '+esc(u.name)+' 发消息'}"></textarea>
+        <div class="c-row"><button class="ib" title="添加附件" data-act="soon">${I('clip')}</button><button class="ib" title="语音输入" data-act="soon">${I('mic')}</button><span class="grow"></span><span class="c-hint">Enter 发送 · Shift + Enter 换行</span><button class="send" id="sendBtn" data-act="send" disabled aria-label="发送">${I('up')}</button></div></div>
+      <div class="disclaim">${isA?'小换由 AI 驱动，可能出错。约课前请与对方确认关键信息。':'小换会在你们需要时协助整理约课，私聊内容仅双方与小换可见。'}</div></div></div>`;
   updateSuggest(); scrollDown(true);
 }
 function suggestions(tid){
@@ -1069,20 +1220,21 @@ function suggestions(tid){
   const th=thread(tid); if(!th||!state.profile) return [];
   const x=th.m, P=state.profile, st=th.stage||0;
   const goal=P.goal||(GOAL_HINT[x.learn]||'').replace('比如：','');
-  if(state.events.some(e=>e.uid===tid)) return ['好的，到时候见～','需要提前准备什么吗？','谢谢你！'];
-  if(st===0) return x.type==='both'?[`你好！我想学${x.learn}，可以用${x.teach}跟你换吗？`,`嗨～看到你也想学${x.teach}，我们互换吧！`]:x.type==='learn'?[`你好！想跟你学${x.learn}，可以用时间币约课吗？`,`你好，请问你一般怎么教${x.learn}？`]:[`你好！看到你想学${x.teach}，我可以教你～`,`Hi～我${x.teach}还不错，可以带你入门`];
+  if(state.events.some(e=>e.uid===tid)) return ['好的，到时候见','需要提前准备什么吗？','谢谢你！'];
+  if(st===0) return x.type==='both'?[`你好！我想学${x.learn}，可以用${x.teach}跟你换吗？`,`嗨，看到你也想学${x.teach}，我们互换吧`]:x.type==='learn'?[`你好！想跟你学${x.learn}，可以用时间币约课吗？`,`你好，请问你一般怎么教${x.learn}？`]:[`你好！看到你想学${x.teach}，我可以教你`,`我${x.teach}还不错，可以带你入门`];
   if(st===1) return x.type==='teach'?['我会先了解你的基础，再从最实用的部分讲起','我习惯边做小项目边学']:[goal?`我现在${x.myLevel}，${goal}`:`我现在${x.myLevel}，想先入门试试`,'零基础，想先培养兴趣'];
   if(st===2) return [`我${P.avail[0]}比较方便，线上就行`,'周末可以线下见面','我时间比较灵活，你定吧'];
-  if(st===3) return ['好呀，今天先试听一下！','周末那个时间可以','线上就好'];
-  return ['好的，谢谢！','到时候见～'];
+  if(st===3) return ['好呀，今天先试听一下','周末那个时间可以','线上就好'];
+  return ['好的，谢谢','到时候见'];
 }
 function updateSuggest(){ const el=$('#suggest'); if(!el) return; el.innerHTML=suggestions(state.active).map(s=>`<button data-act="sug">${esc(s)}</button>`).join(''); }
 function send(text){
   const inp=$('#input'); const v=(text??(inp?inp.value:'')).trim(); if(!v) return;
-  if(text==null&&inp){ inp.value=''; inp.style.height=''; }
+  if(text==null&&inp){ inp.value=''; inp.style.height=''; const b=$('#sendBtn'); if(b) b.disabled=true; }
   const tid=state.active; me(tid,v);
   if(tid==='agent') AGENT.onText(v); else PARTNER.onText(tid,v);
 }
+const pageTop = t => `<div class="topbar"><button class="menu" data-act="openDrawer" aria-label="菜单">${I('menu')}</button>${t}</div>`;
 
 /* ---- 日程 ---- */
 function stHTML(ev){ const s=statusOf(ev); return `<span class="st ${s}" data-st="${ev.id}">${{up:'即将开始',live:'进行中',done:'已完成'}[s]}</span>`; }
@@ -1094,46 +1246,48 @@ function renderCal(){
   const shown=sel?evs.filter(e=>inDay(e,new Date(sel))):evs;
   const up=shown.filter(e=>e.status!=='done'), done=shown.filter(e=>e.status==='done').reverse();
   const card=ev=>{ const u=userById(ev.uid); const s=statusOf(ev);
-    return `<div class="ev"><div class="tm"><b>${fmtHM(ev.start)}</b><small>${fmtDay(ev.start)}</small><br><small>${ev.dur} 分钟</small></div>
-      <div style="min-width:0"><div class="ti">${avatarHTML(u,24)} ${esc(ev.title)} · ${esc(u.name)} ${stHTML(ev)}</div>
-      <div class="meta"><span>${ev.mode==='线上'?`🔗 <a href="${esc(roomURL(ev))}">${esc(roomURL(ev))}</a>`:'📍 '+esc(ev.place)}</span><span>${esc(payText(ev))}${ev.trial?' · 首课试听免费':''}</span><span class="sync">✓ 已同步到你和 ${esc(u.name)} 的日程 · 开课前小换会提醒</span>${ev.rating?`<span>你的评价：${'⭐'.repeat(ev.rating)}</span>`:''}</div>
-      <div class="acts">${s!=='done'?`<button class="btn pri" data-act="join" data-eid="${ev.id}">${ev.mode==='线上'?'进入课堂':'到达签到'}</button><button class="btn" data-act="ics" data-eid="${ev.id}">加入手机日历</button>`:''}<button class="btn" data-act="thread" data-tid="${ev.uid}">💬 和 ${esc(u.name)} 聊天</button></div></div></div>`; };
-  $('#main').innerHTML=`<div class="page"><div class="page-in">
+    return `<div class="ev${s==='done'?' done':''}"><div class="tm"><b>${fmtHM(ev.start)}</b><small>${fmtDay(ev.start)}</small><small>${ev.dur} 分钟</small></div>
+      <div style="min-width:0"><div class="ti">${avatarHTML(u,24)}${esc(ev.title)} · ${esc(u.name)} ${stHTML(ev)}</div>
+      <div class="metas"><div class="meta">${ev.mode==='线上'?`${I('video')}<span>线上课堂 · <a href="${esc(roomURL(ev))}">${esc(roomURL(ev))}</a></span>`:`${I('pin')}<span>线下 · ${esc(ev.place)}</span>`}</div><div class="meta">${I(ev.pay==='swap'?'swap':'coins')}<span>${esc(payText(ev))}${ev.trial?'，首课试听免费':''}</span></div><div class="meta">${I('check')}<span>已同步到你和 ${esc(u.name)} 的日程，开课前小换会提醒</span></div>${ev.rating?`<div class="meta">${I('star')}<span>你的评价：${ev.rating} 星</span></div>`:''}</div>
+      <div class="acts">${s!=='done'?`<button class="btn pri" data-act="join" data-eid="${ev.id}">${I(ev.mode==='线上'?'video':'pin')}${ev.mode==='线上'?'进入课堂':'到达签到'}</button><button class="btn" data-act="ics" data-eid="${ev.id}">${I('download')}加入手机日历</button>`:''}<button class="btn" data-act="thread" data-tid="${ev.uid}">${I('chat')}和 ${esc(u.name)} 聊天</button></div></div></div>`; };
+  $('#main').innerHTML=`${pageTop('日程')}<div class="page"><div class="page-in">
     <h1>日程</h1><div class="sub">小换帮你约好的课都在这里，双方日程自动同步</div>
-    <div class="days"><button class="day${!sel?' on':''}" data-act="calday" data-d="" style="width:64px"><small>全部</small><b>${evs.length}</b></button>${days.map((d,i)=>{ const has=evs.some(e=>inDay(e,d)); return `<button class="day${i===0?' today':''}${sel===d.getTime()?' on':''}" data-act="calday" data-d="${d.getTime()}"><small>${i===0?'今天':'周'+WEEK[d.getDay()]}</small><b>${d.getDate()}</b>${has?'<i></i>':''}</button>`; }).join('')}</div>
-    ${!evs.length?'<div class="empty"><b>📅</b>还没有课程安排<br><span style="font-size:13px">和小换聊聊，找到伙伴、聊好时间后，小换会把课程同步到这里</span><div style="margin-top:14px"><button class="btn pri" data-act="thread" data-tid="agent">去找小换</button></div></div>':''}
+    <div class="days"><button class="day${!sel?' on':''}" data-act="calday" data-d="" style="width:60px"><small>全部</small><b>${evs.length}</b></button>${days.map((d,i)=>{ const has=evs.some(e=>inDay(e,d)); return `<button class="day${i===0?' today':''}${sel===d.getTime()?' on':''}" data-act="calday" data-d="${d.getTime()}"><small>${i===0?'今天':'周'+WEEK[d.getDay()]}</small><b>${d.getDate()}</b>${has?'<i></i>':''}</button>`; }).join('')}</div>
+    ${!evs.length?`<div class="empty"><div class="ei">${I('calendar')}</div><h3>还没有课程安排</h3>和小换聊聊，找到伙伴、聊好时间后，课程会自动出现在这里<div style="margin-top:16px"><button class="btn pri" data-act="thread" data-tid="agent">${I('sparkle')}去找小换</button></div></div>`:''}
     ${up.length?`<div class="sech">待上课 · ${up.length}</div>${up.map(card).join('')}`:''}
     ${done.length?`<div class="sech">已完成 · ${done.length}</div>${done.map(card).join('')}`:''}
-    ${evs.length&&!shown.length?'<div class="empty"><b>🌤</b>这天没有课程</div>':''}
+    ${evs.length&&!shown.length?`<div class="empty"><div class="ei">${I('calendar')}</div>这一天没有课程</div>`:''}
   </div></div>`;
 }
 
 /* ---- 我的 ---- */
 function renderMe(){
   const P=state.profile;
-  if(!P){ $('#main').innerHTML='<div class="page"><div class="page-in"><h1>我的</h1><div class="sub">技能档案</div><div class="empty"><b>🪪</b>还没有技能档案<br><span style="font-size:13px">和小换聊 1 分钟就能生成</span><div style="margin-top:14px"><button class="btn pri" data-act="thread" data-tid="agent">去和小换聊聊</button></div></div></div></div>'; return; }
+  if(!P){ $('#main').innerHTML=`${pageTop('我的档案')}<div class="page"><div class="page-in"><h1>我的档案</h1><div class="sub">技能档案由小换根据对话生成</div><div class="empty"><div class="ei">${I('user')}</div><h3>还没有技能档案</h3>和小换聊 1 分钟就能生成<div style="margin-top:16px"><button class="btn pri" data-act="thread" data-tid="agent">${I('sparkle')}去和小换聊聊</button></div></div></div></div>`; return; }
   const done=state.events.filter(e=>e.status==='done');
   const hrs=Math.round(done.reduce((a,e)=>a+e.dur,0)/60*10)/10;
-  $('#main').innerHTML=`<div class="page"><div class="page-in">
-    <h1>我的</h1><div class="sub">技能档案由小换根据你们的对话生成</div>
+  $('#main').innerHTML=`${pageTop('我的档案')}<div class="page"><div class="page-in">
+    <h1>我的档案</h1><div class="sub">技能档案由小换根据对话生成，随时可以让小换帮你更新</div>
     <div class="grid2">
-      <div class="card">
-        <div style="display:flex;gap:14px;align-items:center;margin-bottom:14px">${avatarHTML({id:'me',name:P.name},60)}<div><div style="font-size:20px;font-weight:700">${esc(P.name)}</div><div class="kv">${esc(P.city)} · ${done.length?`已上 ${done.length} 节课`:'新加入'}</div></div></div>
-        ${P.exp?`<div class="kv">“${esc(P.exp)}”</div>`:''}
-        <div class="kv" style="margin-top:12px">📤 我能教</div><div class="tags">${P.teach.map(t=>tagHTML(t.skill,'teach',t.level)).join('')}</div>
-        <div class="kv">📥 我想学</div><div class="tags">${P.learn.map(l=>tagHTML(l.skill,'learn',l.level)).join('')}</div>
-        ${P.goal?`<div class="kv">🎯 ${esc(P.goal)}</div>`:''}
-        <div class="tags" style="margin-top:12px">${[P.mode==='都可以'?'💻📍 线上 / 线下':P.mode==='线上'?'💻 线上':'📍 线下','⏱ '+P.dur+' / 次','🔁 '+P.freq,...P.avail.map(a=>'📅 '+a)].map(x=>`<span class="a2-badge soft">${esc(x)}</span>`).join('')}</div>
-        <button class="btn ai" data-act="edit" style="margin-top:6px">✨ 让小换帮我修改档案</button>
-      </div>
-      <div class="card">
-        <h3>⏱ 时间币</h3>
+      <div class="card"><div class="pcard-cover" style="background:${coverOf('me'+P.name)};height:84px"></div>
+        <div class="pad" style="padding-top:0">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:-30px;position:relative;z-index:1"><span style="display:inline-flex;border-radius:50%;border:3px solid var(--panel);box-shadow:var(--shadow-sm)">${avatarHTML({id:'me',name:P.name},64)}</span><button class="btn" data-act="edit">${I('sparkle')}让小换更新档案</button></div>
+          <div style="font-size:19px;font-weight:650;margin-top:10px">${esc(P.name)}</div>
+          <div style="font-size:13px;color:var(--muted)">${esc(P.city)} · ${done.length?`已上 ${done.length} 节课`:'新加入'}</div>
+          ${P.exp?`<div style="font-size:13.5px;color:var(--text2);margin-top:10px">“${esc(P.exp)}”</div>`:''}
+          <div class="kv">能教</div><div class="tags">${P.teach.map(t=>tagHTML(t.skill,'teach',t.level)).join('')}</div>
+          <div class="kv">想学</div><div class="tags">${P.learn.map(l=>tagHTML(l.skill,'learn',l.level)).join('')}</div>
+          ${P.goal?`<div class="kv">目标</div><div style="font-size:14px">${esc(P.goal)}</div>`:''}
+          <div class="kv">偏好</div><div class="tags">${[[P.mode==='都可以'?'线上 / 线下':P.mode,'video'],[P.dur+' / 次','clock'],[P.freq,'repeat'],...P.avail.map(a=>[a,'calendar'])].map(([x,ic])=>`<span class="badge">${I(ic)}${esc(x)}</span>`).join('')}</div>
+        </div></div>
+      <div class="card"><div class="pad">
+        <h3><span class="coin" style="width:18px;height:18px;font-size:11px">¢</span>时间币</h3>
         <div class="stats"><div class="stat"><b>${state.credits}</b><span>余额</span></div><div class="stat"><b>${done.length}</b><span>已上课程</span></div><div class="stat"><b>${hrs}</b><span>累计小时</span></div></div>
-        <div class="rules"><div>· 教别人 1 小时 +1 币，向别人学 1 小时 −1 币</div><div>· 技能互换的课时互相抵扣，不花币</div><div>· 每段新关系首课 15 分钟试听免费</div></div>
+        <div class="rules"><div>教别人 1 小时 +1 币，向别人学 1 小时 −1 币</div><div>技能互换的课时互相抵扣，不花币</div><div>每段新关系首课 15 分钟试听免费</div></div>
         <div class="ledger">${state.ledger.map(l=>`<div><span>${esc(l.t)}</span><span class="${l.d>0?'plus':l.d<0?'minus':'zero'}">${l.d>0?'+':''}${l.d}</span></div>`).join('')}</div>
-      </div>
+      </div></div>
     </div>
-    <div style="margin-top:20px;text-align:center"><button class="btn" data-act="logout" style="color:var(--muted)">退出登录</button></div>
+    <div style="margin-top:24px;text-align:center"><button class="btn ghost" data-act="logout">${I('logout')}退出登录</button></div>
   </div></div>`;
 }
 
@@ -1169,33 +1323,35 @@ document.addEventListener('click',e=>{
   else if(act==='join') joinClass(a.dataset.eid);
   else if(act==='ics') downloadICS(a.dataset.eid);
   else if(act==='calday'){ state.calDay=a.dataset.d?+a.dataset.d:null; renderCal(); }
-  else if(act==='back'){ state.mlist=true; renderAll(); }
-  else if(act==='bclose') $('#banner').classList.remove('show');
-  else if(act==='edit'){ go('chat','agent'); say('agent','好的，我们重新过一遍，之前填的我都帮你保留了 ✍️',{ms:500}); AGENT.askTeach(); }
+  else if(act==='openDrawer'){ UIS.drawer=true; $('#app').classList.add('drawer'); }
+  else if(act==='closeDrawer'){ UIS.drawer=false; $('#app').classList.remove('drawer'); }
+  else if(act==='nclose') $('#notif').classList.remove('show');
+  else if(act==='soon') toast(a.title==='语音输入'?'请允许浏览器使用麦克风后再试':'当前对话暂不支持发送附件');
+  else if(act==='edit'){ go('chat','agent'); say('agent','好的，我们重新过一遍，之前填的都帮你保留了。',{ms:450}); AGENT.askTeach(); }
   else if(act==='logout'){ if(confirm('确定退出登录吗？本设备上的对话和日程将被清除。')){ try{localStorage.removeItem(KEY);}catch(_){} location.reload(); } }
-  else if(act==='mic'){ ROOM.mic=!ROOM.mic; a.classList.toggle('off',!ROOM.mic); a.textContent=ROOM.mic?'🎤 静音':'🔇 已静音'; }
-  else if(act==='cam'){ ROOM.cam=!ROOM.cam; a.classList.toggle('off',!ROOM.cam); a.textContent=ROOM.cam?'📷 关摄像头':'📷 已关闭'; const t=$('#mytile'); if(t) t.classList.toggle('off',!ROOM.cam); }
-  else if(act==='share') toast('屏幕共享已开启');
+  else if(act==='mic'){ ROOM.mic=!ROOM.mic; a.classList.toggle('off',!ROOM.mic); a.innerHTML=I(ROOM.mic?'mic':'micoff'); const n=$('#mynm'); if(n) n.innerHTML=I(ROOM.mic?'mic':'micoff')+'我'; }
+  else if(act==='cam'){ ROOM.cam=!ROOM.cam; a.classList.toggle('off',!ROOM.cam); a.innerHTML=I(ROOM.cam?'video':'videooff'); const t=$('#mytile'); if(t) t.classList.toggle('off',!ROOM.cam); }
+  else if(act==='share'){ a.classList.toggle('off'); toast(a.classList.contains('off')?'屏幕共享已开启':'屏幕共享已停止'); }
   else if(act==='endClass') endClass();
 });
 document.addEventListener('input',e=>{
   const inp=e.target.closest('[data-a2bind]'); if(inp){ const s=state.surfaces[inp.closest('.a2ui').dataset.sid]; if(s&&!s.locked){ setPath(s.data,inp.dataset.a2bind,inp.value); save(); } return; }
-  if(e.target.id==='input'){ const t=e.target; t.style.height='auto'; t.style.height=Math.min(140,t.scrollHeight)+'px'; }
+  if(e.target.id==='input'){ const t=e.target; t.style.height='auto'; t.style.height=Math.min(160,t.scrollHeight)+'px'; const b=$('#sendBtn'); if(b) b.disabled=!t.value.trim(); }
 });
 document.addEventListener('keydown',e=>{
   if(e.target.id==='input' && e.key==='Enter' && !e.shiftKey && !e.isComposing && e.keyCode!==229){ e.preventDefault(); send(); }
   else if(e.target.classList && e.target.classList.contains('a2-input') && e.key==='Enter' && !e.isComposing && e.keyCode!==229){ const btn=e.target.closest('.a2ui').querySelector('.a2-btn.pri'); if(btn) btn.click(); }
+  else if(e.key==='Escape'){ UIS.drawer=false; $('#app').classList.remove('drawer'); }
 });
 function openRoomByHash(h){ const code=(String(h).split('#room=')[1]||'').trim(); const ev=state.events.find(e=>e.code===code); if(ev) joinClass(ev.id); else toast('课堂链接已失效或不属于当前账号'); }
 window.addEventListener('hashchange',()=>{ if(location.hash.startsWith('#room=')){ const h=location.hash; history.replaceState(null,'',location.pathname+location.search); openRoomByHash(h); } });
-window.addEventListener('resize',()=>{ $('#app').classList.toggle('mlist', state.view==='chat'&&state.mlist); });
 
 /* =====================================================================
    启动
    ===================================================================== */
 if(/[?&]a2ui\b/.test(location.search)) $('#insp').classList.add('show');
 window.A2UI = {log:A2UI_LOG, surfaces:()=>state.surfaces};
-state.mlist=false; state.view='chat';
+state.view='chat';
 renderAll();
 if(!state.started) AGENT.start(); else AGENT.resume();
 if(location.hash.startsWith('#room=')){ const h=location.hash; history.replaceState(null,'',location.pathname+location.search); setTimeout(()=>openRoomByHash(h),300); }
